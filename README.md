@@ -8,6 +8,8 @@ The dev branch will works on gazebo >= 9.x
 This is a playground until I get some time to push the correct patch to gazebo master (I got hard time to work with mercurial..)!
 So you can expect things to not be up-to-date 
 
+IRLOCK PLUGIN ISN'T WORKING NOW!
+
 ## Usage :
 I assume you already have Gazebo installed with ROS (or without)
 libgazebo7-dev or libgazebo8-dev must be installed.

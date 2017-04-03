@@ -47,14 +47,6 @@
 #include <gazebo/transport/transport.hh>
 #include "include/ArduPilotPlugin.hh"
 
-// DON'T MERGE
-#include "gazebo/common/CommonTypes.hh"
-#include "gazebo/physics/Link.hh"
-#include "gazebo/physics/World.hh"
-#include "gazebo/physics/PhysicsEngine.hh"
-#include "gazebo/physics/Model.hh"
-// END DON'T MERGE
-
 #define MAX_MOTORS 255
 
 using namespace gazebo;
@@ -766,7 +758,8 @@ void ArduPilotPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
   std::vector<std::string> gpsScopedName = getSensorScopedName(this->dataPtr->model, gpsName);
   if (gpsScopedName.size() > 1)
   {
-    gzwarn << "multiple names match [" << gpsName << "] using first found"
+    gzwarn << "[" << this->dataPtr->modelName << "] "
+           << "multiple names match [" << gpsName << "] using first found"
            << " name.\n";
     for (unsigned k = 0; k < gpsScopedName.size(); ++k)
     {
@@ -784,8 +777,9 @@ void ArduPilotPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
   {
     if (gpsScopedName.size() > 1)
     {
-      gzwarn << "first gps_sensor scoped name [" << gpsScopedName[0]
-            << "] not found, trying the rest of the sensor names.\n";
+      gzwarn << "[" << this->dataPtr->modelName << "] "
+             << "first gps_sensor scoped name [" << gpsScopedName[0]
+             << "] not found, trying the rest of the sensor names.\n";
       for (unsigned k = 1; k < gpsScopedName.size(); ++k)
       {
         this->dataPtr->gpsSensor = std::dynamic_pointer_cast<sensors::GpsSensor>
@@ -800,22 +794,23 @@ void ArduPilotPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
 
     if (!this->dataPtr->gpsSensor)
     {
-      gzwarn << "gps_sensor scoped name [" << gpsName
-            << "] not found, trying unscoped name.\n" << "\n";
-      /// TODO: this fails for multi-nested models.
-      /// TODO: and transforms fail for rotated nested model,
-      ///       joints point the wrong way.
+      gzwarn << "[" << this->dataPtr->modelName << "] "
+             << "gps_sensor scoped name [" << gpsName
+             << "] not found, trying unscoped name.\n" << "\n";
       this->dataPtr->gpsSensor = std::dynamic_pointer_cast<sensors::GpsSensor>
         (sensors::SensorManager::Instance()->GetSensor(gpsName));
     }
     
-          if (!this->dataPtr->gpsSensor)
+    if (!this->dataPtr->gpsSensor)
     {
-          gzerr << "gps [" << gpsName
-            << "] not found, abort ArduPilot plugin.\n" << "\n";
+      gzwarn << "[" << this->dataPtr->modelName << "] "
+             << "gps [" << gpsName
+             << "] not found, skipping gps support.\n" << "\n";
     }
-    else {
-    gzwarn << "  found "  << " [" << gpsName << "].\n";
+    else
+    {
+      gzwarn << "[" << this->dataPtr->modelName << "] "
+             << "  found "  << " [" << gpsName << "].\n";
     }
   }
   
@@ -826,7 +821,8 @@ void ArduPilotPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
   std::vector<std::string> rangefinderScopedName = getSensorScopedName(this->dataPtr->model, rangefinderName);
   if (rangefinderScopedName.size() > 1)
   {
-    gzwarn << "multiple names match [" << rangefinderName << "] using first found"
+    gzwarn << "[" << this->dataPtr->modelName << "] "
+           << "multiple names match [" << rangefinderName << "] using first found"
            << " name.\n";
     for (unsigned k = 0; k < rangefinderScopedName.size(); ++k)
     {
@@ -844,8 +840,9 @@ void ArduPilotPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
   {
     if (rangefinderScopedName.size() > 1)
     {
-      gzwarn << "first rangefinder_sensor scoped name [" << rangefinderScopedName[0]
-            << "] not found, trying the rest of the sensor names.\n";
+      gzwarn << "[" << this->dataPtr->modelName << "] "
+             << "first rangefinder_sensor scoped name [" << rangefinderScopedName[0]
+             << "] not found, trying the rest of the sensor names.\n";
       for (unsigned k = 1; k < rangefinderScopedName.size(); ++k)
       {
         this->dataPtr->rangefinderSensor = std::dynamic_pointer_cast<sensors::RaySensor>
@@ -860,25 +857,27 @@ void ArduPilotPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
 
     if (!this->dataPtr->rangefinderSensor)
     {
-      gzwarn << "rangefinder_sensor scoped name [" << rangefinderName
-            << "] not found, trying unscoped name.\n" << "\n";
+      gzwarn << "[" << this->dataPtr->modelName << "] "
+             << "rangefinder_sensor scoped name [" << rangefinderName
+             << "] not found, trying unscoped name.\n" << "\n";
       /// TODO: this fails for multi-nested models.
       /// TODO: and transforms fail for rotated nested model,
       ///       joints point the wrong way.
       this->dataPtr->rangefinderSensor = std::dynamic_pointer_cast<sensors::RaySensor>
         (sensors::SensorManager::Instance()->GetSensor(rangefinderName));
     }
-          if (!this->dataPtr->rangefinderSensor)
+    if (!this->dataPtr->rangefinderSensor)
     {
-          gzerr << "ranfinder [" << rangefinderName
-            << "] not found, abort ArduPilot plugin.\n" << "\n";
+      gzwarn << "[" << this->dataPtr->modelName << "] "
+             << "ranfinder [" << rangefinderName
+             << "] not found, skipping rangefinder support.\n" << "\n";
     }
-        else {
-    gzwarn << "  found "  << " [" << rangefinderName << "].\n";
+    else
+    {
+      gzwarn << "[" << this->dataPtr->modelName << "] "
+             << "  found "  << " [" << rangefinderName << "].\n";
     }
   }
-  
-
 
   // Controller time control.
   this->dataPtr->lastControllerUpdateTime = 0;
@@ -1040,7 +1039,7 @@ void ArduPilotPlugin::ReceiveMotorCommand()
   // missed receives before declaring the FCS offline.
 
   ServoPacket pkt;
-  int waitMs = 1;
+  uint32_t waitMs;
   if (this->dataPtr->arduPilotOnline)
   {
     // increase timeout for receive once we detect a packet from
