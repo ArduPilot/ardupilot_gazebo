@@ -3,7 +3,7 @@
 ## Requirements :
 Gazebo version 7.x or 8.x  
 The dev branch will works on gazebo >= 9.x  
-my branch https://github.com/khancyr/ardupilot/tree/multi_sitl_improve_rover (will be merge soon)
+my branch https://github.com/khancyr/ardupilot/tree/gazebo_improve (will be merge soon)
 
 ## Disclamer : 
 This is a playground until I get some time to push the correct patch to gazebo master (I got hard time to work with mercurial..)!
