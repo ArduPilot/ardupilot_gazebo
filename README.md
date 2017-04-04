@@ -52,5 +52,7 @@ COPTER
 ````
 sim_vehicle.py -v ArduCopter -f gazebo-iris  -m --mav10 --map --console -I1
 ````
-### Missing libArduPilotPlugin.so
-In case you see this message, check you have no error after sudo make install. If no error use "ls" on the install path given to see if the plugin is really here. If this is correct, check with "cat /usr/share/gazebo/setup.sh" the variable GAZEBO_PLUGIN_PATH. It should be the same as the install path. If not use "cp" to copy the lib to right path. (example : cp /usr/lib/x86_64-linux-gnu/gazebo-7/plugins/libArduPilotPlugin.so /usr/lib/x86_64-linux-gnu/gazebo-7.0/plugins/ ) . I don't know why it can have path mistmatch ... but it could append if you install gazebo from sasc-gazebo-sitl .
+### Missing libArduPilotPlugin.so  
+In case you see this message, check you have no error after sudo make install.  
+If no error use "ls" on the install path given to see if the plugin is really here.  
+If this is correct, check with "cat /usr/share/gazebo/setup.sh" the variable GAZEBO_PLUGIN_PATH. It should be the same as the install path. If not use "cp" to copy the lib to right path. (example : cp /usr/lib/x86_64-linux-gnu/gazebo-7/plugins/libArduPilotPlugin.so /usr/lib/x86_64-linux-gnu/gazebo-7.0/plugins/ ) . I don't know why it can have path mistmatch ... but it could append if you install gazebo from sasc-gazebo-sitl .
