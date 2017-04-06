@@ -7,11 +7,11 @@ The dev branch will works on gazebo >= 9.x
 ## Disclamer : 
 This is a playground until I get some time to push the correct patch to gazebo master (I got hard time to work with mercurial..)!
 So you can expect things to not be up-to-date. 
-
-IRLOCK PLUGIN ISN'T WORKING WITH THIS VERSION! (blame gazebo to not provided all libraries...)
+This assume that your are using Ubuntu 16.04
 
 ## Usage :
-I assume you already have Gazebo installed with ROS (or without)  
+I assume you already have Gazebo installed with ROS (or without) 
+If you don't have it yet, install ROS with sudo apt install ros-kinetic-desktop-full (follow instruction here http://wiki.ros.org/kinetic/Installation/Ubuntu)
 libgazebo7-dev or libgazebo8-dev must be installed.
 
 ````

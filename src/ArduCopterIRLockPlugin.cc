@@ -45,7 +45,7 @@
 #include <gazebo/rendering/Camera.hh>
 #include <gazebo/rendering/Conversions.hh>
 #include <gazebo/rendering/Scene.hh>
-#include <gazebo/rendering/selection_buffer/SelectionBuffer.hh>
+#include <include/SelectionBuffer.hh>
 
 #include "include/ArduCopterIRLockPlugin.hh"
 
@@ -234,7 +234,7 @@ void ArduCopterIRLockPlugin::OnNewFrame(const unsigned char * /*_image*/,
       continue;
 
     ignition::math::Vector2i pt = GetScreenSpaceCoords(
-        vis->WorldPose().Pos(), camera);
+        vis->GetWorldPose().pos.Ign(), camera);
 
     // use selection buffer to check if visual is occluded by other entities
     // in the camera view
@@ -259,7 +259,7 @@ void ArduCopterIRLockPlugin::OnNewFrame(const unsigned char * /*_image*/,
 
     if (result && result->GetRootVisual() == vis)
     {
-      this->Publish(vis->Name(), pt.X(), pt.Y());
+      this->Publish(vis->GetName(), pt.X(), pt.Y());
     }
   }
 }
@@ -285,7 +285,7 @@ void ArduCopterIRLockPlugin::Publish(const std::string &/*_fiducial*/,
   ArduCopterIRLockPluginPrivate::irlockPacket pkt;
 
   pkt.timestamp = static_cast<uint64_t>
-    (1.0e3*this->dataPtr->parentSensor->LastMeasurementTime().Double());
+    (1.0e3 * this->dataPtr->parentSensor->LastMeasurementTime().Double());
   pkt.num_targets = static_cast<uint16_t>(1);
   pkt.pos_x = angleX;
   pkt.pos_y = angleY;
