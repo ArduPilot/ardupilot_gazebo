@@ -1,15 +1,14 @@
-# ardupilot_gazebo
+# Ardupilot Gazebo plugin 
 
 ## Requirements :
 Gazebo version 7.x or 8.x  
 The dev branch will works on gazebo >= 9.x  
-my branch https://github.com/khancyr/ardupilot/tree/gazebo_improve (will be merge soon)
 
 ## Disclamer : 
 This is a playground until I get some time to push the correct patch to gazebo master (I got hard time to work with mercurial..)!
 So you can expect things to not be up-to-date. 
 
-IRLOCK PLUGIN ISN'T WORKING NOW!
+IRLOCK PLUGIN ISN'T WORKING WITH THIS VERSION! (blame gazebo to not provided all libraries...)
 
 ## Usage :
 I assume you already have Gazebo installed with ROS (or without)  
@@ -30,6 +29,24 @@ Now launch a world file with a copter/rover/plane and ardupilot plugin, and it s
 (I will try to add some world file and model later)
 
 ## HELP 
+
+launch cmd :  
+ROVER
+````
+sim_vehicle.py -v APMrover2 -f gazebo-rover  -m --mav10 --map --console -I0
+````
+COPTER
+````
+sim_vehicle.py -v ArduCopter -f gazebo-iris  -m --mav10 --map --console -I0
+````
+
+### Missing libArduPilotPlugin.so  
+In case you see this message, check you have no error after sudo make install.  
+If no error use "ls" on the install path given to see if the plugin is really here.  
+If this is correct, check with "cat /usr/share/gazebo/setup.sh" the variable GAZEBO_PLUGIN_PATH. It should be the same as the install path. If not use "cp" to copy the lib to right path. (example : cp /usr/lib/x86_64-linux-gnu/gazebo-7/plugins/libArduPilotPlugin.so /usr/lib/x86_64-linux-gnu/gazebo-7.0/plugins/ ) . I don't know why it can have path mistmatch ... but it could append if you install gazebo from sasc-gazebo-sitl .
+
+
+### Future(not activated yet)
 To use Gazebo gps, you must offset the heading of +90° as gazebo gps is NWU and ardupilot is NED 
 (I don't use GPS altitude for now)  
 example : for SITL default location
@@ -42,17 +59,3 @@ example : for SITL default location
       <heading_deg>87</heading_deg>
     </spherical_coordinates>
 ````
-
-launch cmd :  
-ROVER
-````
-sim_vehicle.py -v APMrover2 -f gazebo-rover  -m --mav10 --map --console -I0
-````
-COPTER
-````
-sim_vehicle.py -v ArduCopter -f gazebo-iris  -m --mav10 --map --console -I1
-````
-### Missing libArduPilotPlugin.so  
-In case you see this message, check you have no error after sudo make install.  
-If no error use "ls" on the install path given to see if the plugin is really here.  
-If this is correct, check with "cat /usr/share/gazebo/setup.sh" the variable GAZEBO_PLUGIN_PATH. It should be the same as the install path. If not use "cp" to copy the lib to right path. (example : cp /usr/lib/x86_64-linux-gnu/gazebo-7/plugins/libArduPilotPlugin.so /usr/lib/x86_64-linux-gnu/gazebo-7.0/plugins/ ) . I don't know why it can have path mistmatch ... but it could append if you install gazebo from sasc-gazebo-sitl .

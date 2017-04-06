@@ -81,7 +81,7 @@ bool getSdfParam(sdf::ElementPtr _sdf, const std::string &_name,
 
 // DON'T MERGE
 std::vector<std::string> getSensorScopedName(physics::ModelPtr _model,
-          const std::string _name)
+          const std::string &_name)
 {
   std::vector<std::string> names;
   for (gazebo::physics::Link_V::const_iterator iter = _model->GetLinks().begin();
@@ -89,17 +89,18 @@ std::vector<std::string> getSensorScopedName(physics::ModelPtr _model,
   {
     for (unsigned int j = 0; j < (*iter)->GetSensorCount(); ++j)
     {
-      if ((*iter)->GetSensorName(j).size() < _name.size())
-      {
-        continue;
-      }
-      if ((*iter)->GetSensorName(j).substr(
-            (*iter)->GetSensorName(j).size()
-            - _name.size(), _name.size()) ==
-          _name)
-      {
-        names.push_back((*iter)->GetSensorName(j));
-      }
+        const auto sensorName = (*iter)->GetSensorName(j);
+        if (sensorName.size() < _name.size())
+        {
+            continue;
+        }
+        if (sensorName.substr(
+                sensorName.size()
+                        - _name.size(), _name.size()) ==
+                _name)
+        {
+            names.push_back(sensorName);
+        }
     }
   }
   return names;
@@ -133,7 +134,7 @@ struct fdmPacket
 
   /// \brief Model position in NED frame
   double positionXYZ[3];
-  
+/*  NOT MERGED IN MASTER YET
   /// \brief Model latitude in WGS84 system
   double latitude = 0.0;
   
@@ -154,6 +155,7 @@ struct fdmPacket
   
   /// \brief Model rangefinder value. Default to -1 to use sitl rangefinder.
   double rangefinder = -1.0;
+*/
 };
 
 /// \brief Control class
@@ -751,7 +753,7 @@ void ArduPilotPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
       return;
     }
   }
-  
+/* NOT MERGED IN MASTER YET
     // Get GPS
     std::string gpsName;
   getSdfParam<std::string>(_sdf, "gpsName", gpsName, "gps_sensor");
@@ -878,7 +880,7 @@ void ArduPilotPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
              << "  found "  << " [" << rangefinderName << "].\n";
     }
   }
-
+*/
   // Controller time control.
   this->dataPtr->lastControllerUpdateTime = 0;
 
@@ -1262,7 +1264,7 @@ void ArduPilotPlugin::SendState() const
   pkt.velocityXYZ[0] = velNEDFrame.X();
   pkt.velocityXYZ[1] = velNEDFrame.Y();
   pkt.velocityXYZ[2] = velNEDFrame.Z();
-  
+/* NOT MERGED IN MASTER YET
   if (!this->dataPtr->gpsSensor)
     {
 
@@ -1285,6 +1287,6 @@ void ArduPilotPlugin::SendState() const
     
   // airspeed :     wind = Vector3(environment.wind.x, environment.wind.y, environment.wind.z)
    // pkt.airspeed = (pkt.velocity - wind).length()
-
+*/
   this->dataPtr->socket_out.Send(&pkt, sizeof(pkt));
 }
