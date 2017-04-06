@@ -16,7 +16,9 @@ Or install directly gazebo8 from http://gazebosim.org/tutorials?tut=install_ubun
 libgazebo7-dev or libgazebo8-dev must be installed.
 
 ````
-git clone the repo
+sudo apt-get install libgazebo7-dev
+sudo apt-get install libgazebo8-dev
+git clone https://github.com/khancyr/ardupilot_gazebo
 cd ardupilot_gazebo
 mkdir build
 cd build
@@ -39,6 +41,10 @@ sim_vehicle.py -v APMrover2 -f gazebo-rover  -m --mav10 --map --console -I0
 COPTER
 ````
 sim_vehicle.py -v ArduCopter -f gazebo-iris  -m --mav10 --map --console -I0
+````
+PLANE
+````
+sim_vehicle.py -v ArduPlane -f gazebo-zephyr  -m --mav10 --map --console -I0
 ````
 
 ### Missing libArduPilotPlugin.so  
