@@ -28,7 +28,6 @@ include_directories(
         )
 
 link_libraries(
-        ${CMAKE_CURRENT_BINARY_DIR}
         ${GAZEBO_LIBRARIES}
         )
 
@@ -56,3 +55,6 @@ endif()
 
 install(TARGETS ArduCopterIRLockPlugin DESTINATION ${GAZEBO_PLUGIN_PATH})
 install(TARGETS ArduPilotPlugin DESTINATION ${GAZEBO_PLUGIN_PATH})
+
+#install(DIRECTORY models DESTINATION ${GAZEBO_RESOURCE_PATH})
+#install(DIRECTORY worlds DESTINATION ${GAZEBO_RESOURCE_PATH})

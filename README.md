@@ -36,6 +36,25 @@ cmake ..
 make -j4
 sudo make install
 ````
+
+````
+echo 'source /usr/share/gazebo/setup.sh' >> ~/.bashrc
+````
+
+Set Path of Gazebo Models (Adapt the path to where to clone the repo)
+````
+echo 'export GAZEBO_MODEL_PATH=~/ardupilot_gazebo/models' >> ~/.bashrc
+````
+
+Set Path of Gazebo Worlds (Adapt the path to where to clone the repo)
+````
+echo 'export GAZEBO_RESOURCE_PATH=~/ardupilot_gazebo/worlds:${GAZEBO_RESOURCE_PATH}' >> ~/.bashrc
+````
+
+````
+source ~/.bashrc
+````
+
 DONE !
 
 Now launch a world file with a copter/rover/plane and ardupilot plugin, and it should work! 
@@ -67,7 +86,7 @@ sim_vehicle.py -v ArduCopter -f gazebo-iris -m --mav10 --map --console -I0
 
 On 2nd Terminal(Launch Gazebo with demo 3DR Iris model)
 ````
-gazebo --verbose worlds/iris_irlock_demo.world
+gazebo --verbose worlds/iris_arduco_demo.world
 ````
 
 ##### PLANE
