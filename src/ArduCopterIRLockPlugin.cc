@@ -54,32 +54,6 @@ GZ_REGISTER_SENSOR_PLUGIN(ArduCopterIRLockPlugin)
 
 namespace gazebo
 {
-  /// \brief Obtains a parameter from sdf.
-  /// \param[in] _sdf Pointer to the sdf object.
-  /// \param[in] _name Name of the parameter.
-  /// \param[out] _param Param Variable to write the parameter to.
-  /// \param[in] _default_value Default value, if the parameter not available.
-  /// \param[in] _verbose If true, gzerror if the parameter is not available.
-  /// \return True if the parameter was found in _sdf, false otherwise.
-  template<class T>
-  bool getSdfParam(sdf::ElementPtr _sdf, const std::string &_name,
-    T &_param, const T &_defaultValue, const bool &_verbose = false)
-  {
-    if (_sdf->HasElement(_name))
-    {
-      _param = _sdf->GetElement(_name)->Get<T>();
-      return true;
-    }
-
-    _param = _defaultValue;
-    if (_verbose)
-    {
-      gzerr << "[ArduPilotPlugin] Please specify a value for parameter ["
-        << _name << "].\n";
-    }
-    return false;
-  }
-
   class ArduCopterIRLockPluginPrivate
   {
     /// \brief Pointer to the parent camera sensor
@@ -193,10 +167,10 @@ void ArduCopterIRLockPlugin::Load(sensors::SensorPtr _sensor,
         << std::endl;
     return;
   }
-  getSdfParam<std::string>(_sdf, "irlock_addr",
-      this->dataPtr->irlock_addr, "127.0.0.1");
-  getSdfParam<uint16_t>(_sdf, "irlock_port",
-      this->dataPtr->irlock_port, 9005);
+  this->dataPtr->irlock_addr =
+          _sdf->Get("irlock_addr", static_cast<std::string>("127.0.0.1")).first;
+  this->dataPtr->irlock_addr =
+          _sdf->Get("irlock_port", 9005).first;
 
   this->dataPtr->parentSensor->SetActive(true);
 
