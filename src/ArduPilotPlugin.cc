@@ -79,33 +79,6 @@ bool getSdfParam(sdf::ElementPtr _sdf, const std::string &_name,
   return false;
 }
 
-// DON'T MERGE
-std::vector<std::string> getSensorScopedName(physics::ModelPtr _model,
-          const std::string &_name)
-{
-  std::vector<std::string> names;
-  for (gazebo::physics::Link_V::const_iterator iter = _model->GetLinks().begin();
-       iter != _model->GetLinks().end(); ++iter)
-  {
-    for (unsigned int j = 0; j < (*iter)->GetSensorCount(); ++j)
-    {
-        const auto sensorName = (*iter)->GetSensorName(j);
-        if (sensorName.size() < _name.size())
-        {
-            continue;
-        }
-        if (sensorName.substr(
-                sensorName.size()
-                        - _name.size(), _name.size()) ==
-                _name)
-        {
-            names.push_back(sensorName);
-        }
-    }
-  }
-  return names;
-}
-// END DON'T MERGE
 /// \brief A servo packet.
 struct ServoPacket
 {
@@ -371,7 +344,7 @@ class gazebo::ArduPilotPluginPrivate
 
   /// \brief Pointer to the model;
   public: physics::ModelPtr model;
-  
+
   /// \brief String of the model name;
   public: std::string modelName;
 
@@ -693,10 +666,11 @@ void ArduPilotPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
   // Get sensors
   std::string imuName;
   getSdfParam<std::string>(_sdf, "imuName", imuName, "imu_sensor");
-  // std::string imuScopedName = this->dataPtr->model->GetWorld()->GetName()
+  // std::string imuScopedName = this->dataPtr->model->GetWorld()->Name()
   //     + "::" + this->dataPtr->model->GetScopedName()
   //     + "::" + imuName;
-  std::vector<std::string> imuScopedName = getSensorScopedName(this->dataPtr->model, imuName);
+  std::vector<std::string> imuScopedName =
+    this->dataPtr->model->SensorScopedName(imuName);
   if (imuScopedName.size() > 1)
   {
     gzwarn << "[" << this->dataPtr->modelName << "] "
@@ -757,7 +731,7 @@ void ArduPilotPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
     // Get GPS
     std::string gpsName;
   getSdfParam<std::string>(_sdf, "gpsName", gpsName, "gps_sensor");
-  std::vector<std::string> gpsScopedName = getSensorScopedName(this->dataPtr->model, gpsName);
+  std::vector<std::string> gpsScopedName = SensorScopedName(this->dataPtr->model, gpsName);
   if (gpsScopedName.size() > 1)
   {
     gzwarn << "[" << this->dataPtr->modelName << "] "
@@ -820,7 +794,7 @@ void ArduPilotPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
   // TODO add sonar
     std::string rangefinderName;
   getSdfParam<std::string>(_sdf, "rangefinderName", rangefinderName, "rangefinder_sensor");
-  std::vector<std::string> rangefinderScopedName = getSensorScopedName(this->dataPtr->model, rangefinderName);
+  std::vector<std::string> rangefinderScopedName = SensorScopedName(this->dataPtr->model, rangefinderName);
   if (rangefinderScopedName.size() > 1)
   {
     gzwarn << "[" << this->dataPtr->modelName << "] "
