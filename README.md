@@ -2,9 +2,8 @@
 
 ## Requirements :
 Native Ubuntu able to run full 3D graphics.
-(Virtual Machine such as VMWare Player does not support full 3D graphics.0)
 Gazebo version 7.x or 8.x  
-The dev branch will works on gazebo >= 9.x  
+The dev branch will works on gazebo >= 8.x  
 
 ## Disclamer : 
 This is a playground until I get some time to push the correct patch to gazebo master (I got hard time to work with mercurial..)!  
@@ -65,11 +64,12 @@ Now launch a world file with a copter/rover/plane and ardupilot plugin, and it s
 How to Launch :  
 Launch Ardupilot Software In the Loop Simulation for each vehicle.
 On new terminal, Launch Gazebo with basic demo world.
-ROVER
+
+#####ROVER (no model provided for now)
 
 On 1st Terminal(Launch Ardupilot SITL)
 ````
-sim_vehicle.py -v APMrover2 -f gazebo-rover -m --mav10 --map --console -I0
+sim_vehicle.py -v APMrover2 -f gazebo-rover --map --console
 ````
 
 On 2nd Termianal(Launch Gazebo with demo Rover model)
@@ -81,19 +81,19 @@ gazebo --verbose worlds/ (Please Add if there is one.)
 
 On 1st Terminal(Launch Ardupilot SITL)
 ````
-sim_vehicle.py -v ArduCopter -f gazebo-iris -m --mav10 --map --console -I0
+sim_vehicle.py -v ArduCopter -f gazebo-iris --map --console
 ````
 
 On 2nd Terminal(Launch Gazebo with demo 3DR Iris model)
 ````
-gazebo --verbose worlds/iris_arduco_demo.world
+gazebo --verbose worlds/iris_arducopter_demo2.world
 ````
 
 ##### PLANE
 
 On 1st Terminal(Launch Ardupilot SITL)
 ````
-sim_vehicle.py -v ArduPlane -f gazebo-zephyr -m --mav10 --map --console -I0
+sim_vehicle.py -v ArduPlane -f gazebo-zephyr --map --console
 ````
 
 On 2nd Terminal(Launch Gazebo with demo Zephyr flying wing model)
@@ -104,22 +104,6 @@ gazebo --verbose worlds/zephyr_ardupilot_demo.world
 In addition, you can use any GCS of Ardupilot locally or remotely (will require connection setup).
 If MAVProxy Developer GCS is uncomportable. Omit --map --console arguments out of SITL launch. and Use APMPlanner 2 or QGroundControl instead.
 Local connection with APMPlanner2/QGroundControl is automatic, and recommended.
-
-For APMPlanner2
-
-Download it here http://firmware.eu.ardupilot.org/Tools/APMPlanner/
-and launch it in terminal
-
-````
-apmplanner2
-````
-
-For QGroundControl
-
-Download it here and follow the installation guide.
-
-https://donlakeflyer.gitbooks.io/qgroundcontrol-user-guide/en/download_and_install.html
-
 
 ## Troubleshooting
 
