@@ -1,0 +1,51 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <world name="default">
+    <gui>
+      <camera name="user_camera">
+        <pose>-5 0 1 0 0.2 0</pose>
+      </camera>
+    </gui>
+    <physics type="ode">
+      <ode>
+        <solver>
+          <type>quick</type>
+          <iters>100</iters>
+          <sor>1.0</sor>
+        </solver>
+        <constraints>
+          <cfm>0.0</cfm>
+          <erp>0.2</erp>
+          <contact_max_correcting_vel>0.1</contact_max_correcting_vel>
+          <contact_surface_layer>0.0</contact_surface_layer>
+        </constraints>
+      </ode>
+      <real_time_update_rate>-1</real_time_update_rate>
+      <!--<max_step_size>0.0020</max_step_size>-->
+    </physics>
+    <gravity>0 0 -9.8</gravity>
+    <include>
+      <uri>model://sun</uri>
+    </include>
+
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+
+
+    <plugin name="map" filename="libStaticMapPlugin.so">
+      <center>-35.363261 149.165230</center>
+      <world_size>300</world_size>
+      <map_type>satellite</map_type>
+      <api_key>YOU_API_KEY</api_key>
+      <use_cache>true</use_cache>
+      <pose>0 0 0.2 0 0 -1.5708</pose>
+    </plugin>
+
+    <model name="iris_demo">
+      <include>
+        <uri>model://iris_with_ardupilot</uri>
+      </include>
+    </model>
+  </world>
+</sdf>

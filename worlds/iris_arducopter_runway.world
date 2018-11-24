@@ -86,7 +86,7 @@
 
     <model name="iris_demo">
       <include>
-        <uri>model://iris_with_standoffs_demo2</uri>
+        <uri>model://iris_with_ardupilot</uri>
       </include>
     </model>
   </world>
