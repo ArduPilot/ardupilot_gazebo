@@ -2,30 +2,28 @@
 
 ## Requirements :
 Native Ubuntu able to run full 3D graphics.
-Gazebo version 7.x or 8.x  
+Gazebo version 8.x or greater
 The dev branch will works on gazebo >= 8.x  
+For Gazebo 7 use branch gazebo7
 
 ## Disclamer : 
 This is a playground until I get some time to push the correct patch to gazebo master (I got hard time to work with mercurial..)!  
 So you can expect things to not be up-to-date.  
-This assume that your are using Ubuntu 16.04
+This assume that your are using Ubuntu 16.04 or Ubuntu 18.04
 
 ## Usage :
 I assume you already have Gazebo installed with ROS (or without).  
-If you don't have it yet, install ROS with sudo apt install ros-kinetic-desktop-full 
-(follow instruction here http://wiki.ros.org/kinetic/Installation/Ubuntu).  
+If you don't have it yet, install ROS with sudo apt install ros-melodic-desktop-full 
+(follow instruction here http://wiki.ros.org/melodic/Installation/Ubuntu).  
 Due to a bug in current gazebo release from ROS, please update gazebo with OSRF version from http://gazebosim.org/tutorials?tut=install_ubuntu
-libgazebo7-dev or libgazebo8-dev must be installed.
 
-For Gazebo 7
+libgazeboX-dev must be installed, X be your gazebo version (9 on ROS melodic).
+
+For Gazebo X
 ````
-sudo apt-get install libgazebo7-dev
+sudo apt-get install libgazeboX-dev
 ````
-OR  
-For Gazebo 8
-````
-sudo apt-get install libgazebo8-dev
-````
+
 ````
 git clone https://github.com/khancyr/ardupilot_gazebo
 cd ardupilot_gazebo
@@ -86,7 +84,7 @@ sim_vehicle.py -v ArduCopter -f gazebo-iris --map --console
 
 On 2nd Terminal(Launch Gazebo with demo 3DR Iris model)
 ````
-gazebo --verbose worlds/iris_arducopter_demo2.world
+gazebo --verbose worlds/iris_arducopter_runway.world
 ````
 
 ##### PLANE
@@ -119,7 +117,7 @@ For Example
 sudo cp -a /usr/lib/x86_64-linux-gnu/gazebo-7.0/plugins/ /usr/lib/x86_64-linux-gnu/gazebo-7/
 ````
 
-path mismatch is confirmed as ROS's glitch. It'll be fixed.
+path mismatch is confirmed as ROS's glitch. It will be fixed.
 
 ### Future(not activated yet)
 To use Gazebo gps, you must offset the heading of +90° as gazebo gps is NWU and ardupilot is NED 
@@ -134,4 +132,4 @@ example : for SITL default location
       <heading_deg>87</heading_deg>
     </spherical_coordinates>
 ````
-
+Rangefinder
