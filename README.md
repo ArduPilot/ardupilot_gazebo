@@ -13,7 +13,7 @@ This assume that your are using Ubuntu 16.04 or Ubuntu 18.04
 
 ## Usage :
 I assume you already have Gazebo installed with ROS (or without).  
-If you don't have it yet, install ROS with sudo apt install ros-melodic-desktop-full 
+If you don't have it yet, install ROS with `sudo apt install ros-melodic-desktop-full`
 (follow instruction here http://wiki.ros.org/melodic/Installation/Ubuntu).  
 Due to a bug in current gazebo release from ROS, please update gazebo with OSRF version from http://gazebosim.org/tutorials?tut=install_ubuntu
 
@@ -61,46 +61,46 @@ Now launch a world file with a copter/rover/plane and ardupilot plugin, and it s
 
 How to Launch :  
 Launch Ardupilot Software In the Loop Simulation for each vehicle.
-On new terminal, Launch Gazebo with basic demo world.
+On new terminal, launch Gazebo with basic demo world.
 
 #####ROVER (no model provided for now)
 
-On 1st Terminal(Launch Ardupilot SITL)
+On 1st Terminal (Launch Ardupilot SITL)
 ````
 sim_vehicle.py -v APMrover2 -f gazebo-rover --map --console
 ````
 
-On 2nd Termianal(Launch Gazebo with demo Rover model)
+On 2nd Terminal (Launch Gazebo with demo Rover model)
 ````
 gazebo --verbose worlds/ (Please Add if there is one.)
 ````
 
 ##### COPTER
 
-On 1st Terminal(Launch Ardupilot SITL)
+On 1st Terminal (Launch Ardupilot SITL)
 ````
 sim_vehicle.py -v ArduCopter -f gazebo-iris --map --console
 ````
 
-On 2nd Terminal(Launch Gazebo with demo 3DR Iris model)
+On 2nd Terminal (Launch Gazebo with demo 3DR Iris model)
 ````
 gazebo --verbose worlds/iris_arducopter_runway.world
 ````
 
 ##### PLANE
 
-On 1st Terminal(Launch Ardupilot SITL)
+On 1st Terminal (Launch Ardupilot SITL)
 ````
 sim_vehicle.py -v ArduPlane -f gazebo-zephyr --map --console
 ````
 
-On 2nd Terminal(Launch Gazebo with demo Zephyr flying wing model)
+On 2nd Terminal (Launch Gazebo with demo Zephyr flying wing model)
 ````
 gazebo --verbose worlds/zephyr_ardupilot_demo.world
 ````
 
 In addition, you can use any GCS of Ardupilot locally or remotely (will require connection setup).
-If MAVProxy Developer GCS is uncomportable. Omit --map --console arguments out of SITL launch. and Use APMPlanner 2 or QGroundControl instead.
+If MAVProxy Developer GCS is uncomportable. Omit --map --console arguments out of SITL launch and use APMPlanner 2 or QGroundControl instead.
 Local connection with APMPlanner2/QGroundControl is automatic, and recommended.
 
 ## Troubleshooting
@@ -109,7 +109,7 @@ Local connection with APMPlanner2/QGroundControl is automatic, and recommended.
 
 In case you see this message when you launch gazebo with demo worlds, check you have no error after sudo make install.  
 If no error use "ls" on the install path given to see if the plugin is really here.  
-If this is correct, check with "cat /usr/share/gazebo/setup.sh" the variable GAZEBO_PLUGIN_PATH. It should be the same as the install path. If not use "cp" to copy the lib to right path. 
+If this is correct, check with `cat /usr/share/gazebo/setup.sh` the variable `GAZEBO_PLUGIN_PATH`. It should be the same as the install path. If not use `cp` to copy the lib to right path. 
 
 For Example
 
