@@ -84,22 +84,22 @@ struct fdmPacket
 /*  NOT MERGED IN MASTER YET
   /// \brief Model latitude in WGS84 system
   double latitude = 0.0;
-  
+
   /// \brief Model longitude in WGS84 system
   double longitude = 0.0;
-  
+
   /// \brief Model altitude from GPS
   double altitude = 0.0;
-  
+
   /// \brief Model estimated from airspeed sensor (e.g. Pitot) in m/s
-  double airspeed = 0.0; 
-  
+  double airspeed = 0.0;
+
   /// \brief Battery voltage. Default to -1 to use sitl estimator.
   double battery_voltage = -1.0;
-  
+
   /// \brief Battery Current.
   double battery_current = 0.0;
-  
+
   /// \brief Model rangefinder value. Default to -1 to use sitl rangefinder.
   double rangefinder = -1.0;
 */
@@ -133,7 +133,7 @@ class Control
   /// POSITION control position of joint
   /// EFFORT control effort of joint
   public: std::string type;
-  
+
   /// \brief use force controler
   public: bool useForce = true;
 
@@ -351,10 +351,10 @@ class gazebo::ArduPilotPluginPrivate
 
   /// \brief Pointer to an IMU sensor
   public: sensors::ImuSensorPtr imuSensor;
-  
+
   /// \brief Pointer to an GPS sensor
   public: sensors::GpsSensorPtr gpsSensor;
-  
+
   /// \brief Pointer to an Rangefinder sensor
   public: sensors::RaySensorPtr rangefinderSensor;
 
@@ -470,7 +470,7 @@ void ArduPilotPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
              << " default to VELOCITY.\n";
       control.type = "VELOCITY";
     }
-    
+
     if (controlSDF->HasElement("useForce"))
     {
       control.useForce = controlSDF->Get<bool>("useForce");
@@ -733,7 +733,7 @@ void ArduPilotPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
       this->dataPtr->gpsSensor = std::dynamic_pointer_cast<sensors::GpsSensor>
         (sensors::SensorManager::Instance()->GetSensor(gpsName));
     }
-    
+
     if (!this->dataPtr->gpsSensor)
     {
       gzwarn << "[" << this->dataPtr->modelName << "] "
@@ -746,7 +746,7 @@ void ArduPilotPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
              << "  found "  << " [" << gpsName << "].\n";
     }
   }
-  
+
   // Get Rangefinder
   // TODO add sonar
   std::string rangefinderName = _sdf->Get("rangefinderName",
@@ -936,7 +936,7 @@ void ArduPilotPlugin::ApplyMotorForces(const double _dt)
         // do nothing
       }
     }
-    else 
+    else
     {
       if (this->dataPtr->controls[i].type == "VELOCITY")
       {
@@ -1205,7 +1205,7 @@ void ArduPilotPlugin::SendState() const
         pkt.latitude = this->dataPtr->gpsSensor->Latitude().Degree();
         pkt.altitude = this->dataPtr->gpsSensor->Altitude();
     }
-    
+
     // TODO : make generic enough to accept sonar/gpuray etc. too
     if (!this->dataPtr->rangefinderSensor)
     {
@@ -1215,7 +1215,7 @@ void ArduPilotPlugin::SendState() const
         const double range = this->dataPtr->rangefinderSensor->Range(0);
         pkt.rangefinder = std::isinf(range) ? 0.0 : range;
     }
-    
+
   // airspeed :     wind = Vector3(environment.wind.x, environment.wind.y, environment.wind.z)
    // pkt.airspeed = (pkt.velocity - wind).length()
 */
