@@ -876,9 +876,9 @@ bool ArduPilotPlugin::InitArduPilotSockets(sdf::ElementPtr _sdf) const
   this->dataPtr->listen_addr =
     _sdf->Get("listen_addr", static_cast<std::string>("127.0.0.1")).first;
   this->dataPtr->fdm_port_in =
-    _sdf->Get("fdm_port_in", static_cast<uint16_t>(9002)).first;
+    _sdf->Get("fdm_port_in", static_cast<uint32_t>(9002)).first;
   this->dataPtr->fdm_port_out =
-    _sdf->Get("fdm_port_out", static_cast<uint16_t>(9003)).first;
+    _sdf->Get("fdm_port_out", static_cast<uint32_t>(9003)).first;
 
   if (!this->dataPtr->socket_in.Bind(this->dataPtr->listen_addr.c_str(),
       this->dataPtr->fdm_port_in))
