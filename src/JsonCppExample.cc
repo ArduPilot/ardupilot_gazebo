@@ -1,4 +1,4 @@
-// Test socket connection to ArduPilot SITL and JSON parsing
+// Test JSON input / output using jsoncpp.
 
 #include <cinttypes>
 #include <exception>
