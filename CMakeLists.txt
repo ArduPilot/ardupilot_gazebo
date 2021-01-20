@@ -151,7 +151,9 @@ target_link_libraries(ArduCopterIRLockPlugin ${GAZEBO_LIBRARIES})
 add_library(ArduPilotPlugin SHARED src/ArduPilotPlugin.cc)
 target_link_libraries(ArduPilotPlugin ${GAZEBO_LIBRARIES})
 
-add_executable(ArduPilotJson src/ArduPilotJson.cc)
+add_executable(JsonCppExample src/JsonCppExample.cc)
+
+add_executable(SITLSocketExample src/SITLSocketExample.cc)
 
 if("${GAZEBO_VERSION}" VERSION_LESS "8.0")
     add_library(GimbalSmall2dPlugin SHARED src/GimbalSmall2dPlugin.cc)
