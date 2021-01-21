@@ -106,7 +106,7 @@ int main(int argc, const char* argv[])
 
         // example 2: create JSON
         {
-            std::cout << "example2: create" << "\n\n";
+            std::cout << "example2: create" << "\n";
 
             Json::Value root;
 
@@ -162,10 +162,21 @@ int main(int argc, const char* argv[])
             windvane["speed"] = speed;
             root["windvane"] = windvane;
 
-            std::cout << root << "\n";
-        }
+            // JSON output
+            Json::StreamWriterBuilder builder;
+            builder["commentStyle"] = "None";
+            builder["indentation"] = "  ";
+            builder["enableYAMLCompatibility"] = false;
+            builder["dropNullPlaceholders"] = false;
+            builder["useSpecialFloats"] = false;
+            builder["emitUTF8"] = true;
+            builder["precision"] = 17;
+            builder["precisionType"] = "significant";
 
-   }
+            std::string json_str = "\n" + Json::writeString(builder, root) + "\n";
+            std::cout << json_str;
+        }
+    }
     catch(const std::exception& e)
     {
         std::cerr << e.what() << '\n';
