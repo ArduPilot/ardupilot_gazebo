@@ -148,7 +148,11 @@ set (plugins_single_header
 add_library(ArduCopterIRLockPlugin SHARED src/ArduCopterIRLockPlugin.cc)
 target_link_libraries(ArduCopterIRLockPlugin ${GAZEBO_LIBRARIES})
 
-add_library(ArduPilotPlugin SHARED src/ArduPilotPlugin.cc)
+add_library(ArduPilotPlugin
+    SHARED
+    src/ArduPilotPlugin.cc
+    src/Socket.cpp
+)
 target_link_libraries(ArduPilotPlugin ${GAZEBO_LIBRARIES})
 
 add_executable(JsonCppExample

@@ -15,25 +15,6 @@
  *
 */
 #include <functional>
-#include <fcntl.h>
-#ifdef _WIN32
-  #include <Winsock2.h>
-  #include <Ws2def.h>
-  #include <Ws2ipdef.h>
-  #include <Ws2tcpip.h>
-  using raw_type = char;
-#else
-  #include <sys/socket.h>
-  #include <netinet/in.h>
-  #include <netinet/tcp.h>
-  #include <arpa/inet.h>
-  using raw_type = void;
-#endif
-
-#if defined(_MSC_VER)
-  #include <BaseTsd.h>
-  typedef SSIZE_T ssize_t;
-#endif
 
 #include <mutex>
 #include <string>
@@ -47,62 +28,22 @@
 #include <gazebo/transport/transport.hh>
 #include "include/ArduPilotPlugin.hh"
 
+#include "Socket.h"
+
+#include <json/json.h>
+
 #define MAX_MOTORS 255
 
 using namespace gazebo;
 
 GZ_REGISTER_MODEL_PLUGIN(ArduPilotPlugin)
 
-/// \brief A servo packet.
-struct ServoPacket
-{
-  /// \brief Motor speed data.
-  /// should rename to servo_command here and in ArduPilot SIM_Gazebo.cpp
-  float motorSpeed[MAX_MOTORS] = {0.0f};
-};
-
-/// \brief Flight Dynamics Model packet that is sent back to the ArduPilot
-struct fdmPacket
-{
-  /// \brief packet timestamp
-  double timestamp;
-
-  /// \brief IMU angular velocity
-  double imuAngularVelocityRPY[3];
-
-  /// \brief IMU linear acceleration
-  double imuLinearAccelerationXYZ[3];
-
-  /// \brief IMU quaternion orientation
-  double imuOrientationQuat[4];
-
-  /// \brief Model velocity in NED frame
-  double velocityXYZ[3];
-
-  /// \brief Model position in NED frame
-  double positionXYZ[3];
-/*  NOT MERGED IN MASTER YET
-  /// \brief Model latitude in WGS84 system
-  double latitude = 0.0;
-
-  /// \brief Model longitude in WGS84 system
-  double longitude = 0.0;
-
-  /// \brief Model altitude from GPS
-  double altitude = 0.0;
-
-  /// \brief Model estimated from airspeed sensor (e.g. Pitot) in m/s
-  double airspeed = 0.0;
-
-  /// \brief Battery voltage. Default to -1 to use sitl estimator.
-  double battery_voltage = -1.0;
-
-  /// \brief Battery Current.
-  double battery_current = 0.0;
-
-  /// \brief Model rangefinder value. Default to -1 to use sitl rangefinder.
-  double rangefinder = -1.0;
-*/
+// The servo packet received from ArduPilot SITL. Defined in SIM_JSON.h.
+struct servo_packet {
+    uint16_t magic;         // 18458 expected magic value
+    uint16_t frame_rate;
+    uint32_t frame_count;
+    uint16_t pwm[16];
 };
 
 /// \brief Control class
@@ -165,152 +106,6 @@ double Control::kDefaultFrequencyCutoff = 5.0;
 double Control::kDefaultSamplingRate = 0.2;
 
 // Private data class
-class gazebo::ArduPilotSocketPrivate
-{
-  /// \brief constructor
-  public: ArduPilotSocketPrivate()
-  {
-    // initialize socket udp socket
-    fd = socket(AF_INET, SOCK_DGRAM, 0);
-    #ifndef _WIN32
-    // Windows does not support FD_CLOEXEC
-    fcntl(fd, F_SETFD, FD_CLOEXEC);
-    #endif
-  }
-
-  /// \brief destructor
-  public: ~ArduPilotSocketPrivate()
-  {
-    if (fd != -1)
-    {
-      ::close(fd);
-      fd = -1;
-    }
-  }
-
-  /// \brief Bind to an adress and port
-  /// \param[in] _address Address to bind to.
-  /// \param[in] _port Port to bind to.
-  /// \return True on success.
-  public: bool Bind(const char *_address, const uint16_t _port)
-  {
-    struct sockaddr_in sockaddr;
-    this->MakeSockAddr(_address, _port, sockaddr);
-
-    if (bind(this->fd, (struct sockaddr *)&sockaddr, sizeof(sockaddr)) != 0)
-    {
-      shutdown(this->fd, 0);
-      #ifdef _WIN32
-      closesocket(this->fd);
-      #else
-      close(this->fd);
-      #endif
-      return false;
-    }
-    int one = 1;
-    setsockopt(this->fd, SOL_SOCKET, SO_REUSEADDR,
-        reinterpret_cast<const char *>(&one), sizeof(one));
-
-    #ifdef _WIN32
-    u_long on = 1;
-    ioctlsocket(this->fd, FIONBIO,
-              reinterpret_cast<u_long FAR *>(&on));
-    #else
-    fcntl(this->fd, F_SETFL,
-        fcntl(this->fd, F_GETFL, 0) | O_NONBLOCK);
-    #endif
-    return true;
-  }
-
-  /// \brief Connect to an adress and port
-  /// \param[in] _address Address to connect to.
-  /// \param[in] _port Port to connect to.
-  /// \return True on success.
-  public : bool Connect(const char *_address, const uint16_t _port)
-  {
-    struct sockaddr_in sockaddr;
-    this->MakeSockAddr(_address, _port, sockaddr);
-
-    if (connect(this->fd, (struct sockaddr *)&sockaddr, sizeof(sockaddr)) != 0)
-    {
-      shutdown(this->fd, 0);
-      #ifdef _WIN32
-      closesocket(this->fd);
-      #else
-      close(this->fd);
-      #endif
-      return false;
-    }
-    int one = 1;
-    setsockopt(this->fd, SOL_SOCKET, SO_REUSEADDR,
-        reinterpret_cast<const char *>(&one), sizeof(one));
-
-    #ifdef _WIN32
-    u_long on = 1;
-    ioctlsocket(this->fd, FIONBIO,
-              reinterpret_cast<u_long FAR *>(&on));
-    #else
-    fcntl(this->fd, F_SETFL,
-        fcntl(this->fd, F_GETFL, 0) | O_NONBLOCK);
-    #endif
-    return true;
-  }
-
-  /// \brief Make a socket
-  /// \param[in] _address Socket address.
-  /// \param[in] _port Socket port
-  /// \param[out] _sockaddr New socket address structure.
-  public: void MakeSockAddr(const char *_address, const uint16_t _port,
-    struct sockaddr_in &_sockaddr)
-  {
-    memset(&_sockaddr, 0, sizeof(_sockaddr));
-
-    #ifdef HAVE_SOCK_SIN_LEN
-      _sockaddr.sin_len = sizeof(_sockaddr);
-    #endif
-
-    _sockaddr.sin_port = htons(_port);
-    _sockaddr.sin_family = AF_INET;
-    _sockaddr.sin_addr.s_addr = inet_addr(_address);
-  }
-
-  public: ssize_t Send(const void *_buf, size_t _size)
-  {
-    return send(this->fd, _buf, _size, 0);
-  }
-
-  /// \brief Receive data
-  /// \param[out] _buf Buffer that receives the data.
-  /// \param[in] _size Size of the buffer.
-  /// \param[in] _timeoutMS Milliseconds to wait for data.
-  public: ssize_t Recv(void *_buf, const size_t _size, uint32_t _timeoutMs)
-  {
-    fd_set fds;
-    struct timeval tv;
-
-    FD_ZERO(&fds);
-    FD_SET(this->fd, &fds);
-
-    tv.tv_sec = _timeoutMs / 1000;
-    tv.tv_usec = (_timeoutMs % 1000) * 1000UL;
-
-    if (select(this->fd+1, &fds, NULL, NULL, &tv) != 1)
-    {
-        return -1;
-    }
-
-    #ifdef _WIN32
-    return recv(this->fd, reinterpret_cast<char *>(_buf), _size, 0);
-    #else
-    return recv(this->fd, _buf, _size, 0);
-    #endif
-  }
-
-  /// \brief Socket handle
-  private: int fd;
-};
-
-// Private data class
 class gazebo::ArduPilotPluginPrivate
 {
   /// \brief Pointer to the update event connection.
@@ -331,31 +126,28 @@ class gazebo::ArduPilotPluginPrivate
   /// \brief Controller update mutex.
   public: std::mutex mutex;
 
-  /// \brief Ardupilot Socket for receive motor command on gazebo
-  public: ArduPilotSocketPrivate socket_in;
+  /// \brief Socket manager
+  public: SocketAPM sock = SocketAPM(true);
 
-  /// \brief Ardupilot Socket to send state to Ardupilot
-  public: ArduPilotSocketPrivate socket_out;
+  /// \brief The Ardupilot address for SITL server
+  public: std::string address_in;
 
-  /// \brief Ardupilot address
-  public: std::string fdm_addr;
+  /// \brief The Ardupilot address provided by socket on recv 
+  public: const char* address_out;
 
-  /// \brief The Ardupilot listen address
-  public: std::string listen_addr;
+  /// \brief Ardupilot port for data from SITL
+  public: uint16_t port_in;
 
-  /// \brief Ardupilot port for receiver socket
-  public: uint16_t fdm_port_in;
+  /// \brief Ardupilot port provided by socket on recv
+  public: uint16_t port_out;
 
-  /// \brief Ardupilot port for sender socket
-  public: uint16_t fdm_port_out;
-
-  /// \brief Pointer to an IMU sensor
+  /// \brief Pointer to an IMU sensor [required]
   public: sensors::ImuSensorPtr imuSensor;
 
-  /// \brief Pointer to an GPS sensor
+  /// \brief Pointer to an GPS sensor [optional]
   public: sensors::GpsSensorPtr gpsSensor;
 
-  /// \brief Pointer to an Rangefinder sensor
+  /// \brief Pointer to an Rangefinder sensor [optional]
   public: sensors::RaySensorPtr rangefinderSensor;
 
   /// \brief false before ardupilot controller is online
@@ -372,7 +164,7 @@ class gazebo::ArduPilotPluginPrivate
 
 /////////////////////////////////////////////////
 ArduPilotPlugin::ArduPilotPlugin()
-  : dataPtr(new ArduPilotPluginPrivate)
+  : dataPtr(new ArduPilotPluginPrivate())
 {
   this->dataPtr->arduPilotOnline = false;
   this->dataPtr->connectionTimeoutCount = 0;
@@ -871,34 +663,22 @@ void ArduPilotPlugin::ResetPIDs()
 /////////////////////////////////////////////////
 bool ArduPilotPlugin::InitArduPilotSockets(sdf::ElementPtr _sdf) const
 {
-  this->dataPtr->fdm_addr =
-    _sdf->Get("fdm_addr", static_cast<std::string>("127.0.0.1")).first;
-  this->dataPtr->listen_addr =
-    _sdf->Get("listen_addr", static_cast<std::string>("127.0.0.1")).first;
-  this->dataPtr->fdm_port_in =
-    _sdf->Get("fdm_port_in", static_cast<uint32_t>(9002)).first;
-  this->dataPtr->fdm_port_out =
-    _sdf->Get("fdm_port_out", static_cast<uint32_t>(9003)).first;
+    this->dataPtr->address_in =
+        _sdf->Get("listen_addr", static_cast<std::string>("127.0.0.1")).first;
+    this->dataPtr->port_in =
+        _sdf->Get("fdm_port_in", static_cast<uint32_t>(9002)).first;
 
-  if (!this->dataPtr->socket_in.Bind(this->dataPtr->listen_addr.c_str(),
-      this->dataPtr->fdm_port_in))
-  {
-    gzerr << "[" << this->dataPtr->modelName << "] "
-          << "failed to bind with " << this->dataPtr->listen_addr
-          << ":" << this->dataPtr->fdm_port_in << " aborting plugin.\n";
-    return false;
-  }
+    if (this->dataPtr->sock.bind(
+            this->dataPtr->address_in.c_str(),
+            this->dataPtr->port_in) < 0)
+    {
+        gzerr << "[" << this->dataPtr->modelName << "] "
+            << "failed to bind with " << this->dataPtr->address_in
+            << ":" << this->dataPtr->port_in << " aborting plugin.\n";
+        return false;
+    }
 
-  if (!this->dataPtr->socket_out.Connect(this->dataPtr->fdm_addr.c_str(),
-      this->dataPtr->fdm_port_out))
-  {
-    gzerr << "[" << this->dataPtr->modelName << "] "
-          << "failed to bind with " << this->dataPtr->fdm_addr
-          << ":" << this->dataPtr->fdm_port_out << " aborting plugin.\n";
-    return false;
-  }
-
-  return true;
+    return true;
 }
 
 /////////////////////////////////////////////////
@@ -971,7 +751,7 @@ void ArduPilotPlugin::ReceiveMotorCommand()
   // Once ArduPilot presence is detected, it takes this many
   // missed receives before declaring the FCS offline.
 
-  ServoPacket pkt;
+  servo_packet pkt;
   uint32_t waitMs;
   if (this->dataPtr->arduPilotOnline)
   {
@@ -984,17 +764,17 @@ void ArduPilotPlugin::ReceiveMotorCommand()
     // Otherwise skip quickly and do not set control force.
     waitMs = 1;
   }
-  ssize_t recvSize =
-    this->dataPtr->socket_in.Recv(&pkt, sizeof(ServoPacket), waitMs);
+
+  auto recvSize = this->dataPtr->sock.recv(&pkt, sizeof(servo_packet), waitMs);
+  this->dataPtr->sock.last_recv_address(this->dataPtr->address_out, this->dataPtr->port_out);
 
   // Drain the socket in the case we're backed up
   int counter = 0;
-  ServoPacket last_pkt;
+  servo_packet last_pkt;
   while (true)
   {
     // last_pkt = pkt;
-    const ssize_t recvSize_last =
-      this->dataPtr->socket_in.Recv(&last_pkt, sizeof(ServoPacket), 0ul);
+    auto recvSize_last = this->dataPtr->sock.recv(&last_pkt, sizeof(servo_packet), 0ul);
     if (recvSize_last == -1)
     {
       break;
@@ -1034,19 +814,22 @@ void ArduPilotPlugin::ReceiveMotorCommand()
   }
   else
   {
-    const ssize_t expectedPktSize =
-    sizeof(pkt.motorSpeed[0]) * this->dataPtr->controls.size();
-    if (recvSize < expectedPktSize)
-    {
-      gzerr << "[" << this->dataPtr->modelName << "] "
-            << "got less than model needs. Got: " << recvSize
-            << "commands, expected size: " << expectedPktSize << "\n";
-    }
-    const ssize_t recvChannels = recvSize / sizeof(pkt.motorSpeed[0]);
+    // @TODO IMPLEMENT CHECKS
+    // auto expectedPktSize = sizeof(pkt.pwm[0]) * this->dataPtr->controls.size();
+    // if (recvSize < expectedPktSize)
+    // {
+    //   gzerr << "[" << this->dataPtr->modelName << "] "
+    //         << "got less than model needs. Got: " << recvSize
+    //         << "commands, expected size: " << expectedPktSize << "\n";
+    // }
+    // auto recvChannels = recvSize / sizeof(pkt.pwm[0]);
     // for(unsigned int i = 0; i < recvChannels; ++i)
     // {
-    //   gzdbg << "servo_command [" << i << "]: " << pkt.motorSpeed[i] << "\n";
+    //   gzdbg << "pwm [" << i << "]: " << pkt.pwm[i] << "\n";
     // }
+
+    // SITL JSON interface supplies all 16 channels
+    auto recvChannels = 16;
 
     if (!this->dataPtr->arduPilotOnline)
     {
@@ -1064,10 +847,12 @@ void ArduPilotPlugin::ReceiveMotorCommand()
       {
         if (this->dataPtr->controls[i].channel < recvChannels)
         {
+          // pwm to motor speed: [1000, 2000] => [0, 1]
+          double pwm = pkt.pwm[this->dataPtr->controls[i].channel];
+          double motor_speed = (pwm - 1000)/1000.0;
+
           // bound incoming cmd between 0 and 1
-          const double cmd = ignition::math::clamp(
-            pkt.motorSpeed[this->dataPtr->controls[i].channel],
-            -1.0f, 1.0f);
+          const double cmd = ignition::math::clamp(motor_speed, 0.0, 1.0);
           this->dataPtr->controls[i].cmd =
             this->dataPtr->controls[i].multiplier *
             (this->dataPtr->controls[i].offset + cmd);
@@ -1103,121 +888,140 @@ void ArduPilotPlugin::ReceiveMotorCommand()
 /////////////////////////////////////////////////
 void ArduPilotPlugin::SendState() const
 {
-  // send_fdm
-  fdmPacket pkt;
+    // JSON output
+    //
+    // for SITL set indentation = "", i.e. JSON string does not contain embedded newlines.
+    //
+    Json::StreamWriterBuilder builder;
+    builder["commentStyle"] = "None";
+    builder["indentation"] = "";
+    builder["enableYAMLCompatibility"] = false;
+    builder["dropNullPlaceholders"] = false;
+    builder["useSpecialFloats"] = false;
+    builder["emitUTF8"] = true;
+    builder["precision"] = 17;
+    builder["precisionType"] = "significant";
 
-  pkt.timestamp = this->dataPtr->model->GetWorld()->SimTime().Double();
+    // asssumed that the imu orientation is:
+    //   x forward
+    //   y right
+    //   z down
 
-  // asssumed that the imu orientation is:
-  //   x forward
-  //   y right
-  //   z down
-
-  // get linear acceleration in body frame
-  const ignition::math::Vector3d linearAccel =
+    // get linear acceleration in body frame
+    const ignition::math::Vector3d linearAccel =
     this->dataPtr->imuSensor->LinearAcceleration();
+    // gzerr << "lin accel [" << linearAccel << "]\n";
 
-  // copy to pkt
-  pkt.imuLinearAccelerationXYZ[0] = linearAccel.X();
-  pkt.imuLinearAccelerationXYZ[1] = linearAccel.Y();
-  pkt.imuLinearAccelerationXYZ[2] = linearAccel.Z();
-  // gzerr << "lin accel [" << linearAccel << "]\n";
-
-  // get angular velocity in body frame
-  const ignition::math::Vector3d angularVel =
+    // get angular velocity in body frame
+    const ignition::math::Vector3d angularVel =
     this->dataPtr->imuSensor->AngularVelocity();
 
-  // copy to pkt
-  pkt.imuAngularVelocityRPY[0] = angularVel.X();
-  pkt.imuAngularVelocityRPY[1] = angularVel.Y();
-  pkt.imuAngularVelocityRPY[2] = angularVel.Z();
-
-  // get inertial pose and velocity
-  // position of the uav in world frame
-  // this position is used to calcualte bearing and distance
-  // from starting location, then use that to update gps position.
-  // The algorithm looks something like below (from ardupilot helper
-  // libraries):
-  //   bearing = to_degrees(atan2(position.y, position.x));
-  //   distance = math.sqrt(self.position.x**2 + self.position.y**2)
-  //   (self.latitude, self.longitude) = util.gps_newpos(
-  //    self.home_latitude, self.home_longitude, bearing, distance)
-  // where xyz is in the NED directions.
-  // Gazebo world xyz is assumed to be N, -E, -D, so flip some stuff
-  // around.
-  // orientation of the uav in world NED frame -
-  // assuming the world NED frame has xyz mapped to NED,
-  // imuLink is NED - z down
-
-  // model world pose brings us to model,
-  // which for example zephyr has -y-forward, x-left, z-up
-  // adding modelXYZToAirplaneXForwardZDown rotates
-  //   from: model XYZ
-  //   to: airplane x-forward, y-left, z-down
-  const ignition::math::Pose3d gazeboXYZToModelXForwardZDown =
+    // get inertial pose and velocity
+    // position of the uav in world frame
+    // this position is used to calcualte bearing and distance
+    // from starting location, then use that to update gps position.
+    // The algorithm looks something like below (from ardupilot helper
+    // libraries):
+    //   bearing = to_degrees(atan2(position.y, position.x));
+    //   distance = math.sqrt(self.position.x**2 + self.position.y**2)
+    //   (self.latitude, self.longitude) = util.gps_newpos(
+    //    self.home_latitude, self.home_longitude, bearing, distance)
+    // where xyz is in the NED directions.
+    // Gazebo world xyz is assumed to be N, -E, -D, so flip some stuff
+    // around.
+    // orientation of the uav in world NED frame -
+    // assuming the world NED frame has xyz mapped to NED,
+    // imuLink is NED - z down
+    // 
+    // model world pose brings us to model,
+    // which for example zephyr has -y-forward, x-left, z-up
+    // adding modelXYZToAirplaneXForwardZDown rotates
+    //   from: model XYZ
+    //   to: airplane x-forward, y-left, z-down
+    const ignition::math::Pose3d gazeboXYZToModelXForwardZDown =
     this->modelXYZToAirplaneXForwardZDown +
     this->dataPtr->model->WorldPose();
 
-  // get transform from world NED to Model frame
-  const ignition::math::Pose3d NEDToModelXForwardZUp =
+    // get transform from world NED to Model frame
+    const ignition::math::Pose3d NEDToModelXForwardZUp =
     gazeboXYZToModelXForwardZDown - this->gazeboXYZToNED;
+    // gzerr << "ned to model [" << NEDToModelXForwardZUp << "]\n";
 
-  // gzerr << "ned to model [" << NEDToModelXForwardZUp << "]\n";
+    // imuOrientationQuat is the rotation from world NED frame
+    // to the uav frame.
+    // gzdbg << "imu [" << gazeboXYZToModelXForwardZDown.rot.GetAsEuler()
+    //       << "]\n";
+    // gzdbg << "ned [" << this->gazeboXYZToNED.rot.GetAsEuler() << "]\n";
+    // gzdbg << "rot [" << NEDToModelXForwardZUp.rot.GetAsEuler() << "]\n";
 
-  // N
-  pkt.positionXYZ[0] = NEDToModelXForwardZUp.Pos().X();
-
-  // E
-  pkt.positionXYZ[1] = NEDToModelXForwardZUp.Pos().Y();
-
-  // D
-  pkt.positionXYZ[2] = NEDToModelXForwardZUp.Pos().Z();
-
-  // imuOrientationQuat is the rotation from world NED frame
-  // to the uav frame.
-  pkt.imuOrientationQuat[0] = NEDToModelXForwardZUp.Rot().W();
-  pkt.imuOrientationQuat[1] = NEDToModelXForwardZUp.Rot().X();
-  pkt.imuOrientationQuat[2] = NEDToModelXForwardZUp.Rot().Y();
-  pkt.imuOrientationQuat[3] = NEDToModelXForwardZUp.Rot().Z();
-
-  // gzdbg << "imu [" << gazeboXYZToModelXForwardZDown.rot.GetAsEuler()
-  //       << "]\n";
-  // gzdbg << "ned [" << this->gazeboXYZToNED.rot.GetAsEuler() << "]\n";
-  // gzdbg << "rot [" << NEDToModelXForwardZUp.rot.GetAsEuler() << "]\n";
-
-  // Get NED velocity in body frame *
-  // or...
-  // Get model velocity in NED frame
-  const ignition::math::Vector3d velGazeboWorldFrame =
+    // Get NED velocity in body frame *
+    // or...
+    // Get model velocity in NED frame
+    const ignition::math::Vector3d velGazeboWorldFrame =
     this->dataPtr->model->GetLink()->WorldLinearVel();
-  const ignition::math::Vector3d velNEDFrame =
+    const ignition::math::Vector3d velNEDFrame =
     this->gazeboXYZToNED.Rot().RotateVectorReverse(velGazeboWorldFrame);
-  pkt.velocityXYZ[0] = velNEDFrame.X();
-  pkt.velocityXYZ[1] = velNEDFrame.Y();
-  pkt.velocityXYZ[2] = velNEDFrame.Z();
-/* NOT MERGED IN MASTER YET
-  if (!this->dataPtr->gpsSensor)
-    {
 
-    }
-    else {
-        pkt.longitude = this->dataPtr->gpsSensor->Longitude().Degree();
-        pkt.latitude = this->dataPtr->gpsSensor->Latitude().Degree();
-        pkt.altitude = this->dataPtr->gpsSensor->Altitude();
-    }
+    // build JSON
+    Json::Value root;
 
-    // TODO : make generic enough to accept sonar/gpuray etc. too
-    if (!this->dataPtr->rangefinderSensor)
-    {
+    // require the duration since sim start in seconds 
+    Json::Value timestamp(this->dataPtr->model->GetWorld()->SimTime().Double());
+    root["timestamp"] = timestamp;
 
-    } else {
-        // Rangefinder value can not be send as Inf to ardupilot
-        const double range = this->dataPtr->rangefinderSensor->Range(0);
-        pkt.rangefinder = std::isinf(range) ? 0.0 : range;
-    }
+    Json::Value imu;
+    Json::Value gyro(Json::ValueType::arrayValue);
+    gyro.resize(3);
+    gyro[0] = angularVel.X();
+    gyro[1] = angularVel.Y();
+    gyro[2] = angularVel.Z();
+    imu["gyro"] = gyro;
+    Json::Value accel_body(Json::ValueType::arrayValue);
+    accel_body.resize(3);
+    accel_body[0] = linearAccel.X();
+    accel_body[1] = linearAccel.Y();
+    accel_body[2] = linearAccel.Z();
+    imu["accel_body"] = accel_body;
+    root["imu"] = imu;
 
-  // airspeed :     wind = Vector3(environment.wind.x, environment.wind.y, environment.wind.z)
-   // pkt.airspeed = (pkt.velocity - wind).length()
-*/
-  this->dataPtr->socket_out.Send(&pkt, sizeof(pkt));
+    Json::Value position(Json::ValueType::arrayValue);
+    position.resize(3);
+    position[0] = NEDToModelXForwardZUp.Pos().X();
+    position[1] = NEDToModelXForwardZUp.Pos().Y();
+    position[2] = NEDToModelXForwardZUp.Pos().Z();
+    root["position"] = position;
+
+    // ArduPilot quaternion convention: q[0] = 1 for identity.
+    Json::Value quaternion(Json::ValueType::arrayValue);
+    quaternion.resize(4);
+    quaternion[0] = NEDToModelXForwardZUp.Rot().W();
+    quaternion[1] = NEDToModelXForwardZUp.Rot().X();
+    quaternion[2] = NEDToModelXForwardZUp.Rot().Y();
+    quaternion[3] = NEDToModelXForwardZUp.Rot().Z();
+    root["quaternion"] = quaternion;
+
+    Json::Value velocity(Json::ValueType::arrayValue);
+    velocity.resize(3);
+    velocity[0] = velNEDFrame.X();
+    velocity[1] = velNEDFrame.Y();
+    velocity[2] = velNEDFrame.Z();
+    root["velocity"] = velocity;
+
+    // Json::Value windvane;
+    // Json::Value direction(1.57079633);
+    // windvane["direction"] = direction;
+    // Json::Value speed(5.5);
+    // windvane["speed"] = speed;
+    // root["windvane"] = windvane;
+
+    // send JSON
+    std::string json_str = "\n" + Json::writeString(builder, root) + "\n";
+    auto bytes_sent = this->dataPtr->sock.sendto(
+        json_str.c_str(), json_str.size(),
+        this->dataPtr->address_out,
+        this->dataPtr->port_out);
+    
+    // std::cout << "sent " << bytes_sent <<  " bytes to " 
+    //     << this->dataPtr->address_out << ":" << this->dataPtr->port_out << "\n";
+    // std::cout << json_str << "\n";
 }
