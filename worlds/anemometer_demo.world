@@ -46,7 +46,7 @@
             <connectionTimeoutMaxCount>5</connectionTimeoutMaxCount>
             <modelXYZToAirplaneXForwardZDown>0 0 0 3.141593 0 0</modelXYZToAirplaneXForwardZDown>
             <gazeboXYZToNED>0 0 0 3.141593 0 0</gazeboXYZToNED>
-            <!-- <imuName>base_link::imu_sensor</imuName> -->
+            <imuName>base_link::imu_sensor</imuName>
             <!-- <anemometerName>base_link::anemometer_sensor</anemometerName> -->
         </plugin>
 
@@ -138,7 +138,7 @@
             </sensor> -->
 
             <!-- IMU required by ArduPilotPlugin -->
-            <!-- <sensor name='imu_sensor' type='imu'>
+            <sensor name='imu_sensor' type='imu'>
                 <pose>0 0 0.5 3.141593 0 0</pose>  
                 <always_on>1</always_on>
                 <update_rate>1000</update_rate>
@@ -148,7 +148,7 @@
                     <angular_velocity/>
                     <linear_acceleration/>
                 </imu>
-            </sensor> -->
+            </sensor>
 
         </link>
     </model>
