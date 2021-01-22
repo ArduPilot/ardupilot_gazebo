@@ -17,7 +17,8 @@ else()
     message("Gazebo version: ${GAZEBO_VERSION}")
 endif()
 
-find_package(jsoncpp REQUIRED)
+# RapidJSON is a header only library
+find_package(rapidjson REQUIRED)
 
 ###### COMPILE RULES ######
 include(CheckCXXCompilerFlag)
@@ -126,17 +127,15 @@ include_directories(
     ${PROJECT_SOURCE_DIR}
     include
     ${GAZEBO_INCLUDE_DIRS}
-    ${JSONCPP_INCLUDE_DIRS}
+    ${RAPIDJSON_INCLUDE_DIRS}
 )
 
 link_libraries(
     ${GAZEBO_LIBRARIES}
-    ${JSONCPP_LIBRARIES}
 )
 
 link_directories(
     ${GAZEBO_LIBRARY_DIRS}
-    ${JSONCPP_LIBRARY_DIRS}
 )
 
 set (plugins_single_header
@@ -155,8 +154,8 @@ add_library(ArduPilotPlugin
 )
 target_link_libraries(ArduPilotPlugin ${GAZEBO_LIBRARIES})
 
-add_executable(JsonCppExample
-    src/JsonCppExample.cc
+add_executable(RapidJsonExample
+    src/RapidJsonExample.cc
 )
 
 add_executable(SocketExample

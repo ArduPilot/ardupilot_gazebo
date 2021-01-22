@@ -26,11 +26,12 @@
 #include <gazebo/msgs/msgs.hh>
 #include <gazebo/sensors/sensors.hh>
 #include <gazebo/transport/transport.hh>
-#include "include/ArduPilotPlugin.hh"
+#include "ArduPilotPlugin.hh"
 
 #include "Socket.h"
 
-#include <json/json.h>
+#include <rapidjson/stringbuffer.h>
+#include <rapidjson/writer.h>
 
 #define MAX_MOTORS 255
 
@@ -631,17 +632,17 @@ void ArduPilotPlugin::OnUpdate()
 {
   std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
 
-  const gazebo::common::Time curTime =
-    this->dataPtr->model->GetWorld()->SimTime();
+  const gazebo::common::Time curTime = this->dataPtr->model->GetWorld()->SimTime();
+  double dt = (curTime - this->dataPtr->lastControllerUpdateTime).Double();
+  this->dataPtr->lastControllerUpdateTime = curTime;
 
   // Update the control surfaces and publish the new state.
-  if (curTime > this->dataPtr->lastControllerUpdateTime)
+  if (dt > 0)
   {
     this->ReceiveMotorCommand();
     if (this->dataPtr->arduPilotOnline)
     {
-      this->ApplyMotorForces((curTime -
-        this->dataPtr->lastControllerUpdateTime).Double());
+      this->ApplyMotorForces(dt);
       this->SendState();
     }
   }
@@ -663,14 +664,17 @@ void ArduPilotPlugin::ResetPIDs()
 /////////////////////////////////////////////////
 bool ArduPilotPlugin::InitArduPilotSockets(sdf::ElementPtr _sdf) const
 {
+    this->dataPtr->sock.set_blocking(false);
+    this->dataPtr->sock.reuseaddress();
+
     this->dataPtr->address_in =
         _sdf->Get("listen_addr", static_cast<std::string>("127.0.0.1")).first;
     this->dataPtr->port_in =
         _sdf->Get("fdm_port_in", static_cast<uint32_t>(9002)).first;
 
     if (this->dataPtr->sock.bind(
-            this->dataPtr->address_in.c_str(),
-            this->dataPtr->port_in) < 0)
+        this->dataPtr->address_in.c_str(),
+        this->dataPtr->port_in) < 0)
     {
         gzerr << "[" << this->dataPtr->modelName << "] "
             << "failed to bind with " << this->dataPtr->address_in
@@ -751,13 +755,12 @@ void ArduPilotPlugin::ReceiveMotorCommand()
   // Once ArduPilot presence is detected, it takes this many
   // missed receives before declaring the FCS offline.
 
-  servo_packet pkt;
   uint32_t waitMs;
   if (this->dataPtr->arduPilotOnline)
   {
     // increase timeout for receive once we detect a packet from
     // ArduPilot FCS.
-    waitMs = 1000;
+    waitMs = 100;
   }
   else
   {
@@ -765,42 +768,44 @@ void ArduPilotPlugin::ReceiveMotorCommand()
     waitMs = 1;
   }
 
+  servo_packet pkt;
   auto recvSize = this->dataPtr->sock.recv(&pkt, sizeof(servo_packet), waitMs);
   this->dataPtr->sock.last_recv_address(this->dataPtr->address_out, this->dataPtr->port_out);
 
   // Drain the socket in the case we're backed up
-  int counter = 0;
-  servo_packet last_pkt;
-  while (true)
-  {
-    // last_pkt = pkt;
-    auto recvSize_last = this->dataPtr->sock.recv(&last_pkt, sizeof(servo_packet), 0ul);
-    if (recvSize_last == -1)
-    {
-      break;
-    }
-    counter++;
-    pkt = last_pkt;
-    recvSize = recvSize_last;
-  }
-  if (counter > 0)
-  {
-    gzdbg << "[" << this->dataPtr->modelName << "] "
-          << "Drained n packets: " << counter << std::endl;
-  }
+//   int counter = 0;
+//   servo_packet last_pkt;
+//   while (true)
+//   {
+//     // last_pkt = pkt;
+//     auto recvSize_last = this->dataPtr->sock.recv(&last_pkt, sizeof(servo_packet), 0ul);
+//     if (recvSize_last == -1)
+//     {
+//       break;
+//     }
+//     counter++;
+//     pkt = last_pkt;
+//     recvSize = recvSize_last;
+//   }
+//   if (counter > 0)
+//   {
+//     gzdbg << "[" << this->dataPtr->modelName << "] "
+//           << "Drained n packets: " << counter << std::endl;
+//   }
 
+  
   if (recvSize == -1)
   {
     // didn't receive a packet
     // gzdbg << "no packet\n";
-    gazebo::common::Time::NSleep(100);
+    // gazebo::common::Time::NSleep(10);
     if (this->dataPtr->arduPilotOnline)
     {
-      gzwarn << "[" << this->dataPtr->modelName << "] "
-             << "Broken ArduPilot connection, count ["
-             << this->dataPtr->connectionTimeoutCount
-             << "/" << this->dataPtr->connectionTimeoutMaxCount
-             << "]\n";
+    //   gzwarn << "[" << this->dataPtr->modelName << "] "
+    //          << "Broken ArduPilot connection, count ["
+    //          << this->dataPtr->connectionTimeoutCount
+    //          << "/" << this->dataPtr->connectionTimeoutMaxCount
+    //          << "]\n";
       if (++this->dataPtr->connectionTimeoutCount >
         this->dataPtr->connectionTimeoutMaxCount)
       {
@@ -814,6 +819,29 @@ void ArduPilotPlugin::ReceiveMotorCommand()
   }
   else
   {
+    // inspect sitl packet
+    // std::cout << "recv " << recvSize << " bytes from "
+    //     << this->dataPtr->address_out << ":" << this->dataPtr->port_out << "\n";
+    // std::cout << "magic: " << pkt.magic << "\n";
+    // std::cout << "frame_rate: " << pkt.frame_rate << "\n";
+    // std::cout << "frame_count: " << pkt.frame_count << "\n";
+    // std::cout << "pwm: [";
+    // for (auto i=0; i<15; ++i)
+    // {
+    //   std::cout << pkt.pwm[i] << ", ";
+    // }
+    // std::cout << pkt.pwm[15] << "]\n";
+
+    // check magic
+    uint16_t magic = 18458;
+    if (magic != pkt.magic)
+    {
+        std::cout << "Incorrect protocol magic "
+            << pkt.magic << " should be "
+            << magic << "\n";
+        // continue; 
+    }
+
     // @TODO IMPLEMENT CHECKS
     // auto expectedPktSize = sizeof(pkt.pwm[0]) * this->dataPtr->controls.size();
     // if (recvSize < expectedPktSize)
@@ -831,12 +859,14 @@ void ArduPilotPlugin::ReceiveMotorCommand()
     // SITL JSON interface supplies all 16 channels
     auto recvChannels = 16;
 
+    // always reset the connection timeout so we don't accumulate
+    this->dataPtr->connectionTimeoutCount = 0;
     if (!this->dataPtr->arduPilotOnline)
     {
-      gzdbg << "[" << this->dataPtr->modelName << "] "
-            << "ArduPilot controller online detected.\n";
+    //   gzdbg << "[" << this->dataPtr->modelName << "] "
+    //         << "ArduPilot controller online detected.\n";
       // made connection, set some flags
-      this->dataPtr->connectionTimeoutCount = 0;
+    //   this->dataPtr->connectionTimeoutCount = 0;
       this->dataPtr->arduPilotOnline = true;
     }
 
@@ -888,20 +918,6 @@ void ArduPilotPlugin::ReceiveMotorCommand()
 /////////////////////////////////////////////////
 void ArduPilotPlugin::SendState() const
 {
-    // JSON output
-    //
-    // for SITL set indentation = "", i.e. JSON string does not contain embedded newlines.
-    //
-    Json::StreamWriterBuilder builder;
-    builder["commentStyle"] = "None";
-    builder["indentation"] = "";
-    builder["enableYAMLCompatibility"] = false;
-    builder["dropNullPlaceholders"] = false;
-    builder["useSpecialFloats"] = false;
-    builder["emitUTF8"] = true;
-    builder["precision"] = 17;
-    builder["precisionType"] = "significant";
-
     // asssumed that the imu orientation is:
     //   x forward
     //   y right
@@ -962,60 +978,75 @@ void ArduPilotPlugin::SendState() const
     const ignition::math::Vector3d velNEDFrame =
     this->gazeboXYZToNED.Rot().RotateVectorReverse(velGazeboWorldFrame);
 
-    // build JSON
-    Json::Value root;
-
     // require the duration since sim start in seconds 
-    Json::Value timestamp(this->dataPtr->model->GetWorld()->SimTime().Double());
-    root["timestamp"] = timestamp;
+    double timestamp = this->dataPtr->model->GetWorld()->SimTime().Double();
 
-    Json::Value imu;
-    Json::Value gyro(Json::ValueType::arrayValue);
-    gyro.resize(3);
-    gyro[0] = angularVel.X();
-    gyro[1] = angularVel.Y();
-    gyro[2] = angularVel.Z();
-    imu["gyro"] = gyro;
-    Json::Value accel_body(Json::ValueType::arrayValue);
-    accel_body.resize(3);
-    accel_body[0] = linearAccel.X();
-    accel_body[1] = linearAccel.Y();
-    accel_body[2] = linearAccel.Z();
-    imu["accel_body"] = accel_body;
-    root["imu"] = imu;
+    using namespace rapidjson;
 
-    Json::Value position(Json::ValueType::arrayValue);
-    position.resize(3);
-    position[0] = NEDToModelXForwardZUp.Pos().X();
-    position[1] = NEDToModelXForwardZUp.Pos().Y();
-    position[2] = NEDToModelXForwardZUp.Pos().Z();
-    root["position"] = position;
+    // build JSON document
+    StringBuffer s;
+    Writer<StringBuffer> writer(s);            
+
+    writer.StartObject();
+
+    writer.Key("timestamp");
+    writer.Double(timestamp);
+
+    writer.Key("imu");
+    writer.StartObject();
+    writer.Key("gyro");
+    writer.StartArray();
+    writer.Double(angularVel.X());
+    writer.Double(angularVel.Y());
+    writer.Double(angularVel.Z());
+    writer.EndArray();
+    writer.Key("accel_body");
+    writer.StartArray();
+    writer.Double(linearAccel.X());
+    writer.Double(linearAccel.Y());
+    writer.Double(linearAccel.Z());
+    writer.EndArray();
+    writer.EndObject();
+
+    writer.Key("position");
+    writer.StartArray();
+    writer.Double(NEDToModelXForwardZUp.Pos().X());
+    writer.Double(NEDToModelXForwardZUp.Pos().Y());
+    writer.Double(NEDToModelXForwardZUp.Pos().Z());
+    writer.EndArray();
 
     // ArduPilot quaternion convention: q[0] = 1 for identity.
-    Json::Value quaternion(Json::ValueType::arrayValue);
-    quaternion.resize(4);
-    quaternion[0] = NEDToModelXForwardZUp.Rot().W();
-    quaternion[1] = NEDToModelXForwardZUp.Rot().X();
-    quaternion[2] = NEDToModelXForwardZUp.Rot().Y();
-    quaternion[3] = NEDToModelXForwardZUp.Rot().Z();
-    root["quaternion"] = quaternion;
+    writer.Key("quaternion");
+    writer.StartArray();
+    writer.Double(NEDToModelXForwardZUp.Rot().W());
+    writer.Double(NEDToModelXForwardZUp.Rot().X());
+    writer.Double(NEDToModelXForwardZUp.Rot().Y());
+    writer.Double(NEDToModelXForwardZUp.Rot().Z());
+    writer.EndArray();
 
-    Json::Value velocity(Json::ValueType::arrayValue);
-    velocity.resize(3);
-    velocity[0] = velNEDFrame.X();
-    velocity[1] = velNEDFrame.Y();
-    velocity[2] = velNEDFrame.Z();
-    root["velocity"] = velocity;
+    writer.Key("velocity");
+    writer.StartArray();
+    writer.Double(velNEDFrame.X());
+    writer.Double(velNEDFrame.Y());
+    writer.Double(velNEDFrame.Z());
+    writer.EndArray();
 
-    // Json::Value windvane;
-    // Json::Value direction(1.57079633);
-    // windvane["direction"] = direction;
-    // Json::Value speed(5.5);
-    // windvane["speed"] = speed;
-    // root["windvane"] = windvane;
+    // writer.Key("rng_1");
+    // writer.Double(0.0);
+
+    // writer.Key("rng_1");
+    // writer.Double(0.0);
+
+    // writer.Key("windvane");
+    // writer.StartObject();
+    // writer.Key("direction");
+    // writer.Double(1.57079633);
+    // writer.Key("speed");
+    // writer.Double(5.5);
+    // writer.EndObject();
 
     // send JSON
-    std::string json_str = "\n" + Json::writeString(builder, root) + "\n";
+    std::string json_str = "\n" + std::string(s.GetString()) + "\n";
     auto bytes_sent = this->dataPtr->sock.sendto(
         json_str.c_str(), json_str.size(),
         this->dataPtr->address_out,
@@ -1024,4 +1055,5 @@ void ArduPilotPlugin::SendState() const
     // std::cout << "sent " << bytes_sent <<  " bytes to " 
     //     << this->dataPtr->address_out << ":" << this->dataPtr->port_out << "\n";
     // std::cout << json_str << "\n";
+
 }
