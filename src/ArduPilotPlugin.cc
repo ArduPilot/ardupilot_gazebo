@@ -758,9 +758,10 @@ void ArduPilotPlugin::ReceiveMotorCommand()
   uint32_t waitMs;
   if (this->dataPtr->arduPilotOnline)
   {
-    // increase timeout for receive once we detect a packet from
-    // ArduPilot FCS.
-    waitMs = 100;
+    // Increase timeout for recv once we detect a packet from ArduPilot FCS.
+    // If this value is too high then it will block the main Gazebo update loop
+    // and adversely affect the RTF.
+    waitMs = 10;
   }
   else
   {
@@ -770,42 +771,34 @@ void ArduPilotPlugin::ReceiveMotorCommand()
 
   servo_packet pkt;
   auto recvSize = this->dataPtr->sock.recv(&pkt, sizeof(servo_packet), waitMs);
+  
   this->dataPtr->sock.last_recv_address(this->dataPtr->address_out, this->dataPtr->port_out);
 
-  // Drain the socket in the case we're backed up
-//   int counter = 0;
-//   servo_packet last_pkt;
-//   while (true)
-//   {
-//     // last_pkt = pkt;
-//     auto recvSize_last = this->dataPtr->sock.recv(&last_pkt, sizeof(servo_packet), 0ul);
-//     if (recvSize_last == -1)
-//     {
-//       break;
-//     }
-//     counter++;
-//     pkt = last_pkt;
-//     recvSize = recvSize_last;
-//   }
-//   if (counter > 0)
-//   {
-//     gzdbg << "[" << this->dataPtr->modelName << "] "
-//           << "Drained n packets: " << counter << std::endl;
-//   }
-
+  // drain the socket in the case we're backed up
+  int counter = 0;
+  while (true)
+  {
+    servo_packet last_pkt;
+    auto recvSize_last = this->dataPtr->sock.recv(&last_pkt, sizeof(servo_packet), 0ul);
+    if (recvSize_last == -1)
+    {
+      break;
+    }
+    counter++;
+    pkt = last_pkt;
+    recvSize = recvSize_last;
+  }
+  if (counter > 0)
+  {
+    gzmsg << "[" << this->dataPtr->modelName << "] "
+          << "Drained n packets: " << counter << std::endl;
+  }
   
   if (recvSize == -1)
   {
-    // didn't receive a packet
-    // gzdbg << "no packet\n";
-    // gazebo::common::Time::NSleep(10);
+    // didn't receive a packet, increment timeout count if online
     if (this->dataPtr->arduPilotOnline)
     {
-    //   gzwarn << "[" << this->dataPtr->modelName << "] "
-    //          << "Broken ArduPilot connection, count ["
-    //          << this->dataPtr->connectionTimeoutCount
-    //          << "/" << this->dataPtr->connectionTimeoutMaxCount
-    //          << "]\n";
       if (++this->dataPtr->connectionTimeoutCount >
         this->dataPtr->connectionTimeoutMaxCount)
       {
