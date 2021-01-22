@@ -26,11 +26,11 @@
 #include <cinttypes>
 #include <exception>
 #include <iostream>
-#include <memory>
 #include <string>
 #include <thread>
 
-#include <json/json.h>
+#include <rapidjson/stringbuffer.h>
+#include <rapidjson/writer.h>
 
 const double GRAVITY_MSS = 9.80665;
 
@@ -61,20 +61,6 @@ int main(int argc, const char* argv[])
         uint32_t sitl_frame_count = 0;
         uint32_t sitl_last_frame = -1;
         uint16_t sitl_pwm[16];
-
-        // JSON output
-        //
-        // for SITL set indentation = "", i.e. JSON string does not contain embedded newlines.
-        //
-        Json::StreamWriterBuilder builder;
-        builder["commentStyle"] = "None";
-        builder["indentation"] = "";
-        builder["enableYAMLCompatibility"] = false;
-        builder["dropNullPlaceholders"] = false;
-        builder["useSpecialFloats"] = false;
-        builder["emitUTF8"] = true;
-        builder["precision"] = 17;
-        builder["precisionType"] = "significant";
 
         // start clocks
         uint16_t update_rate_hz = 50;
@@ -170,76 +156,85 @@ int main(int argc, const char* argv[])
                 // update and send JSON
                 // if (now - last_update_time > update_duration)
                 {    
+                    using namespace rapidjson;
+
                     last_update_time += update_duration;
 
                     // update physics for time step here
 
-                    // build JSON
-                    Json::Value root;
-
                     // require the duration since sim start in seconds 
-                    Json::Value timestamp(sim_time_ns.count() * 1.0E-9);
-                    root["timestamp"] = timestamp;
+                    double timestamp = sim_time_ns.count() * 1.0E-9;
 
-                    Json::Value imu;
-                    Json::Value gyro(Json::ValueType::arrayValue);
-                    gyro.resize(3);
-                    gyro[0] = 0.0;
-                    gyro[1] = 0.0;
-                    gyro[2] = 0.0;
-                    imu["gyro"] = gyro;
-                    Json::Value accel_body(Json::ValueType::arrayValue);
-                    accel_body.resize(3);
-                    accel_body[0] = 0.0;
-                    accel_body[1] = 0.0;
-                    accel_body[2] = -GRAVITY_MSS;
-                    imu["accel_body"] = accel_body;
-                    root["imu"] = imu;
+                    // build JSON document
+                    StringBuffer s;
+                    Writer<StringBuffer> writer(s);            
 
-                    Json::Value position(Json::ValueType::arrayValue);
-                    position.resize(3);
-                    position[0] = 0.0;
-                    position[1] = 0.0;
-                    position[2] = 0.0;
-                    root["position"] = position;
+                    writer.StartObject();
 
-                    // Json::Value attitude(Json::ValueType::arrayValue);
-                    // attitude.resize(3);
-                    // attitude[0] = 0.0;
-                    // attitude[1] = 0.0;
-                    // attitude[2] = 0.0;
-                    // root["attitude"] = attitude;
+                    writer.Key("timestamp");
+                    writer.Double(timestamp);
+
+                    writer.Key("imu");
+                    writer.StartObject();
+                    writer.Key("gyro");
+                    writer.StartArray();
+                    writer.Double(0.0);
+                    writer.Double(0.0);
+                    writer.Double(0.0);
+                    writer.EndArray();
+                    writer.Key("accel_body");
+                    writer.StartArray();
+                    writer.Double(0.0);
+                    writer.Double(0.0);
+                    writer.Double(-GRAVITY_MSS);
+                    writer.EndArray();
+                    writer.EndObject();
+
+                    writer.Key("position");
+                    writer.StartArray();
+                    writer.Double(0.0);
+                    writer.Double(0.0);
+                    writer.Double(0.0);
+                    writer.EndArray();
 
                     // ArduPilot quaternion convention: q[0] = 1 for identity.
-                    Json::Value quaternion(Json::ValueType::arrayValue);
-                    quaternion.resize(4);
-                    quaternion[0] = 1.0;
-                    quaternion[1] = 0.0;
-                    quaternion[2] = 0.0;
-                    quaternion[3] = 0.0;
-                    root["quaternion"] = quaternion;
+                    writer.Key("quaternion");
+                    writer.StartArray();
+                    writer.Double(1.0);
+                    writer.Double(0.0);
+                    writer.Double(0.0);
+                    writer.Double(0.0);
+                    writer.EndArray();
 
-                    Json::Value velocity(Json::ValueType::arrayValue);
-                    velocity.resize(3);
-                    velocity[0] = 0.0;
-                    velocity[1] = 0.0;
-                    velocity[2] = 0.0;
-                    root["velocity"] = velocity;
+                    writer.Key("velocity");
+                    writer.StartArray();
+                    writer.Double(0.0);
+                    writer.Double(0.0);
+                    writer.Double(0.0);
+                    writer.EndArray();
 
-                    Json::Value windvane;
-                    Json::Value direction(1.57079633);
-                    windvane["direction"] = direction;
-                    Json::Value speed(5.5);
-                    windvane["speed"] = speed;
-                    root["windvane"] = windvane;
+                    writer.Key("rng_1");
+                    writer.Double(0.0);
+
+                    writer.Key("rng_1");
+                    writer.Double(0.0);
+
+                    writer.Key("windvane");
+                    writer.StartObject();
+                    writer.Key("direction");
+                    writer.Double(1.57079633);
+                    writer.Key("speed");
+                    writer.Double(5.5);
+                    writer.EndObject();
 
                     // send JSON
-                    std::string json_str = "\n" + Json::writeString(builder, root) + "\n";
+                    std::string json_str = "\n" + std::string(s.GetString()) + "\n";
                     auto bytes_sent = sock.sendto(json_str.c_str(), json_str.size(), address.c_str(), port);
 
                     std::cout << "sent " << bytes_sent <<  " bytes to " 
                         << ip << ":" << port << "\n";
                     std::cout << json_str << "\n";
+
                 }
             }
         }
