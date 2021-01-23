@@ -87,7 +87,9 @@ namespace gazebo
     private: void ResetPIDs();
 
     /// \brief Receive a servo packet from ArduPilot
-    private: void ReceiveServoPacket();
+    ///
+    /// Returns true if a servo packet was received, otherwise false.
+    private: bool ReceiveServoPacket();
 
     /// \brief Send state to ArduPilot
     private: void SendState() const;
