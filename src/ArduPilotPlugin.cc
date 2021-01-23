@@ -49,7 +49,7 @@ struct servo_packet {
     uint16_t pwm[16];
 };
 
-/// \brief Control class
+/// \brief class Control is responsible for controlling a joint
 class Control
 {
   /// \brief Constructor
@@ -63,34 +63,36 @@ class Control
     this->pid.Init(0.1, 0, 0, 0, 0, 1.0, -1.0);
   }
 
-  /// \brief control id / channel
+  /// \brief The PWM channel used to command this control 
   public: int channel = 0;
 
-  /// \brief Next command to be applied to the propeller
+  /// \brief Next command to be applied to the joint
   public: double cmd = 0;
 
   /// \brief Velocity PID for motor control
   public: common::PID pid;
 
-  /// \brief Control type. Can be:
-  /// VELOCITY control velocity of joint
-  /// POSITION control position of joint
-  /// EFFORT control effort of joint
+  /// \brief The controller type
+  ///
+  /// Valid controller types are:
+  ///   VELOCITY control velocity of joint
+  ///   POSITION control position of joint
+  ///   EFFORT control effort of joint
   public: std::string type;
 
-  /// \brief use force controler
+  /// \brief Use force controller
   public: bool useForce = true;
 
-  /// \brief Control propeller joint.
+  /// \brief The name of the joint being controlled
   public: std::string jointName;
 
-  /// \brief Control propeller joint.
+  /// \brief The joint being controlled
   public: physics::JointPtr joint;
 
-  /// \brief direction multiplier for this control
+  /// \brief A multiplier to scale the raw input command
   public: double multiplier = 1;
 
-  /// \brief input command offset
+  /// \brief An offset to shift the zero-point of the raw input command
   public: double offset = 0;
 
   /// \brief unused coefficients
@@ -120,10 +122,10 @@ class gazebo::ArduPilotPluginPrivate
   /// \brief String of the model name;
   public: std::string modelName;
 
-  /// \brief array of propellers
+  /// \brief Array of controllers
   public: std::vector<Control> controls;
 
-  /// \brief keep track of controller update sim-time.
+  /// \brief Keep track of controller update sim-time.
   public: gazebo::common::Time lastControllerUpdateTime;
 
   /// \brief Controller update mutex.
@@ -153,21 +155,23 @@ class gazebo::ArduPilotPluginPrivate
   /// \brief Pointer to an Rangefinder sensor [optional]
   public: sensors::RaySensorPtr rangefinderSensor;
 
-  /// \brief false before ardupilot controller is online
-  /// to allow gazebo to continue without waiting
+  /// \brief Set to true when the ArduPilot flight controller is online
+  ///
+  /// Set to false when Gazebo starts to prevent blocking, true when
+  /// the ArduPilot controller is detected and online, and false if the
+  /// connection to the ArduPilot controller times out.
   public: bool arduPilotOnline;
 
-  /// \brief number of times ArduCotper skips update
+  /// \brief Number of consecutive missed ArduPilot controller messages
   public: int connectionTimeoutCount;
 
-  /// \brief number of times ArduCotper skips update
-  /// before marking ArduPilot offline
+  /// \brief Max number of consecutive missed ArduPilot controller messages before timeout
   public: int connectionTimeoutMaxCount;
 
-  /// \brief transform from model orientation to x-forward and z-up
+  /// \brief Transform from model orientation to x-forward and z-up
   public: ignition::math::Pose3d modelXYZToAirplaneXForwardZDown;
 
-  /// \brief transform from world frame to NED frame
+  /// \brief Transform from world frame to NED frame
   public: ignition::math::Pose3d gazeboXYZToNED;
 };
 
@@ -885,6 +889,10 @@ void ArduPilotPlugin::ReceiveServoPacket()
             << magic << "\n";
         return; 
     }
+
+    // @TODO check frame rate and frame order
+
+
 
     // SITL JSON interface supplies 16 servo channels
     const uint16_t MAX_SERVO_CHANNELS = 16;
