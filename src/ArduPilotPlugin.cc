@@ -33,6 +33,8 @@
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
 
+// MAX_MOTORS limits the maximum number of <control> elements that
+// can be defined in the <plugin>.
 #define MAX_MOTORS 255
 
 using namespace gazebo;
@@ -796,72 +798,72 @@ void ArduPilotPlugin::ApplyMotorForces(const double _dt)
 /////////////////////////////////////////////////
 void ArduPilotPlugin::ReceiveServoPacket()
 {
-  // Added detection for whether ArduPilot is online or not.
-  // If ArduPilot is detected (receive of fdm packet from someone),
-  // then socket receive wait time is increased from 1ms to 1 sec
-  // to accomodate network jitter.
-  // If ArduPilot is not detected, receive call blocks for 1ms
-  // on each call.
-  // Once ArduPilot presence is detected, it takes this many
-  // missed receives before declaring the FCS offline.
+    // Added detection for whether ArduPilot is online or not.
+    // If ArduPilot is detected (receive of fdm packet from someone),
+    // then socket receive wait time is increased from 1ms to 1 sec
+    // to accomodate network jitter.
+    // If ArduPilot is not detected, receive call blocks for 1ms
+    // on each call.
+    // Once ArduPilot presence is detected, it takes this many
+    // missed receives before declaring the FCS offline.
 
-  uint32_t waitMs;
-  if (this->dataPtr->arduPilotOnline)
-  {
-    // Increase timeout for recv once we detect a packet from ArduPilot FCS.
-    // If this value is too high then it will block the main Gazebo update loop
-    // and adversely affect the RTF.
-    waitMs = 10;
-  }
-  else
-  {
-    // Otherwise skip quickly and do not set control force.
-    waitMs = 1;
-  }
-
-  servo_packet pkt;
-  auto recvSize = this->dataPtr->sock.recv(&pkt, sizeof(servo_packet), waitMs);
-  
-  this->dataPtr->sock.last_recv_address(this->dataPtr->fcu_address, this->dataPtr->fcu_port);
-
-  // drain the socket in the case we're backed up
-  int counter = 0;
-  while (true)
-  {
-    servo_packet last_pkt;
-    auto recvSize_last = this->dataPtr->sock.recv(&last_pkt, sizeof(servo_packet), 0ul);
-    if (recvSize_last == -1)
-    {
-      break;
-    }
-    counter++;
-    pkt = last_pkt;
-    recvSize = recvSize_last;
-  }
-  if (counter > 0)
-  {
-    gzmsg << "[" << this->dataPtr->modelName << "] "
-          << "Drained n packets: " << counter << std::endl;
-  }
-  
-  if (recvSize == -1)
-  {
-    // didn't receive a packet, increment timeout count if online
+    uint32_t waitMs;
     if (this->dataPtr->arduPilotOnline)
     {
-      if (++this->dataPtr->connectionTimeoutCount >
-        this->dataPtr->connectionTimeoutMaxCount)
-      {
-        this->dataPtr->connectionTimeoutCount = 0;
-        this->dataPtr->arduPilotOnline = false;
-        gzwarn << "[" << this->dataPtr->modelName << "] "
-               << "Broken ArduPilot connection, resetting motor control.\n";
-        this->ResetPIDs();
-      }
+        // Increase timeout for recv once we detect a packet from ArduPilot FCS.
+        // If this value is too high then it will block the main Gazebo update loop
+        // and adversely affect the RTF.
+        waitMs = 10;
     }
-  }
-  else
-  {
+    else
+    {
+        // Otherwise skip quickly and do not set control force.
+        waitMs = 1;
+    }
+
+    servo_packet pkt;
+    auto recvSize = this->dataPtr->sock.recv(&pkt, sizeof(servo_packet), waitMs);
+  
+    this->dataPtr->sock.last_recv_address(this->dataPtr->fcu_address, this->dataPtr->fcu_port);
+
+    // drain the socket in the case we're backed up
+    int counter = 0;
+    while (true)
+    {
+        servo_packet last_pkt;
+        auto recvSize_last = this->dataPtr->sock.recv(&last_pkt, sizeof(servo_packet), 0ul);
+        if (recvSize_last == -1)
+        {
+            break;
+        }
+        counter++;
+        pkt = last_pkt;
+        recvSize = recvSize_last;
+    }
+    if (counter > 0)
+    {
+        gzmsg << "[" << this->dataPtr->modelName << "] "
+            << "Drained n packets: " << counter << std::endl;
+    }
+
+    // didn't receive a packet, increment timeout count if online, then return
+    if (recvSize == -1)
+    {
+        if (this->dataPtr->arduPilotOnline)
+        {
+            if (++this->dataPtr->connectionTimeoutCount >
+            this->dataPtr->connectionTimeoutMaxCount)
+            {
+                this->dataPtr->connectionTimeoutCount = 0;
+                this->dataPtr->arduPilotOnline = false;
+                gzwarn << "[" << this->dataPtr->modelName << "] "
+                    << "Broken ArduPilot connection, resetting motor control.\n";
+                this->ResetPIDs();
+            }
+        }
+        return;
+    }
+
     // inspect sitl packet
     // gzdbg << "recv " << recvSize << " bytes from "
     //     << this->dataPtr->fcu_address << ":" << this->dataPtr->fcu_port << "\n";
@@ -869,38 +871,23 @@ void ArduPilotPlugin::ReceiveServoPacket()
     // gzdbg << "frame_rate: " << pkt.frame_rate << "\n";
     // gzdbg << "frame_count: " << pkt.frame_count << "\n";
     // gzdbg << "pwm: [";
-    // for (auto i=0; i<15; ++i)
-    // {
-    //   gzdbg << pkt.pwm[i] << ", ";
+    // for (auto i=0; i<15; ++i) {
+    //     gzdbg << pkt.pwm[i] << ", ";
     // }
     // gzdbg << pkt.pwm[15] << "]\n";
 
-    // check magic
-    uint16_t magic = 18458;
+    // check magic, return if invalid
+    const uint16_t magic = 18458;
     if (magic != pkt.magic)
     {
         gzwarn << "Incorrect protocol magic "
             << pkt.magic << " should be "
             << magic << "\n";
-        // continue; 
+        return; 
     }
 
-    // @TODO IMPLEMENT CHECKS
-    // auto expectedPktSize = sizeof(pkt.pwm[0]) * this->dataPtr->controls.size();
-    // if (recvSize < expectedPktSize)
-    // {
-    //   gzerr << "[" << this->dataPtr->modelName << "] "
-    //         << "got less than model needs. Got: " << recvSize
-    //         << "commands, expected size: " << expectedPktSize << "\n";
-    // }
-    // auto recvChannels = recvSize / sizeof(pkt.pwm[0]);
-    // for(unsigned int i = 0; i < recvChannels; ++i)
-    // {
-    //   gzdbg << "pwm [" << i << "]: " << pkt.pwm[i] << "\n";
-    // }
-
-    // SITL JSON interface supplies all 16 channels
-    auto recvChannels = 16;
+    // SITL JSON interface supplies 16 servo channels
+    const uint16_t MAX_SERVO_CHANNELS = 16;
 
     // always reset the connection timeout so we don't accumulate
     this->dataPtr->connectionTimeoutCount = 0;
@@ -917,46 +904,47 @@ void ArduPilotPlugin::ReceiveServoPacket()
     // compute command based on requested motorSpeed
     for (unsigned i = 0; i < this->dataPtr->controls.size(); ++i)
     {
-      if (i < MAX_MOTORS)
-      {
-        if (this->dataPtr->controls[i].channel < recvChannels)
+        // enforce limit on the number of <control> elements
+        if (i < MAX_MOTORS)
         {
-          // pwm to motor speed: [1000, 2000] => [0, 1]
-          double pwm = pkt.pwm[this->dataPtr->controls[i].channel];
-          double motor_speed = (pwm - 1000)/1000.0;
+            if (this->dataPtr->controls[i].channel < MAX_SERVO_CHANNELS)
+            {
+                // convert pwm to motor speed: [1000, 2000] => [0, 1]
+                double pwm = pkt.pwm[this->dataPtr->controls[i].channel];
+                double motor_speed = (pwm - 1000)/1000.0;
 
-          // bound incoming cmd between 0 and 1
-          const double cmd = ignition::math::clamp(motor_speed, 0.0, 1.0);
-          this->dataPtr->controls[i].cmd =
-            this->dataPtr->controls[i].multiplier *
-            (this->dataPtr->controls[i].offset + cmd);
-          // gzdbg << "apply input chan[" << this->dataPtr->controls[i].channel
-          //       << "] to control chan[" << i
-          //       << "] with joint name ["
-          //       << this->dataPtr->controls[i].jointName
-          //       << "] raw cmd ["
-          //       << pkt.motorSpeed[this->dataPtr->controls[i].channel]
-          //       << "] adjusted cmd [" << this->dataPtr->controls[i].cmd
-          //       << "].\n";
+                // bound incoming cmd between 0 and 1
+                const double cmd = ignition::math::clamp(motor_speed, 0.0, 1.0);
+                this->dataPtr->controls[i].cmd =
+                this->dataPtr->controls[i].multiplier *
+                (this->dataPtr->controls[i].offset + cmd);
+
+            //   gzdbg << "apply input chan[" << this->dataPtr->controls[i].channel
+            //         << "] to control chan[" << i
+            //         << "] with joint name ["
+            //         << this->dataPtr->controls[i].jointName
+            //         << "] pwm [" << pwm
+            //         << "] raw cmd [" << motor_speed
+            //         << "] adjusted cmd [" << this->dataPtr->controls[i].cmd
+            //         << "].\n";
+            }
+            else
+            {
+                gzerr << "[" << this->dataPtr->modelName << "] "
+                    << "control[" << i << "] channel ["
+                    << this->dataPtr->controls[i].channel
+                    << "] is greater than the number of servo channels ["
+                    << MAX_SERVO_CHANNELS
+                    << "], control not applied.\n";
+            }
         }
         else
         {
-          gzerr << "[" << this->dataPtr->modelName << "] "
-                << "control[" << i << "] channel ["
-                << this->dataPtr->controls[i].channel
-                << "] is greater than incoming commands size["
-                << recvChannels
-                << "], control not applied.\n";
-        }
-      }
-      else
-      {
         gzerr << "[" << this->dataPtr->modelName << "] "
-              << "too many motors, skipping [" << i
-              << " > " << MAX_MOTORS << "].\n";
-      }
+                << "too many motors, skipping [" << i
+                << " > " << MAX_MOTORS << "].\n";
+        }
     }
-  }
 }
 
 /////////////////////////////////////////////////
