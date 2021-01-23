@@ -18,6 +18,7 @@
 
 #include <mutex>
 #include <string>
+#include <sstream>
 #include <vector>
 #include <sdf/sdf.hh>
 #include <ignition/math/Filter.hh>
@@ -36,6 +37,9 @@
 // MAX_MOTORS limits the maximum number of <control> elements that
 // can be defined in the <plugin>.
 #define MAX_MOTORS 255
+
+// SITL JSON interface supplies 16 servo channels
+#define MAX_SERVO_CHANNELS 16
 
 using namespace gazebo;
 
@@ -126,7 +130,10 @@ class gazebo::ArduPilotPluginPrivate
   public: std::vector<Control> controls;
 
   /// \brief Keep track of controller update sim-time.
-  public: gazebo::common::Time lastControllerUpdateTime;
+  public: gazebo::common::Time lastControllerUpdateTime = 0;
+
+  /// \brief Keep track of the time the last servo packet was received.
+  public: gazebo::common::Time lastServoPacketRecvTime = 0;
 
   /// \brief Controller update mutex.
   public: std::mutex mutex;
@@ -173,6 +180,13 @@ class gazebo::ArduPilotPluginPrivate
 
   /// \brief Transform from world frame to NED frame
   public: ignition::math::Pose3d gazeboXYZToNED;
+
+  /// \brief Last received frame rate from the ArduPilot controller
+  public: uint16_t fcu_frame_rate;
+
+  /// \brief Last received frame count from the ArduPilot controller
+  public: uint32_t fcu_frame_count = -1;
+
 };
 
 /////////////////////////////////////////////////
@@ -675,19 +689,30 @@ void ArduPilotPlugin::OnUpdate()
   const gazebo::common::Time curTime = this->dataPtr->model->GetWorld()->SimTime();
   double dt = (curTime - this->dataPtr->lastControllerUpdateTime).Double();
   this->dataPtr->lastControllerUpdateTime = curTime;
-
+ 
   // Update the control surfaces and publish the new state.
   if (dt > 0)
   {
-    this->ReceiveServoPacket();
+    if (this->ReceiveServoPacket())
+    {
+        double dt_pkt = (curTime - this->dataPtr->lastServoPacketRecvTime).Double();        
+        this->dataPtr->lastServoPacketRecvTime = curTime;
+
+        // debug: synchonisation ckecks
+        // gzdbg << "fdm_frame_rate: " << 1/dt
+        //   << ", fcu_frame_rate: " << this->dataPtr->fcu_frame_rate
+        //   << "\n";
+        // gzdbg << "fdm_frame_rate: " << 1/dt
+        //   << ", servo_packet_rate: " << 1/dt_pkt
+        //   << "\n";
+    }
+
     if (this->dataPtr->arduPilotOnline)
     {
-      this->ApplyMotorForces(dt);
+      this->ApplyMotorForces(dt);    
       this->SendState();
     }
   }
-
-  this->dataPtr->lastControllerUpdateTime = curTime;
 }
 
 /////////////////////////////////////////////////
@@ -726,7 +751,7 @@ bool ArduPilotPlugin::InitSockets(sdf::ElementPtr _sdf) const
     }
 
     // bind the socket
-    if (this->dataPtr->sock.bind(this->dataPtr->fdm_address.c_str(), this->dataPtr->fdm_port) < 0)
+    if (!this->dataPtr->sock.bind(this->dataPtr->fdm_address.c_str(), this->dataPtr->fdm_port))
     {
         gzerr << "[" << this->dataPtr->modelName << "] "
             << "failed to bind with "
@@ -800,7 +825,7 @@ void ArduPilotPlugin::ApplyMotorForces(const double _dt)
 }
 
 /////////////////////////////////////////////////
-void ArduPilotPlugin::ReceiveServoPacket()
+bool ArduPilotPlugin::ReceiveServoPacket()
 {
     // Added detection for whether ArduPilot is online or not.
     // If ArduPilot is detected (receive of fdm packet from someone),
@@ -846,7 +871,7 @@ void ArduPilotPlugin::ReceiveServoPacket()
     }
     if (counter > 0)
     {
-        gzmsg << "[" << this->dataPtr->modelName << "] "
+        gzwarn << "[" << this->dataPtr->modelName << "] "
             << "Drained n packets: " << counter << std::endl;
     }
 
@@ -865,20 +890,22 @@ void ArduPilotPlugin::ReceiveServoPacket()
                 this->ResetPIDs();
             }
         }
-        return;
+        return false;
     }
 
-    // inspect sitl packet
-    // gzdbg << "recv " << recvSize << " bytes from "
+    // debug: inspect sitl packet
+    // std::ostringstream oss;
+    // oss << "recv " << recvSize << " bytes from "
     //     << this->dataPtr->fcu_address << ":" << this->dataPtr->fcu_port << "\n";
-    // gzdbg << "magic: " << pkt.magic << "\n";
-    // gzdbg << "frame_rate: " << pkt.frame_rate << "\n";
-    // gzdbg << "frame_count: " << pkt.frame_count << "\n";
-    // gzdbg << "pwm: [";
-    // for (auto i=0; i<15; ++i) {
-    //     gzdbg << pkt.pwm[i] << ", ";
+    // oss << "magic: " << pkt.magic << "\n";
+    // oss << "frame_rate: " << pkt.frame_rate << "\n";
+    // oss << "frame_count: " << pkt.frame_count << "\n";
+    // oss << "pwm: [";
+    // for (auto i=0; i<MAX_SERVO_CHANNELS - 1; ++i) {
+    //     oss << pkt.pwm[i] << ", ";
     // }
-    // gzdbg << pkt.pwm[15] << "]\n";
+    // oss << pkt.pwm[MAX_SERVO_CHANNELS - 1] << "]\n";
+    // gzdbg << "\n" << oss.str();
 
     // check magic, return if invalid
     const uint16_t magic = 18458;
@@ -887,15 +914,31 @@ void ArduPilotPlugin::ReceiveServoPacket()
         gzwarn << "Incorrect protocol magic "
             << pkt.magic << " should be "
             << magic << "\n";
-        return; 
+        return false;
     }
 
-    // @TODO check frame rate and frame order
-
-
-
-    // SITL JSON interface supplies 16 servo channels
-    const uint16_t MAX_SERVO_CHANNELS = 16;
+    // check frame rate and frame order
+    this->dataPtr->fcu_frame_rate = pkt.frame_rate;
+    if (pkt.frame_count < this->dataPtr->fcu_frame_count)
+    {
+        // @TODO - implement re-initialisation 
+        gzwarn << "ArduPilot controller has reset\n";
+    }
+    else if (pkt.frame_count == this->dataPtr->fcu_frame_count)
+    {
+        // received duplicate frame, skip
+        gzwarn << "Duplicate input frame\n";
+        return false;
+    }
+    else if (pkt.frame_count != this->dataPtr->fcu_frame_count + 1
+        && this->dataPtr->arduPilotOnline)
+    {
+        // missed frames, warn only
+        gzwarn << "Missed "
+            << this->dataPtr->fcu_frame_count - pkt.frame_count
+            << " input frames\n";
+    }
+    this->dataPtr->fcu_frame_count = pkt.frame_count;
 
     // always reset the connection timeout so we don't accumulate
     this->dataPtr->connectionTimeoutCount = 0;
@@ -953,6 +996,7 @@ void ArduPilotPlugin::ReceiveServoPacket()
                 << " > " << MAX_MOTORS << "].\n";
         }
     }
+    return true;
 }
 
 /////////////////////////////////////////////////
