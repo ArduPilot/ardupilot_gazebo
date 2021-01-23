@@ -63,6 +63,18 @@ namespace gazebo
     // Documentation Inherited.
     public: virtual void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
 
+    /// \brief Load control channels
+    private: void LoadControlChannels(sdf::ElementPtr _sdf);
+
+    /// \brief Load IMU sensors
+    private: void LoadImuSensors(sdf::ElementPtr _sdf);
+
+    /// \brief Load GPS sensors
+    private: void LoadGpsSensors(sdf::ElementPtr _sdf);
+
+    /// \brief Load Range sensors
+    private: void LoadRangeSensors(sdf::ElementPtr _sdf);
+
     /// \brief Update the control surfaces controllers.
     /// \param[in] _info Update information provided by the server.
     private: void OnUpdate();
@@ -74,23 +86,17 @@ namespace gazebo
     /// \brief Reset PID Joint controllers.
     private: void ResetPIDs();
 
-    /// \brief Receive motor commands from ArduPilot
-    private: void ReceiveMotorCommand();
+    /// \brief Receive a servo packet from ArduPilot
+    private: void ReceiveServoPacket();
 
     /// \brief Send state to ArduPilot
     private: void SendState() const;
 
-    /// \brief Init ardupilot socket
-    private: bool InitArduPilotSockets(sdf::ElementPtr _sdf) const;
+    /// \brief Initialise flight dynamics model socket
+    private: bool InitSockets(sdf::ElementPtr _sdf) const;
 
     /// \brief Private data pointer.
     private: std::unique_ptr<ArduPilotPluginPrivate> dataPtr;
-
-    /// \brief transform from model orientation to x-forward and z-up
-    private: ignition::math::Pose3d modelXYZToAirplaneXForwardZDown;
-
-    /// \brief transform from world frame to NED frame
-    private: ignition::math::Pose3d gazeboXYZToNED;
   };
 }
 #endif
