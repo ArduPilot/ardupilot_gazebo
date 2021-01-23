@@ -130,17 +130,17 @@ class gazebo::ArduPilotPluginPrivate
   /// \brief Socket manager
   public: SocketAPM sock = SocketAPM(true);
 
-  /// \brief The Ardupilot address for SITL server
-  public: std::string address_in;
+  /// \brief The address for the flight dynamics model (i.e. this plugin)
+  public: std::string fdm_address = "127.0.0.1";
 
-  /// \brief The Ardupilot address provided by socket on recv 
-  public: const char* address_out;
+  /// \brief The address for the SITL flight controller - auto detected
+  public: const char* fcu_address;
 
-  /// \brief Ardupilot port for data from SITL
-  public: uint16_t port_in;
+  /// \brief The port for the flight dynamics model (9002) 
+  public: uint16_t fdm_port = 9002;
 
-  /// \brief Ardupilot port provided by socket on recv
-  public: uint16_t port_out;
+  /// \brief The port for the SITL flight controller - auto detected
+  public: uint16_t fcu_port;
 
   /// \brief Pointer to an IMU sensor [required]
   public: sensors::ImuSensorPtr imuSensor;
@@ -161,6 +161,12 @@ class gazebo::ArduPilotPluginPrivate
   /// \brief number of times ArduCotper skips update
   /// before marking ArduPilot offline
   public: int connectionTimeoutMaxCount;
+
+  /// \brief transform from model orientation to x-forward and z-up
+  public: ignition::math::Pose3d modelXYZToAirplaneXForwardZDown;
+
+  /// \brief transform from world frame to NED frame
+  public: ignition::math::Pose3d gazeboXYZToNED;
 };
 
 /////////////////////////////////////////////////
@@ -188,22 +194,55 @@ void ArduPilotPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
   // modelXYZToAirplaneXForwardZDown brings us from gazebo model frame:
   // x-forward, y-right, z-down
   // to the aerospace convention: x-forward, y-left, z-up
-  this->modelXYZToAirplaneXForwardZDown =
+  this->dataPtr->modelXYZToAirplaneXForwardZDown =
     ignition::math::Pose3d(0, 0, 0, 0, 0, 0);
   if (_sdf->HasElement("modelXYZToAirplaneXForwardZDown"))
   {
-    this->modelXYZToAirplaneXForwardZDown =
+    this->dataPtr->modelXYZToAirplaneXForwardZDown =
         _sdf->Get<ignition::math::Pose3d>("modelXYZToAirplaneXForwardZDown");
   }
 
   // gazeboXYZToNED: from gazebo model frame: x-forward, y-right, z-down
   // to the aerospace convention: x-forward, y-left, z-up
-  this->gazeboXYZToNED = ignition::math::Pose3d(0, 0, 0, IGN_PI, 0, 0);
+  this->dataPtr->gazeboXYZToNED = ignition::math::Pose3d(0, 0, 0, IGN_PI, 0, 0);
   if (_sdf->HasElement("gazeboXYZToNED"))
   {
-    this->gazeboXYZToNED = _sdf->Get<ignition::math::Pose3d>("gazeboXYZToNED");
+    this->dataPtr->gazeboXYZToNED = _sdf->Get<ignition::math::Pose3d>("gazeboXYZToNED");
   }
 
+  // Load control channel params
+  this->LoadControlChannels(_sdf);
+
+  // Load sensor params
+  this->LoadImuSensors(_sdf);
+  this->LoadGpsSensors(_sdf);
+  this->LoadRangeSensors(_sdf);
+
+  // Controller time control.
+  this->dataPtr->lastControllerUpdateTime = 0;
+
+  // Initialise sockets
+  if (!InitSockets(_sdf))
+  {
+    return;
+  }
+
+  // Missed update count before we declare arduPilotOnline status false
+  this->dataPtr->connectionTimeoutMaxCount =
+    _sdf->Get("connectionTimeoutMaxCount", 10).first;
+
+  // Listen to the update event. This event is broadcast every simulation
+  // iteration.
+  this->dataPtr->updateConnection = event::Events::ConnectWorldUpdateBegin(
+      std::bind(&ArduPilotPlugin::OnUpdate, this));
+
+  gzmsg << "[" << this->dataPtr->modelName << "] "
+        << "ArduPilot ready to fly. The force will be with you" << std::endl;
+}
+
+/////////////////////////////////////////////////
+void ArduPilotPlugin::LoadControlChannels(sdf::ElementPtr _sdf)
+{
   // per control channel
   sdf::ElementPtr controlSDF;
   if (_sdf->HasElement("control"))
@@ -281,7 +320,7 @@ void ArduPilotPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
     }
 
     // Get the pointer to the joint.
-    control.joint = _model->GetJoint(control.jointName);
+    control.joint = this->dataPtr->model->GetJoint(control.jointName);
     if (control.joint == nullptr)
     {
       gzerr << "[" << this->dataPtr->modelName << "] "
@@ -415,8 +454,11 @@ void ArduPilotPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
     this->dataPtr->controls.push_back(control);
     controlSDF = controlSDF->GetNextElement("control");
   }
+}
 
-  // Get sensors
+/////////////////////////////////////////////////
+void ArduPilotPlugin::LoadImuSensors(sdf::ElementPtr _sdf)
+{
   std::string imuName =
     _sdf->Get("imuName", static_cast<std::string>("imu_sensor")).first;
   std::vector<std::string> imuScopedName =
@@ -478,8 +520,14 @@ void ArduPilotPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
       return;
     }
   }
-/* NOT MERGED IN MASTER YET
-    // Get GPS
+}
+
+/////////////////////////////////////////////////
+void ArduPilotPlugin::LoadGpsSensors(sdf::ElementPtr _sdf)
+{
+  /*
+  NOT MERGED IN MASTER YET
+  // Get GPS
   std::string gpsName = _sdf->Get("imuName", static_cast<std::string>("gps_sensor")).first;
   std::vector<std::string> gpsScopedName = SensorScopedName(this->dataPtr->model, gpsName);
   if (gpsScopedName.size() > 1)
@@ -539,7 +587,13 @@ void ArduPilotPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
              << "  found "  << " [" << gpsName << "].\n";
     }
   }
+  */
+}
 
+/////////////////////////////////////////////////
+void ArduPilotPlugin::LoadRangeSensors(sdf::ElementPtr _sdf)
+{
+  /*
   // Get Rangefinder
   // TODO add sonar
   std::string rangefinderName = _sdf->Get("rangefinderName",
@@ -604,27 +658,7 @@ void ArduPilotPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
              << "  found "  << " [" << rangefinderName << "].\n";
     }
   }
-*/
-  // Controller time control.
-  this->dataPtr->lastControllerUpdateTime = 0;
-
-  // Initialise ardupilot sockets
-  if (!InitArduPilotSockets(_sdf))
-  {
-    return;
-  }
-
-  // Missed update count before we declare arduPilotOnline status false
-  this->dataPtr->connectionTimeoutMaxCount =
-    _sdf->Get("connectionTimeoutMaxCount", 10).first;
-
-  // Listen to the update event. This event is broadcast every simulation
-  // iteration.
-  this->dataPtr->updateConnection = event::Events::ConnectWorldUpdateBegin(
-      std::bind(&ArduPilotPlugin::OnUpdate, this));
-
-  gzlog << "[" << this->dataPtr->modelName << "] "
-        << "ArduPilot ready to fly. The force will be with you" << std::endl;
+  */
 }
 
 /////////////////////////////////////////////////
@@ -639,7 +673,7 @@ void ArduPilotPlugin::OnUpdate()
   // Update the control surfaces and publish the new state.
   if (dt > 0)
   {
-    this->ReceiveMotorCommand();
+    this->ReceiveServoPacket();
     if (this->dataPtr->arduPilotOnline)
     {
       this->ApplyMotorForces(dt);
@@ -662,26 +696,42 @@ void ArduPilotPlugin::ResetPIDs()
 }
 
 /////////////////////////////////////////////////
-bool ArduPilotPlugin::InitArduPilotSockets(sdf::ElementPtr _sdf) const
-{
+bool ArduPilotPlugin::InitSockets(sdf::ElementPtr _sdf) const
+{   
+    // configure port
     this->dataPtr->sock.set_blocking(false);
     this->dataPtr->sock.reuseaddress();
 
-    this->dataPtr->address_in =
-        _sdf->Get("listen_addr", static_cast<std::string>("127.0.0.1")).first;
-    this->dataPtr->port_in =
-        _sdf->Get("fdm_port_in", static_cast<uint32_t>(9002)).first;
-
-    if (this->dataPtr->sock.bind(
-        this->dataPtr->address_in.c_str(),
-        this->dataPtr->port_in) < 0)
-    {
-        gzerr << "[" << this->dataPtr->modelName << "] "
-            << "failed to bind with " << this->dataPtr->address_in
-            << ":" << this->dataPtr->port_in << " aborting plugin.\n";
-        return false;
+    // get the fdm address if provided, otherwise default to localhost
+    if (_sdf->HasElement("fdm_addr")) {
+        this->dataPtr->fdm_address =
+            _sdf->Get("fdm_addr", static_cast<std::string>("127.0.0.1")).first;
     }
 
+    // port configuration now automatic
+    if (_sdf->HasElement("listen_addr")) {
+        gzwarn << "Param <listen_addr> is deprecated, connection is auto detected\n";
+    }
+    if (_sdf->HasElement("fdm_port_in")) {
+        gzwarn << "Param <fdm_port_in> is deprecated, port must be 9002 \n";
+    }
+    if (_sdf->HasElement("fdm_port_out")) {
+        gzwarn << "Param <fdm_port_out> is deprecated, connection is auto detected\n";
+    }
+
+    // bind the socket
+    if (this->dataPtr->sock.bind(this->dataPtr->fdm_address.c_str(), this->dataPtr->fdm_port) < 0)
+    {
+        gzerr << "[" << this->dataPtr->modelName << "] "
+            << "failed to bind with "
+            << this->dataPtr->fdm_address << ":" << this->dataPtr->fdm_port
+            << " aborting plugin.\n";
+        return false;
+    }
+    gzmsg << "[" << this->dataPtr->modelName << "] "
+        << "flight dynamics model @ "
+        << this->dataPtr->fdm_address << ":" << this->dataPtr->fdm_port
+        << "\n";
     return true;
 }
 
@@ -744,7 +794,7 @@ void ArduPilotPlugin::ApplyMotorForces(const double _dt)
 }
 
 /////////////////////////////////////////////////
-void ArduPilotPlugin::ReceiveMotorCommand()
+void ArduPilotPlugin::ReceiveServoPacket()
 {
   // Added detection for whether ArduPilot is online or not.
   // If ArduPilot is detected (receive of fdm packet from someone),
@@ -772,7 +822,7 @@ void ArduPilotPlugin::ReceiveMotorCommand()
   servo_packet pkt;
   auto recvSize = this->dataPtr->sock.recv(&pkt, sizeof(servo_packet), waitMs);
   
-  this->dataPtr->sock.last_recv_address(this->dataPtr->address_out, this->dataPtr->port_out);
+  this->dataPtr->sock.last_recv_address(this->dataPtr->fcu_address, this->dataPtr->fcu_port);
 
   // drain the socket in the case we're backed up
   int counter = 0;
@@ -813,23 +863,23 @@ void ArduPilotPlugin::ReceiveMotorCommand()
   else
   {
     // inspect sitl packet
-    // std::cout << "recv " << recvSize << " bytes from "
-    //     << this->dataPtr->address_out << ":" << this->dataPtr->port_out << "\n";
-    // std::cout << "magic: " << pkt.magic << "\n";
-    // std::cout << "frame_rate: " << pkt.frame_rate << "\n";
-    // std::cout << "frame_count: " << pkt.frame_count << "\n";
-    // std::cout << "pwm: [";
+    // gzdbg << "recv " << recvSize << " bytes from "
+    //     << this->dataPtr->fcu_address << ":" << this->dataPtr->fcu_port << "\n";
+    // gzdbg << "magic: " << pkt.magic << "\n";
+    // gzdbg << "frame_rate: " << pkt.frame_rate << "\n";
+    // gzdbg << "frame_count: " << pkt.frame_count << "\n";
+    // gzdbg << "pwm: [";
     // for (auto i=0; i<15; ++i)
     // {
-    //   std::cout << pkt.pwm[i] << ", ";
+    //   gzdbg << pkt.pwm[i] << ", ";
     // }
-    // std::cout << pkt.pwm[15] << "]\n";
+    // gzdbg << pkt.pwm[15] << "]\n";
 
     // check magic
     uint16_t magic = 18458;
     if (magic != pkt.magic)
     {
-        std::cout << "Incorrect protocol magic "
+        gzwarn << "Incorrect protocol magic "
             << pkt.magic << " should be "
             << magic << "\n";
         // continue; 
@@ -856,11 +906,12 @@ void ArduPilotPlugin::ReceiveMotorCommand()
     this->dataPtr->connectionTimeoutCount = 0;
     if (!this->dataPtr->arduPilotOnline)
     {
-    //   gzdbg << "[" << this->dataPtr->modelName << "] "
-    //         << "ArduPilot controller online detected.\n";
-      // made connection, set some flags
-    //   this->dataPtr->connectionTimeoutCount = 0;
-      this->dataPtr->arduPilotOnline = true;
+        this->dataPtr->arduPilotOnline = true;
+
+        gzmsg << "[" << this->dataPtr->modelName << "] "
+            << "Connected to ArduPilot controller @ "
+            << this->dataPtr->fcu_address << ":" << this->dataPtr->fcu_port
+            << "\n";
     }
 
     // compute command based on requested motorSpeed
@@ -911,23 +962,23 @@ void ArduPilotPlugin::ReceiveMotorCommand()
 /////////////////////////////////////////////////
 void ArduPilotPlugin::SendState() const
 {
-    // asssumed that the imu orientation is:
+    // it is assumed that the imu orientation is:
     //   x forward
     //   y right
     //   z down
 
     // get linear acceleration in body frame
     const ignition::math::Vector3d linearAccel =
-    this->dataPtr->imuSensor->LinearAcceleration();
-    // gzerr << "lin accel [" << linearAccel << "]\n";
+        this->dataPtr->imuSensor->LinearAcceleration();
+    // gzdbg << "lin accel [" << linearAccel << "]\n";
 
     // get angular velocity in body frame
     const ignition::math::Vector3d angularVel =
-    this->dataPtr->imuSensor->AngularVelocity();
+        this->dataPtr->imuSensor->AngularVelocity();
 
     // get inertial pose and velocity
     // position of the uav in world frame
-    // this position is used to calcualte bearing and distance
+    // this position is used to calculate bearing and distance
     // from starting location, then use that to update gps position.
     // The algorithm looks something like below (from ardupilot helper
     // libraries):
@@ -948,13 +999,13 @@ void ArduPilotPlugin::SendState() const
     //   from: model XYZ
     //   to: airplane x-forward, y-left, z-down
     const ignition::math::Pose3d gazeboXYZToModelXForwardZDown =
-    this->modelXYZToAirplaneXForwardZDown +
+    this->dataPtr->modelXYZToAirplaneXForwardZDown +
     this->dataPtr->model->WorldPose();
 
     // get transform from world NED to Model frame
     const ignition::math::Pose3d NEDToModelXForwardZUp =
-    gazeboXYZToModelXForwardZDown - this->gazeboXYZToNED;
-    // gzerr << "ned to model [" << NEDToModelXForwardZUp << "]\n";
+        gazeboXYZToModelXForwardZDown - this->dataPtr->gazeboXYZToNED;
+    // gzdbg << "ned to model [" << NEDToModelXForwardZUp << "]\n";
 
     // imuOrientationQuat is the rotation from world NED frame
     // to the uav frame.
@@ -969,7 +1020,7 @@ void ArduPilotPlugin::SendState() const
     const ignition::math::Vector3d velGazeboWorldFrame =
     this->dataPtr->model->GetLink()->WorldLinearVel();
     const ignition::math::Vector3d velNEDFrame =
-    this->gazeboXYZToNED.Rot().RotateVectorReverse(velGazeboWorldFrame);
+    this->dataPtr->gazeboXYZToNED.Rot().RotateVectorReverse(velGazeboWorldFrame);
 
     // require the duration since sim start in seconds 
     double timestamp = this->dataPtr->model->GetWorld()->SimTime().Double();
@@ -1024,8 +1075,14 @@ void ArduPilotPlugin::SendState() const
     writer.Double(velNEDFrame.Z());
     writer.EndArray();
 
-    // writer.Key("rng_1");
-    // writer.Double(0.0);
+    // SITL/SIM_JSON supports these additional sensor fields
+    //      rng_1 : 0 
+    //      rng_2 : 0
+    //      rng_3 : 0
+    //      rng_4 : 0
+    //      rng_5 : 0
+    //      rng_6 : 0
+    //      windvane : { direction: 0, speed: 0 }
 
     // writer.Key("rng_1");
     // writer.Double(0.0);
@@ -1042,11 +1099,10 @@ void ArduPilotPlugin::SendState() const
     std::string json_str = "\n" + std::string(s.GetString()) + "\n";
     auto bytes_sent = this->dataPtr->sock.sendto(
         json_str.c_str(), json_str.size(),
-        this->dataPtr->address_out,
-        this->dataPtr->port_out);
+        this->dataPtr->fcu_address,
+        this->dataPtr->fcu_port);
     
-    // std::cout << "sent " << bytes_sent <<  " bytes to " 
-    //     << this->dataPtr->address_out << ":" << this->dataPtr->port_out << "\n";
-    // std::cout << json_str << "\n";
-
+    // gzdbg << "sent " << bytes_sent <<  " bytes to " 
+    //     << this->dataPtr->fcu_address << ":" << this->dataPtr->fcu_port << "\n";
+    // gzdbg << json_str << "\n";
 }
