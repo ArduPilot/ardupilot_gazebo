@@ -147,11 +147,11 @@ class gazebo::ArduPilotPluginPrivate
   /// \brief The address for the SITL flight controller - auto detected
   public: const char* fcu_address;
 
-  /// \brief The port for the flight dynamics model (9002) 
-  public: uint16_t fdm_port = 9002;
+  /// \brief The port for the flight dynamics model
+  public: uint16_t fdm_port_in = 9002;
 
   /// \brief The port for the SITL flight controller - auto detected
-  public: uint16_t fcu_port;
+  public: uint16_t fcu_port_out;
 
   /// \brief Pointer to an IMU sensor [required]
   public: sensors::ImuSensorPtr imuSensor;
@@ -734,34 +734,32 @@ bool ArduPilotPlugin::InitSockets(sdf::ElementPtr _sdf) const
     this->dataPtr->sock.reuseaddress();
 
     // get the fdm address if provided, otherwise default to localhost
-    if (_sdf->HasElement("fdm_addr")) {
-        this->dataPtr->fdm_address =
-            _sdf->Get("fdm_addr", static_cast<std::string>("127.0.0.1")).first;
-    }
+    this->dataPtr->fdm_address =
+        _sdf->Get("fdm_addr", static_cast<std::string>("127.0.0.1")).first;
 
-    // port configuration now automatic
+    this->dataPtr->fdm_port_in =
+        _sdf->Get("fdm_port_in", static_cast<uint32_t>(9002)).first;
+
+    // output port configuration is automatic
     if (_sdf->HasElement("listen_addr")) {
         gzwarn << "Param <listen_addr> is deprecated, connection is auto detected\n";
-    }
-    if (_sdf->HasElement("fdm_port_in")) {
-        gzwarn << "Param <fdm_port_in> is deprecated, port must be 9002 \n";
     }
     if (_sdf->HasElement("fdm_port_out")) {
         gzwarn << "Param <fdm_port_out> is deprecated, connection is auto detected\n";
     }
 
     // bind the socket
-    if (!this->dataPtr->sock.bind(this->dataPtr->fdm_address.c_str(), this->dataPtr->fdm_port))
+    if (!this->dataPtr->sock.bind(this->dataPtr->fdm_address.c_str(), this->dataPtr->fdm_port_in))
     {
         gzerr << "[" << this->dataPtr->modelName << "] "
             << "failed to bind with "
-            << this->dataPtr->fdm_address << ":" << this->dataPtr->fdm_port
+            << this->dataPtr->fdm_address << ":" << this->dataPtr->fdm_port_in
             << " aborting plugin.\n";
         return false;
     }
     gzmsg << "[" << this->dataPtr->modelName << "] "
         << "flight dynamics model @ "
-        << this->dataPtr->fdm_address << ":" << this->dataPtr->fdm_port
+        << this->dataPtr->fdm_address << ":" << this->dataPtr->fdm_port_in
         << "\n";
     return true;
 }
@@ -853,7 +851,7 @@ bool ArduPilotPlugin::ReceiveServoPacket()
     servo_packet pkt;
     auto recvSize = this->dataPtr->sock.recv(&pkt, sizeof(servo_packet), waitMs);
   
-    this->dataPtr->sock.last_recv_address(this->dataPtr->fcu_address, this->dataPtr->fcu_port);
+    this->dataPtr->sock.last_recv_address(this->dataPtr->fcu_address, this->dataPtr->fcu_port_out);
 
     // drain the socket in the case we're backed up
     int counter = 0;
@@ -896,7 +894,7 @@ bool ArduPilotPlugin::ReceiveServoPacket()
     // debug: inspect sitl packet
     // std::ostringstream oss;
     // oss << "recv " << recvSize << " bytes from "
-    //     << this->dataPtr->fcu_address << ":" << this->dataPtr->fcu_port << "\n";
+    //     << this->dataPtr->fcu_address << ":" << this->dataPtr->fcu_port_out << "\n";
     // oss << "magic: " << pkt.magic << "\n";
     // oss << "frame_rate: " << pkt.frame_rate << "\n";
     // oss << "frame_count: " << pkt.frame_count << "\n";
@@ -948,7 +946,7 @@ bool ArduPilotPlugin::ReceiveServoPacket()
 
         gzmsg << "[" << this->dataPtr->modelName << "] "
             << "Connected to ArduPilot controller @ "
-            << this->dataPtr->fcu_address << ":" << this->dataPtr->fcu_port
+            << this->dataPtr->fcu_address << ":" << this->dataPtr->fcu_port_out
             << "\n";
     }
 
@@ -1140,9 +1138,9 @@ void ArduPilotPlugin::SendState() const
     auto bytes_sent = this->dataPtr->sock.sendto(
         json_str.c_str(), json_str.size(),
         this->dataPtr->fcu_address,
-        this->dataPtr->fcu_port);
+        this->dataPtr->fcu_port_out);
     
     // gzdbg << "sent " << bytes_sent <<  " bytes to " 
-    //     << this->dataPtr->fcu_address << ":" << this->dataPtr->fcu_port << "\n";
+    //     << this->dataPtr->fcu_address << ":" << this->dataPtr->fcu_port_out << "\n";
     // gzdbg << json_str << "\n";
 }
