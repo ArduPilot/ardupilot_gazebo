@@ -94,10 +94,20 @@ class Control
   public: physics::JointPtr joint;
 
   /// \brief A multiplier to scale the raw input command
-  public: double multiplier = 1;
+  public: double multiplier = 1.0;
 
   /// \brief An offset to shift the zero-point of the raw input command
-  public: double offset = 0;
+  public: double offset = 0.0;
+
+  /// \brief Lower bound of PWM input, has default (1000).
+  ///
+  /// The lower bound of PWM input should match SERVOX_MIN for this channel.
+  public: double servo_min = 1000.0;
+
+  /// \brief Upper limit of PWM input, has default (2000).
+  ///
+  /// The upper limit of PWM input should match SERVOX_MAX for this channel.
+  public: double servo_max = 2000.0;
 
   /// \brief unused coefficients
   public: double rotorVelocitySlowdownSim;
@@ -380,9 +390,10 @@ void ArduPilotPlugin::LoadControlChannels(sdf::ElementPtr _sdf)
     else
     {
       gzdbg << "[" << this->dataPtr->modelName << "] "
-            << "<multiplier> (or deprecated <turningDirection>) not specified,"
-            << " Default 1 (or deprecated <turningDirection> 'ccw').\n";
-      control.multiplier = 1;
+            << "channel[" << control.channel
+            << "]: <multiplier> (or deprecated <turningDirection>) not specified, "
+            << " default to " << control.multiplier
+            << " (or deprecated <turningDirection> 'ccw').\n";
     }
 
     if (controlSDF->HasElement("offset"))
@@ -392,8 +403,33 @@ void ArduPilotPlugin::LoadControlChannels(sdf::ElementPtr _sdf)
     else
     {
       gzdbg << "[" << this->dataPtr->modelName << "] "
-            << "<offset> not specified, default to 0.\n";
-      control.offset = 0;
+            << "channel[" << control.channel
+            << "]: <offset> not specified, default to "
+            << control.offset << "\n";
+    }
+
+    if (controlSDF->HasElement("servo_min"))
+    {
+      control.servo_min = controlSDF->Get<double>("servo_min");
+    }
+    else
+    {
+      gzdbg << "[" << this->dataPtr->modelName << "] "
+            << "channel[" << control.channel
+            << "]: <servo_min> not specified, default to "
+            << control.servo_min << "\n";
+    }
+
+    if (controlSDF->HasElement("servo_max"))
+    {
+      control.servo_max = controlSDF->Get<double>("servo_max");
+    }
+    else
+    {
+      gzdbg << "[" << this->dataPtr->modelName << "] "
+            << "channel[" << control.channel
+            << "]: <servo_max> not specified, default to "
+            << control.servo_max << "\n";
     }
 
     control.rotorVelocitySlowdownSim =
@@ -698,13 +734,15 @@ void ArduPilotPlugin::OnUpdate()
         double dt_pkt = (curTime - this->dataPtr->lastServoPacketRecvTime).Double();        
         this->dataPtr->lastServoPacketRecvTime = curTime;
 
-        // debug: synchonisation ckecks
-        // gzdbg << "fdm_frame_rate: " << 1/dt
-        //   << ", fcu_frame_rate: " << this->dataPtr->fcu_frame_rate
-        //   << "\n";
-        // gzdbg << "fdm_frame_rate: " << 1/dt
-        //   << ", servo_packet_rate: " << 1/dt_pkt
-        //   << "\n";
+        // debug: synchonisation checks
+#if 0
+        gzdbg << "fdm_frame_rate: " << 1/dt
+          << ", fcu_frame_rate: " << this->dataPtr->fcu_frame_rate
+          << "\n";
+        gzdbg << "fdm_frame_rate: " << 1/dt
+          << ", servo_packet_rate: " << 1/dt_pkt
+          << "\n";
+#endif
     }
 
     if (this->dataPtr->arduPilotOnline)
@@ -891,19 +929,21 @@ bool ArduPilotPlugin::ReceiveServoPacket()
         return false;
     }
 
+#if 0
     // debug: inspect sitl packet
-    // std::ostringstream oss;
-    // oss << "recv " << recvSize << " bytes from "
-    //     << this->dataPtr->fcu_address << ":" << this->dataPtr->fcu_port_out << "\n";
-    // oss << "magic: " << pkt.magic << "\n";
-    // oss << "frame_rate: " << pkt.frame_rate << "\n";
-    // oss << "frame_count: " << pkt.frame_count << "\n";
-    // oss << "pwm: [";
-    // for (auto i=0; i<MAX_SERVO_CHANNELS - 1; ++i) {
-    //     oss << pkt.pwm[i] << ", ";
-    // }
-    // oss << pkt.pwm[MAX_SERVO_CHANNELS - 1] << "]\n";
-    // gzdbg << "\n" << oss.str();
+    std::ostringstream oss;
+    oss << "recv " << recvSize << " bytes from "
+        << this->dataPtr->fcu_address << ":" << this->dataPtr->fcu_port_out << "\n";
+    oss << "magic: " << pkt.magic << "\n";
+    oss << "frame_rate: " << pkt.frame_rate << "\n";
+    oss << "frame_count: " << pkt.frame_count << "\n";
+    oss << "pwm: [";
+    for (auto i=0; i<MAX_SERVO_CHANNELS - 1; ++i) {
+        oss << pkt.pwm[i] << ", ";
+    }
+    oss << pkt.pwm[MAX_SERVO_CHANNELS - 1] << "]\n";
+    gzdbg << "\n" << oss.str();
+#endif
 
     // check magic, return if invalid
     const uint16_t magic = 18458;
@@ -958,24 +998,29 @@ bool ArduPilotPlugin::ReceiveServoPacket()
         {
             if (this->dataPtr->controls[i].channel < MAX_SERVO_CHANNELS)
             {
-                // convert pwm to motor speed: [1000, 2000] => [0, 1]
-                double pwm = pkt.pwm[this->dataPtr->controls[i].channel];
-                double motor_speed = (pwm - 1000)/1000.0;
+                // convert pwm to raw cmd: [servo_min, servo_max] => [0, 1],
+                // default is: [1000, 2000] => [0, 1]
+                const double pwm = pkt.pwm[this->dataPtr->controls[i].channel];
+                const double pwm_min = this->dataPtr->controls[i].servo_min;
+                const double pwm_max = this->dataPtr->controls[i].servo_max;
+                const double multiplier = this->dataPtr->controls[i].multiplier;
+                const double offset = this->dataPtr->controls[i].offset;
 
                 // bound incoming cmd between 0 and 1
-                const double cmd = ignition::math::clamp(motor_speed, 0.0, 1.0);
-                this->dataPtr->controls[i].cmd =
-                this->dataPtr->controls[i].multiplier *
-                (this->dataPtr->controls[i].offset + cmd);
+                double raw_cmd = (pwm - pwm_min)/(pwm_max - pwm_min);
+                raw_cmd = ignition::math::clamp(raw_cmd, 0.0, 1.0);
+                this->dataPtr->controls[i].cmd = multiplier * (raw_cmd + offset);
 
-            //   gzdbg << "apply input chan[" << this->dataPtr->controls[i].channel
-            //         << "] to control chan[" << i
-            //         << "] with joint name ["
-            //         << this->dataPtr->controls[i].jointName
-            //         << "] pwm [" << pwm
-            //         << "] raw cmd [" << motor_speed
-            //         << "] adjusted cmd [" << this->dataPtr->controls[i].cmd
-            //         << "].\n";
+#if 0
+                gzdbg << "apply input chan[" << this->dataPtr->controls[i].channel
+                    << "] to control chan[" << i
+                    << "] with joint name ["
+                    << this->dataPtr->controls[i].jointName
+                    << "] pwm [" << pwm
+                    << "] raw cmd [" << raw_cmd
+                    << "] adjusted cmd [" << this->dataPtr->controls[i].cmd
+                    << "].\n";
+#endif
             }
             else
             {
