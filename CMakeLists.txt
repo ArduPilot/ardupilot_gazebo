@@ -18,7 +18,7 @@ else()
 endif()
 
 # RapidJSON is a header only library
-find_package(rapidjson REQUIRED)
+find_package(RapidJSON REQUIRED)
 
 ###### COMPILE RULES ######
 include(CheckCXXCompilerFlag)
