@@ -154,15 +154,6 @@ add_library(ArduPilotPlugin
 )
 target_link_libraries(ArduPilotPlugin ${GAZEBO_LIBRARIES})
 
-add_executable(RapidJsonExample
-    src/RapidJsonExample.cc
-)
-
-add_executable(SocketExample
-    src/SocketExample.cc
-    src/Socket.cpp
-)
-
 if("${GAZEBO_VERSION}" VERSION_LESS "8.0")
     add_library(GimbalSmall2dPlugin SHARED src/GimbalSmall2dPlugin.cc)
     target_link_libraries(GimbalSmall2dPlugin ${GAZEBO_LIBRARIES})
