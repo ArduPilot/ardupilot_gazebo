@@ -574,8 +574,8 @@ void ignition::gazebo::systems::ArduPilotPlugin::LoadImuSensors(
     sdf::ElementPtr _sdf,
     ignition::gazebo::EntityComponentManager &/*_ecm*/)
 {
-  std::string imuName =
-    _sdf->Get("imuName", static_cast<std::string>("imu_sensor")).first;
+    this->dataPtr->imuName =
+        _sdf->Get("imuName", static_cast<std::string>("imu_sensor")).first;
 }
 
 /////////////////////////////////////////////////
