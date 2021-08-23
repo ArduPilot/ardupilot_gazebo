@@ -511,12 +511,10 @@
     <static>0</static>
 
     <!-- plugins -->
-    <plugin
-      filename="libignition-gazebo-joint-state-publisher-system.so"
+    <plugin filename="libignition-gazebo-joint-state-publisher-system.so"
       name="ignition::gazebo::systems::JointStatePublisher">
     </plugin>
-    <plugin
-        filename="libignition-gazebo-lift-drag-system.so"
+    <plugin filename="libignition-gazebo-lift-drag-system.so"
         name="ignition::gazebo::systems::LiftDrag">
       <a0>0.3</a0>
       <alpha_stall>1.4</alpha_stall>
@@ -533,8 +531,7 @@
       <upward>0 0 1</upward>
       <link_name>rotor_0</link_name>
     </plugin>
-    <plugin
-        filename="libignition-gazebo-lift-drag-system.so"
+    <plugin filename="libignition-gazebo-lift-drag-system.so"
         name="ignition::gazebo::systems::LiftDrag">
       <a0>0.3</a0>
       <alpha_stall>1.4</alpha_stall>
@@ -552,8 +549,7 @@
       <link_name>rotor_0</link_name>
     </plugin>
 
-    <plugin
-        filename="libignition-gazebo-lift-drag-system.so"
+    <plugin filename="libignition-gazebo-lift-drag-system.so"
         name="ignition::gazebo::systems::LiftDrag">
       <a0>0.3</a0>
       <alpha_stall>1.4</alpha_stall>
@@ -570,8 +566,7 @@
       <upward>0 0 1</upward>
       <link_name>rotor_1</link_name>
     </plugin>
-    <plugin
-        filename="libignition-gazebo-lift-drag-system.so"
+    <plugin filename="libignition-gazebo-lift-drag-system.so"
         name="ignition::gazebo::systems::LiftDrag">
       <a0>0.3</a0>
       <alpha_stall>1.4</alpha_stall>
@@ -589,8 +584,7 @@
       <link_name>rotor_1</link_name>
     </plugin>
 
-    <plugin
-        filename="libignition-gazebo-lift-drag-system.so"
+    <plugin filename="libignition-gazebo-lift-drag-system.so"
         name="ignition::gazebo::systems::LiftDrag">
       <a0>0.3</a0>
       <alpha_stall>1.4</alpha_stall>
@@ -607,8 +601,7 @@
       <upward>0 0 1</upward>
       <link_name>rotor_2</link_name>
     </plugin>
-    <plugin
-        filename="libignition-gazebo-lift-drag-system.so"
+    <plugin filename="libignition-gazebo-lift-drag-system.so"
         name="ignition::gazebo::systems::LiftDrag">
       <a0>0.3</a0>
       <alpha_stall>1.4</alpha_stall>
@@ -626,8 +619,7 @@
       <link_name>rotor_2</link_name>
     </plugin>
 
-    <plugin
-        filename="libignition-gazebo-lift-drag-system.so"
+    <plugin filename="libignition-gazebo-lift-drag-system.so"
         name="ignition::gazebo::systems::LiftDrag">
       <a0>0.3</a0>
       <alpha_stall>1.4</alpha_stall>
@@ -644,8 +636,7 @@
       <upward>0 0 1</upward>
       <link_name>rotor_3</link_name>
     </plugin>
-    <plugin
-        filename="libignition-gazebo-lift-drag-system.so"
+    <plugin filename="libignition-gazebo-lift-drag-system.so"
         name="ignition::gazebo::systems::LiftDrag">
       <a0>0.3</a0>
       <alpha_stall>1.4</alpha_stall>
@@ -663,40 +654,38 @@
       <link_name>rotor_3</link_name>
     </plugin>
 
-    <plugin
-      filename="libignition-gazebo-apply-joint-force-system.so"
+    <plugin filename="libignition-gazebo-apply-joint-force-system.so"
       name="ignition::gazebo::systems::ApplyJointForce">
       <joint_name>rotor_0_joint</joint_name>
     </plugin>
-    <plugin
-      filename="libignition-gazebo-apply-joint-force-system.so"
+    <plugin filename="libignition-gazebo-apply-joint-force-system.so"
       name="ignition::gazebo::systems::ApplyJointForce">
       <joint_name>rotor_1_joint</joint_name>
     </plugin>
-    <plugin
-      filename="libignition-gazebo-apply-joint-force-system.so"
+    <plugin filename="libignition-gazebo-apply-joint-force-system.so"
       name="ignition::gazebo::systems::ApplyJointForce">
       <joint_name>rotor_2_joint</joint_name>
     </plugin>
-    <plugin
-      filename="libignition-gazebo-apply-joint-force-system.so"
+    <plugin filename="libignition-gazebo-apply-joint-force-system.so"
       name="ignition::gazebo::systems::ApplyJointForce">
       <joint_name>rotor_3_joint</joint_name>
     </plugin>
 
     <plugin name="ArduPilotPlugin" filename="libArduPilotPlugin.so">
+      <!-- Port settings -->
       <fdm_addr>127.0.0.1</fdm_addr>
       <fdm_port_in>9002</fdm_port_in>
-      <fdm_port_out>9003</fdm_port_out>
-      <!---->
-          Require by ArduPilot :
-          Only change model and gazebo from XYZ to XY-Z coordinates
+      <connectionTimeoutMaxCount>5</connectionTimeoutMaxCount>
+
+      <!-- Frame conventions
+        Require by ArduPilot: change model and gazebo from XYZ to XY-Z coordinates
       -->
       <modelXYZToAirplaneXForwardZDown>0 0 0 3.141593 0 0</modelXYZToAirplaneXForwardZDown>
       <gazeboXYZToNED>0 0 0 3.141593 0 0</gazeboXYZToNED>
+
+      <!-- Sensors -->
       <imuName>imu_sensor</imuName>
-      <connectionTimeoutMaxCount>5</connectionTimeoutMaxCount>
-      <control channel="0">
+
       <!--
           incoming control command [0, 1]
           so offset it by 0 to get [0, 1]
@@ -704,8 +693,14 @@
           offset = 0
           multiplier = 838 max rpm / 1 = 838
         -->
-        <type>VELOCITY</type>
+      <control channel="0">
+        <jointName>rotor_0_joint</jointName>
+        <useForce>0</useForce>
+        <multiplier>838</multiplier>
         <offset>0</offset>
+        <servo_min>1100</servo_min>
+        <servo_max>1900</servo_max>
+        <type>VELOCITY</type>
         <p_gain>0.20</p_gain>
         <i_gain>0</i_gain>
         <d_gain>0</d_gain>
@@ -713,14 +708,17 @@
         <i_min>0</i_min>
         <cmd_max>2.5</cmd_max>
         <cmd_min>-2.5</cmd_min>
-        <jointName>rotor_0_joint</jointName>
-        <multiplier>838</multiplier>
         <controlVelocitySlowdownSim>1</controlVelocitySlowdownSim>
       </control>
       
       <control channel="1">
-        <type>VELOCITY</type>
+        <jointName>rotor_1_joint</jointName>
+        <useForce>0</useForce>
+        <multiplier>838</multiplier>
         <offset>0</offset>
+        <servo_min>1100</servo_min>
+        <servo_max>1900</servo_max>
+        <type>VELOCITY</type>
         <p_gain>0.20</p_gain>
         <i_gain>0</i_gain>
         <d_gain>0</d_gain>
@@ -728,14 +726,17 @@
         <i_min>0</i_min>
         <cmd_max>2.5</cmd_max>
         <cmd_min>-2.5</cmd_min>
-        <jointName>rotor_1_joint</jointName>
-        <multiplier>838</multiplier>
         <controlVelocitySlowdownSim>1</controlVelocitySlowdownSim>
       </control>
 
       <control channel="2">
-        <type>VELOCITY</type>
+        <jointName>rotor_2_joint</jointName>
+        <useForce>0</useForce>
+        <multiplier>-838</multiplier>
         <offset>0</offset>
+        <servo_min>1100</servo_min>
+        <servo_max>1900</servo_max>
+        <type>VELOCITY</type>
         <p_gain>0.20</p_gain>
         <i_gain>0</i_gain>
         <d_gain>0</d_gain>
@@ -743,14 +744,17 @@
         <i_min>0</i_min>
         <cmd_max>2.5</cmd_max>
         <cmd_min>-2.5</cmd_min>
-        <jointName>rotor_2_joint</jointName>
-        <multiplier>-838</multiplier>
         <controlVelocitySlowdownSim>1</controlVelocitySlowdownSim>
       </control>
 
       <control channel="3">
-        <type>VELOCITY</type>
+        <jointName>rotor_3_joint</jointName>
+        <useForce>0</useForce>
+        <multiplier>-838</multiplier>
         <offset>0</offset>
+        <servo_min>1100</servo_min>
+        <servo_max>1900</servo_max>
+        <type>VELOCITY</type>
         <p_gain>0.20</p_gain>
         <i_gain>0</i_gain>
         <d_gain>0</d_gain>
@@ -758,8 +762,6 @@
         <i_min>0</i_min>
         <cmd_max>2.5</cmd_max>
         <cmd_min>-2.5</cmd_min>
-        <jointName>rotor_3_joint</jointName>
-        <multiplier>-838</multiplier>
         <controlVelocitySlowdownSim>1</controlVelocitySlowdownSim>
       </control>
     </plugin>
