@@ -8,14 +8,31 @@ project(ardupilot_sitl_gazebo)
 ## Find Dependencies ##
 #######################
 
-find_package(gazebo REQUIRED)
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
+find_package(ignition-cmake2 2.8.0 REQUIRED)
 
-if("${GAZEBO_VERSION}" VERSION_LESS "8.0")
-    message(FATAL_ERROR "You need at least Gazebo 8.0. Your version: ${GAZEBO_VERSION}")
-else()
-    message("Gazebo version: ${GAZEBO_VERSION}")
-endif()
+ign_find_package(sdformat11 REQUIRED VERSION 11.2.1)
+set(SDF_VER ${sdformat11_VERSION_MAJOR})
+
+ign_find_package(ignition-plugin1 REQUIRED)
+set(IGN_PLUGIN_VER ${ignition-plugin1_VERSION_MAJOR})
+
+ign_find_package(ignition-msgs7 REQUIRED VERSION 7.1)
+set(IGN_MSGS_VER ${ignition-msgs7_VERSION_MAJOR})
+
+ign_find_package(ignition-common4 REQUIRED COMPONENTS all)
+set(IGN_COMMON_VER ${ignition-common4_VERSION_MAJOR})
+
+ign_find_package(ignition-physics4 REQUIRED)
+set(IGN_PHYSICS_VER ${ignition-physics4_VERSION_MAJOR})
+
+ign_find_package(ignition-sensors5 REQUIRED)
+set(IGN_SENSORS_VER ${ignition-sensors5_VERSION_MAJOR})
+
+ign_find_package(ignition-math6 REQUIRED VERSION 6.8)
+set(IGN_MATH_VER ${ignition-math6_VERSION_MAJOR})
+
+ign_find_package(ignition-gazebo5 REQUIRED)
+set(IGN_GAZEBO_VER ${ignition-gazebo5_VERSION_MAJOR})
 
 # RapidJSON is a header only library
 find_package(RapidJSON REQUIRED)
@@ -126,53 +143,63 @@ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${VALID_CXX_FLAGS} ${UNFILTERED_FLAGS}"
 include_directories(
     ${PROJECT_SOURCE_DIR}
     include
-    ${GAZEBO_INCLUDE_DIRS}
+	${SDFORMAT-INCLUDE_DIRS}
+    ${IGNITION-COMMON_INCLUDE_DIRS}
+	${IGNITION-GAZEBO_INCLUDE_DIRS}
+	${IGNITION-MATH_INCLUDE_DIRS}
+	${IGNITION-MSGS_INCLUDE_DIRS}
+	${IGNITION-PHYSICS_INCLUDE_DIRS}
+	${IGNITION-SENSORS_INCLUDE_DIRS}
+	${IGNITION-TRANSPORT_INCLUDE_DIRS}
     ${RAPIDJSON_INCLUDE_DIRS}
 )
 
 link_libraries(
-    ${GAZEBO_LIBRARIES}
-)
-
-link_directories(
-    ${GAZEBO_LIBRARY_DIRS}
+	${SDFORMAT-LIBRARIES}
+    ${IGNITION-COMMON_LIBRARIES}
+	${IGNITION-GAZEBO_LIBRARIES}
+	${IGNITION-MATH_LIBRARIES}
+	${IGNITION-MSGS_LIBRARIES}
+	${IGNITION-PHYSICS_LIBRARIES}
+	${IGNITION-SENSORS_LIBRARIES}
+	${IGNITION-TRANSPORT_LIBRARIES}
 )
 
 set (plugins_single_header
-        ArduPilotPlugin
-        ArduCopterIRLockPlugin
-        GimbalSmall2dPlugin
-        )
+    ArduPilotPlugin
+    ArduCopterIRLockPlugin
+    GimbalSmall2dPlugin
+)
 
-add_library(ArduCopterIRLockPlugin SHARED src/ArduCopterIRLockPlugin.cc)
-target_link_libraries(ArduCopterIRLockPlugin ${GAZEBO_LIBRARIES})
+# add_library(ArduCopterIRLockPlugin SHARED src/ArduCopterIRLockPlugin.cc)
+# target_link_libraries(ArduCopterIRLockPlugin)
 
 add_library(ArduPilotPlugin
     SHARED
     src/ArduPilotPlugin.cc
     src/Socket.cpp
 )
-target_link_libraries(ArduPilotPlugin ${GAZEBO_LIBRARIES})
+target_link_libraries(ArduPilotPlugin)
 
-if("${GAZEBO_VERSION}" VERSION_LESS "8.0")
-    add_library(GimbalSmall2dPlugin SHARED src/GimbalSmall2dPlugin.cc)
-    target_link_libraries(GimbalSmall2dPlugin ${GAZEBO_LIBRARIES})
-    install(TARGETS GimbalSmall2dPlugin DESTINATION ${GAZEBO_PLUGIN_PATH})
-endif()
+# if("${GAZEBO_VERSION}" VERSION_LESS "8.0")
+#     add_library(GimbalSmall2dPlugin SHARED src/GimbalSmall2dPlugin.cc)
+#     target_link_libraries(GimbalSmall2dPlugin ${GAZEBO_LIBRARIES})
+#     install(TARGETS GimbalSmall2dPlugin DESTINATION ${GAZEBO_PLUGIN_PATH})
+# endif()
 
-install(TARGETS ArduCopterIRLockPlugin DESTINATION ${GAZEBO_PLUGIN_PATH})
-install(TARGETS ArduPilotPlugin DESTINATION ${GAZEBO_PLUGIN_PATH})
+# install(TARGETS ArduCopterIRLockPlugin DESTINATION ${GAZEBO_PLUGIN_PATH})
+# install(TARGETS ArduPilotPlugin DESTINATION ${GAZEBO_PLUGIN_PATH})
 
-install(DIRECTORY models DESTINATION ${GAZEBO_MODEL_PATH}/..)
-install(DIRECTORY worlds DESTINATION ${GAZEBO_MODEL_PATH}/..)
+# install(DIRECTORY models DESTINATION ${GAZEBO_MODEL_PATH}/..)
+# install(DIRECTORY worlds DESTINATION ${GAZEBO_MODEL_PATH}/..)
 
 # uninstall target
-if(NOT TARGET uninstall)
-  configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
-    IMMEDIATE @ONLY)
+# if(NOT TARGET uninstall)
+#   configure_file(
+#     "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
+#     "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+#     IMMEDIATE @ONLY)
 
-  add_custom_target(uninstall
-    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
-endif()
+#   add_custom_target(uninstall
+#     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
+# endif()

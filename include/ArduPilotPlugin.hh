@@ -17,11 +17,14 @@
 #ifndef GAZEBO_PLUGINS_ARDUPILOTPLUGIN_HH_
 #define GAZEBO_PLUGINS_ARDUPILOTPLUGIN_HH_
 
+#include <ignition/gazebo/System.hh>
 #include <sdf/sdf.hh>
-#include <gazebo/common/common.hh>
-#include <gazebo/physics/physics.hh>
 
+namespace ignition
+{
 namespace gazebo
+{
+namespace systems
 {
   // Forward declare private data class
   class ArduPilotSocketPrivate;
@@ -52,28 +55,54 @@ namespace gazebo
   /// <imuName>     scoped name for the imu sensor
   /// <connectionTimeoutMaxCount> timeout before giving up on
   ///                             controller synchronization
-  class GAZEBO_VISIBLE ArduPilotPlugin : public ModelPlugin
-  {
+  class IGNITION_GAZEBO_VISIBLE ArduPilotPlugin:
+    public ignition::gazebo::System,
+    public ignition::gazebo::ISystemConfigure,
+    public ignition::gazebo::ISystemPostUpdate,
+    public ignition::gazebo::ISystemPreUpdate
+{
     /// \brief Constructor.
     public: ArduPilotPlugin();
 
     /// \brief Destructor.
     public: ~ArduPilotPlugin();
 
+    /// \brief Load configuration from SDF on startup.
+    public: void Configure(const ignition::gazebo::Entity &_entity,
+                          const std::shared_ptr<const sdf::Element> &_sdf,
+                          ignition::gazebo::EntityComponentManager &_ecm,
+                          ignition::gazebo::EventManager &_eventMgr) final;
+
+    /// \brief Do the part of one update loop that involves making changes to simulation.
+    public: void PreUpdate(const ignition::gazebo::UpdateInfo &_info,
+                           ignition::gazebo::EntityComponentManager &_ecm) final;
+
+    /// \brief Do the part of one update loop that involves reading results from simulation.
+    public: void PostUpdate(const ignition::gazebo::UpdateInfo &_info,
+                            const ignition::gazebo::EntityComponentManager &_ecm) final;
+
     // Documentation Inherited.
-    public: virtual void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
+    // public: virtual void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
 
     /// \brief Load control channels
-    private: void LoadControlChannels(sdf::ElementPtr _sdf);
+    private: void LoadControlChannels(
+        sdf::ElementPtr _sdf,
+        ignition::gazebo::EntityComponentManager &_ecm);
 
     /// \brief Load IMU sensors
-    private: void LoadImuSensors(sdf::ElementPtr _sdf);
+    private: void LoadImuSensors(
+        sdf::ElementPtr _sdf,
+        ignition::gazebo::EntityComponentManager &_ecm);
 
     /// \brief Load GPS sensors
-    private: void LoadGpsSensors(sdf::ElementPtr _sdf);
+    private: void LoadGpsSensors(
+        sdf::ElementPtr _sdf,
+        ignition::gazebo::EntityComponentManager &_ecm);
 
     /// \brief Load Range sensors
-    private: void LoadRangeSensors(sdf::ElementPtr _sdf);
+    private: void LoadRangeSensors(
+        sdf::ElementPtr _sdf,
+        ignition::gazebo::EntityComponentManager &_ecm);
 
     /// \brief Update the control surfaces controllers.
     /// \param[in] _info Update information provided by the server.
@@ -81,7 +110,9 @@ namespace gazebo
 
     /// \brief Update PID Joint controllers.
     /// \param[in] _dt time step size since last update.
-    private: void ApplyMotorForces(const double _dt);
+    private: void ApplyMotorForces(
+        const double _dt,
+        ignition::gazebo::EntityComponentManager &_ecm);
 
     /// \brief Reset PID Joint controllers.
     private: void ResetPIDs();
@@ -92,7 +123,9 @@ namespace gazebo
     private: bool ReceiveServoPacket();
 
     /// \brief Send state to ArduPilot
-    private: void SendState() const;
+    private: void SendState(
+        double _simTime,
+        const ignition::gazebo::EntityComponentManager &_ecm) const;
 
     /// \brief Initialise flight dynamics model socket
     private: bool InitSockets(sdf::ElementPtr _sdf) const;
@@ -100,5 +133,7 @@ namespace gazebo
     /// \brief Private data pointer.
     private: std::unique_ptr<ArduPilotPluginPrivate> dataPtr;
   };
-}
-#endif
+} // namespace systems
+} // namespace gazebo
+} // namespace ignition
+#endif // GAZEBO_PLUGINS_ARDUPILOTPLUGIN_HH_
