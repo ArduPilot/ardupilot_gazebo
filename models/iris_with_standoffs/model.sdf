@@ -51,6 +51,9 @@
           <!--script>
             <name>Gazebo/DarkGrey</name>
           </script-->
+          <ambient>.175 .175 .175  1.0</ambient>
+          <diffuse>.175 .175 .175  1.0</diffuse>
+          <specular>.175 .175 .175 1.000000</specular>
         </material>
       </visual>
 
@@ -67,6 +70,9 @@
             <name>Gazebo/FlatBlack</name>
             <uri>file://media/materials/scripts/gazebo.material</uri>
           </script-->
+          <ambient>0.1 0.1 0.1</ambient>
+          <diffuse>0.1 0.1 0.1</diffuse>
+          <specular>0.01 0.01 0.01 1.0</specular>
         </material>
       </visual>
       <visual name='front_right_leg_visual'>
@@ -82,6 +88,9 @@
             <name>Gazebo/FlatBlack</name>
             <uri>file://media/materials/scripts/gazebo.material</uri>
           </script-->
+          <ambient>0.1 0.1 0.1</ambient>
+          <diffuse>0.1 0.1 0.1</diffuse>
+          <specular>0.01 0.01 0.01 1.0</specular>
         </material>
       </visual>
       <visual name='rear_left_leg_visual'>
@@ -97,6 +106,9 @@
             <name>Gazebo/FlatBlack</name>
             <uri>file://media/materials/scripts/gazebo.material</uri>
           </script-->
+          <ambient>0.1 0.1 0.1</ambient>
+          <diffuse>0.1 0.1 0.1</diffuse>
+          <specular>0.01 0.01 0.01 1.0</specular>
         </material>
       </visual>
       <visual name='rear_right_leg_visual'>
@@ -112,6 +124,9 @@
             <name>Gazebo/FlatBlack</name>
             <uri>file://media/materials/scripts/gazebo.material</uri>
           </script-->
+          <ambient>0.1 0.1 0.1</ambient>
+          <diffuse>0.1 0.1 0.1</diffuse>
+          <specular>0.01 0.01 0.01 1.0</specular>
         </material>
       </visual>
     </link>
@@ -272,6 +287,9 @@
             <name>Gazebo/Blue</name>
             <uri>__default__</uri>
           </script-->
+          <ambient>0 0 1</ambient>
+          <diffuse>0 0 1</diffuse>
+          <specular>0.1 0.1 0.1 1</specular>
         </material>
       </visual>
       <gravity>1</gravity>
@@ -339,9 +357,12 @@
         </geometry>
         <material>
           <!--script>
-            <name>Gazebo/DarkGrey</name>
+            <name>Gazebo/White</name>
             <uri>__default__</uri>
           </script-->
+          <ambient>1 1 1 1</ambient>
+          <diffuse>1 1 1 1</diffuse>
+          <specular>.1 .1 .1 1</specular>
         </material>
       </visual>
       <gravity>1</gravity>
@@ -412,6 +433,9 @@
             <name>Gazebo/Blue</name>
             <uri>__default__</uri>
           </script-->
+          <ambient>0 0 1</ambient>
+          <diffuse>0 0 1</diffuse>
+          <specular>0.1 0.1 0.1 1</specular>
         </material>
       </visual>
       <gravity>1</gravity>
@@ -479,9 +503,12 @@
         </geometry>
         <material>
           <!--script>
-            <name>Gazebo/DarkGrey</name>
+            <name>Gazebo/White</name>
             <uri>__default__</uri>
           </script-->
+          <ambient>1 1 1 1</ambient>
+          <diffuse>1 1 1 1</diffuse>
+          <specular>.1 .1 .1 1</specular>
         </material>
       </visual>
       <gravity>1</gravity>
