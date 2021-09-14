@@ -20,11 +20,9 @@
 #include <ignition/gazebo/System.hh>
 #include <sdf/sdf.hh>
 
-namespace ignition
-{
-namespace gazebo
-{
-namespace systems
+namespace ignition {
+namespace gazebo {
+namespace systems 
 {
   // Forward declare private data class
   class ArduPilotSocketPrivate;
@@ -81,9 +79,6 @@ namespace systems
     public: void PostUpdate(const ignition::gazebo::UpdateInfo &_info,
                             const ignition::gazebo::EntityComponentManager &_ecm) final;
 
-    // Documentation Inherited.
-    // public: virtual void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
-
     /// \brief Load control channels
     private: void LoadControlChannels(
         sdf::ElementPtr _sdf,
@@ -133,7 +128,9 @@ namespace systems
     /// \brief Private data pointer.
     private: std::unique_ptr<ArduPilotPluginPrivate> dataPtr;
   };
+
 } // namespace systems
 } // namespace gazebo
 } // namespace ignition
+
 #endif // GAZEBO_PLUGINS_ARDUPILOTPLUGIN_HH_

@@ -16,9 +16,6 @@
   simple socket handling class for systems with BSD socket API
  */
 
-// #include <AP_HAL/AP_HAL.h>
-// #if HAL_OS_SOCKETS
-
 #include "Socket.h"
 #include <string.h>
 
@@ -234,5 +231,3 @@ SocketAPM *SocketAPM::accept(uint32_t timeout_ms)
     setsockopt(newfd, IPPROTO_TCP, TCP_NODELAY, &one, sizeof(one));
     return new SocketAPM(false, newfd);
 }
-
-// #endif // HAL_OS_SOCKETS
