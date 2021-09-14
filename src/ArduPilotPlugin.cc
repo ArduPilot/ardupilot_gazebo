@@ -262,7 +262,6 @@ ignition::gazebo::systems::ArduPilotPlugin::~ArduPilotPlugin()
 }
 
 /////////////////////////////////////////////////
-// void ignition::gazebo::systems::ArduPilotPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
 void ignition::gazebo::systems::ArduPilotPlugin::Configure(
     const ignition::gazebo::Entity &_entity,
     const std::shared_ptr<const sdf::Element> &_sdf,

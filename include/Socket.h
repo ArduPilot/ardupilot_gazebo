@@ -17,9 +17,6 @@
  */
 #pragma once
 
-// #include <AP_HAL/AP_HAL.h>
-// #if HAL_OS_SOCKETS
-
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
@@ -70,5 +67,3 @@ private:
 
     void make_sockaddr(const char *address, uint16_t port, struct sockaddr_in &sockaddr);
 };
-
-// #endif // HAL_OS_SOCKETS
