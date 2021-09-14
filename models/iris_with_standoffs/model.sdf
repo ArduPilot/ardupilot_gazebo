@@ -695,7 +695,7 @@
         -->
       <control channel="0">
         <jointName>rotor_0_joint</jointName>
-        <useForce>0</useForce>
+        <useForce>1</useForce>
         <multiplier>838</multiplier>
         <offset>0</offset>
         <servo_min>1100</servo_min>
@@ -713,7 +713,7 @@
       
       <control channel="1">
         <jointName>rotor_1_joint</jointName>
-        <useForce>0</useForce>
+        <useForce>1</useForce>
         <multiplier>838</multiplier>
         <offset>0</offset>
         <servo_min>1100</servo_min>
@@ -731,7 +731,7 @@
 
       <control channel="2">
         <jointName>rotor_2_joint</jointName>
-        <useForce>0</useForce>
+        <useForce>1</useForce>
         <multiplier>-838</multiplier>
         <offset>0</offset>
         <servo_min>1100</servo_min>
@@ -749,7 +749,7 @@
 
       <control channel="3">
         <jointName>rotor_3_joint</jointName>
-        <useForce>0</useForce>
+        <useForce>1</useForce>
         <multiplier>-838</multiplier>
         <offset>0</offset>
         <servo_min>1100</servo_min>
