@@ -287,7 +287,7 @@ void ignition::gazebo::systems::ArduPilotPlugin::Configure(
   // x-forward, y-right, z-down
   // to the aerospace convention: x-forward, y-left, z-up
   this->dataPtr->modelXYZToAirplaneXForwardZDown =
-    ignition::math::Pose3d(0, 0, 0, 0, 0, 0);
+    ignition::math::Pose3d(0, 0, 0, IGN_PI, 0, 0);
   if (sdfClone->HasElement("modelXYZToAirplaneXForwardZDown"))
   {
     this->dataPtr->modelXYZToAirplaneXForwardZDown =
