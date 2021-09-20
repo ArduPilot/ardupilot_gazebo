@@ -1173,78 +1173,114 @@ void ignition::gazebo::systems::ArduPilotPlugin::SendState(
         imuMsg = this->dataPtr->imuMsg;
     }
 
-    // it is assumed that the imu orientation is:
-    //   x forward
-    //   y right
-    //   z down
+    // it is assumed that the imu orientation conforms to the aircraft convention:
+    //   x-forward
+    //   y-right
+    //   z-down
 
-    // get linear acceleration in body frame
+    // get linear acceleration
     ignition::math::Vector3d linearAccel{
         this->dataPtr->imuMsg.linear_acceleration().x(),
         this->dataPtr->imuMsg.linear_acceleration().y(),
         this->dataPtr->imuMsg.linear_acceleration().z()
     };
-    // igndbg << "lin accel [" << linearAccel << "]\n";
 
-    // get angular velocity in body frame
+    // get angular velocity
     ignition::math::Vector3d angularVel{
         this->dataPtr->imuMsg.angular_velocity().x(),
         this->dataPtr->imuMsg.angular_velocity().y(),
         this->dataPtr->imuMsg.angular_velocity().z(),
     };
 
-    // get inertial pose and velocity
-    // position of the uav in world frame
-    // this position is used to calculate bearing and distance
-    // from starting location, then use that to update gps position.
-    // The algorithm looks something like below (from ardupilot helper
-    // libraries):
-    //   bearing = to_degrees(atan2(position.y, position.x));
-    //   distance = math.sqrt(self.position.x**2 + self.position.y**2)
-    //   (self.latitude, self.longitude) = util.gps_newpos(
-    //    self.home_latitude, self.home_longitude, bearing, distance)
-    // where xyz is in the NED directions.
-    // Gazebo world xyz is assumed to be N, -E, -D, so flip some stuff
-    // around.
-    // orientation of the uav in world NED frame -
-    // assuming the world NED frame has xyz mapped to NED,
-    // imuLink is NED - z down
-    // 
-    // model world pose brings us to model,
-    // which for example zephyr has -y-forward, x-left, z-up
-    // adding modelXYZToAirplaneXForwardZDown rotates
-    //   from: model XYZ
-    //   to: airplane x-forward, y-left, z-down
+    /*
+      Gazebo versus ArduPilot frame conventions
+      =========================================
+
+      1. ArduPilot assumes an aircraft convention for body and world frames:
+
+        ArduPilot world frame is: x-north, y-east, z-down (NED)
+        ArduPilot body frame is:  x-forward, y-right, z-down
+
+      2. The Gazebo frame convention is:
+
+        Gazebo world frame is:    x-north, y-west, z-up
+        Gazebo body frame is:     x-forward, y-left, z-up
+
+        In some cases the Gazebo body frame may use a non-standard convention,
+        for example the Zephyr delta wing model has x-left, y-back, z-up. 
+
+      3. The position and orientation provided to ArduPilot must be given as the
+      transform from the Aircraft world frame to the Aircraft body frame.
+      We denote this as:
+
+        wldAToBdyA = ^{w_A}\xi_{b_A}
+
+      By which we mean that a vector expressed in Aircraft body frame coordinates
+      may be represented in Aircraft world frame coordinates by the transform:
+      
+        ^{wldA}v = ^{wldA}\xi_{bdyA} ^{bdyA}v
+                 = ^{wldA}rot_{bdyA} ^{bdyA}v + ^{wldA}pos_{bdyA}
+
+      i.e. a rotation from the world to body frame followed by a translation.
+
+      Combining transforms
+      ====================
+
+      1. Gazebo supplies us with the transform from the Gazebo world frame to the
+      Gazebo body frame (which we recall may be non-standard)
+
+        wldGToBdyG = ^{wldG}\xi_{bdyG}
+
+      2. The transform from the Aircraft world frame to the Gazebo world frame
+      is fixed (provided Gazebo does not modify its convention)
+
+        wldAToWldG = ^{wldA}\xi_{wldG} = Pose3d(0, 0, 0, -IGN_PI, 0, 0)
+
+      Note that this is the inverse of the plugin parameter <gazeboXYZToNED>
+      which tells us how to rotate a Gazebo world frame into an Aircraft world frame.
+
+      3. The transform from the Aircraft body frame to the Gazebo body frame is denoted:
+
+        bdyAToBdyG = ^{bdyA}\xi_{bdyG}
+
+      This will typically be Pose3d(0, 0, 0, -IGN_PI, 0, 0) but in some cases will vary.
+      For instance the Zephyr uses the transform Pose3d(0, 0, 0, -IGN_PI, 0, IGN_PI/2)
+
+      Note this is also the inverse of the plugin parameter <modelXYZToAirplaneXForwardZDown>
+      which tells us how to rotate a Gazebo model frame into an Aircraft body frame
+
+      4. Finally we compose the transforms to get the one required for the ArduPilot
+      JSON interface:
+
+        ^{wldA}\xi_{bdyA} = ^{wldA}\xi_{wldG} * ^{wldG}\xi_{bdyG} * (^{bdyA}\xi_{bdyG})^{-1}
+
+      where we use:
+
+        ^{bdyG}\xi_{bdyA} = (^{bdyA}\xi_{bdyG})^{-1}
+
+      In C++ variables names this is:
+
+        wldAToBdyA = wldAToWldG * wldGToBdyG * bdyAToBdyG.Inverse()
+    */
+
+    // get pose and velocity in Gazebo world frame
     const ignition::gazebo::components::WorldPose* worldPose =
         _ecm.Component<ignition::gazebo::components::WorldPose>(
             this->dataPtr->modelLink);
 
-    const ignition::math::Pose3d gazeboXYZToModelXForwardZDown =
-        this->dataPtr->modelXYZToAirplaneXForwardZDown +
-        worldPose->Data();
-
-    // get transform from world NED to Model frame
-    const ignition::math::Pose3d NEDToModelXForwardZUp =
-        gazeboXYZToModelXForwardZDown - this->dataPtr->gazeboXYZToNED;
-    // igndbg << "ned to model [" << NEDToModelXForwardZUp << "]\n";
-
-    // imuOrientationQuat is the rotation from world NED frame
-    // to the uav frame.
-    // igndbg << "imu [" << gazeboXYZToModelXForwardZDown.rot.GetAsEuler()
-    //       << "]\n";
-    // igndbg << "ned [" << this->gazeboXYZToNED.rot.GetAsEuler() << "]\n";
-    // igndbg << "rot [" << NEDToModelXForwardZUp.rot.GetAsEuler() << "]\n";
-
-    // Get NED velocity in body frame *
-    // or...
-    // Get model velocity in NED frame
     const ignition::gazebo::components::WorldLinearVelocity* worldLinearVel =
         _ecm.Component<ignition::gazebo::components::WorldLinearVelocity>(
             this->dataPtr->modelLink);
 
-    const ignition::math::Vector3d velGazeboWorldFrame = worldLinearVel->Data();
-    const ignition::math::Vector3d velNEDFrame =
-        this->dataPtr->gazeboXYZToNED.Rot().RotateVectorReverse(velGazeboWorldFrame);
+    // position and orientation transform (Aircraft world to Aircraft body)
+    ignition::math::Pose3d bdyAToBdyG = this->dataPtr->modelXYZToAirplaneXForwardZDown.Inverse();
+    ignition::math::Pose3d wldAToWldG = this->dataPtr->gazeboXYZToNED.Inverse();
+    ignition::math::Pose3d wldGToBdyG = worldPose->Data();
+    ignition::math::Pose3d wldAToBdyA = wldAToWldG * wldGToBdyG * bdyAToBdyG.Inverse();
+
+    // velocity transformation
+    ignition::math::Vector3d velWldG = worldLinearVel->Data();
+    ignition::math::Vector3d velWldA = wldAToWldG.Rot() * velWldG + wldAToWldG.Pos();
 
     // require the duration since sim start in seconds 
     double timestamp = _simTime;
@@ -1278,25 +1314,25 @@ void ignition::gazebo::systems::ArduPilotPlugin::SendState(
 
     writer.Key("position");
     writer.StartArray();
-    writer.Double(NEDToModelXForwardZUp.Pos().X());
-    writer.Double(NEDToModelXForwardZUp.Pos().Y());
-    writer.Double(NEDToModelXForwardZUp.Pos().Z());
+    writer.Double(wldAToBdyA.Pos().X());
+    writer.Double(wldAToBdyA.Pos().Y());
+    writer.Double(wldAToBdyA.Pos().Z());
     writer.EndArray();
 
     // ArduPilot quaternion convention: q[0] = 1 for identity.
     writer.Key("quaternion");
     writer.StartArray();
-    writer.Double(NEDToModelXForwardZUp.Rot().W());
-    writer.Double(NEDToModelXForwardZUp.Rot().X());
-    writer.Double(NEDToModelXForwardZUp.Rot().Y());
-    writer.Double(NEDToModelXForwardZUp.Rot().Z());
+    writer.Double(wldAToBdyA.Rot().W());
+    writer.Double(wldAToBdyA.Rot().X());
+    writer.Double(wldAToBdyA.Rot().Y());
+    writer.Double(wldAToBdyA.Rot().Z());
     writer.EndArray();
 
     writer.Key("velocity");
     writer.StartArray();
-    writer.Double(velNEDFrame.X());
-    writer.Double(velNEDFrame.Y());
-    writer.Double(velNEDFrame.Z());
+    writer.Double(velWldA.X());
+    writer.Double(velWldA.Y());
+    writer.Double(velWldA.Z());
     writer.EndArray();
 
     // SITL/SIM_JSON supports these additional sensor fields
