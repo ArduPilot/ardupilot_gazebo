@@ -825,9 +825,8 @@ void ignition::gazebo::systems::ArduPilotPlugin::PostUpdate(
             double t = std::chrono::duration_cast<std::chrono::duration<double>>(_info.simTime).count();
             this->SendState(t, _ecm);
         }
+        this->dataPtr->lastControllerUpdateTime = _info.simTime;
     }
-
-    this->dataPtr->lastControllerUpdateTime = _info.simTime;
 }
 
 /////////////////////////////////////////////////
