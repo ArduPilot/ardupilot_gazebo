@@ -18,6 +18,7 @@
 #include "Socket.h"
 
 #include <ignition/common/Time.hh>
+#include <ignition/common/SignalHandler.hh>
 #include <ignition/gazebo/components/AngularVelocity.hh>
 #include <ignition/gazebo/components/Imu.hh>
 #include <ignition/gazebo/components/JointForceCmd.hh>
@@ -50,6 +51,8 @@
 #include <sstream>
 #include <vector>
 
+#define DEBUG_JSON_IO 0
+
 // MAX_MOTORS limits the maximum number of <control> elements that
 // can be defined in the <plugin>.
 #define MAX_MOTORS 255
@@ -66,14 +69,6 @@ IGNITION_ADD_PLUGIN(ignition::gazebo::systems::ArduPilotPlugin,
 // Add plugin alias so that we can refer to the plugin without the version
 // namespace
 IGNITION_ADD_PLUGIN_ALIAS(ignition::gazebo::systems::ArduPilotPlugin, "ArduPilotPlugin")
-
-// The servo packet received from ArduPilot SITL. Defined in SIM_JSON.h.
-struct servo_packet {
-    uint16_t magic;         // 18458 expected magic value
-    uint16_t frame_rate;
-    uint32_t frame_count;
-    uint16_t pwm[16];
-};
 
 /// \brief class Control is responsible for controlling a joint
 class Control
@@ -191,6 +186,9 @@ class ignition::gazebo::systems::ArduPilotPluginPrivate
   /// \brief The name of the IMU sensor
   public: std::string imuName;
 
+  /// \brief Set true to enforce lock-step simulation
+  public: bool isLockStep{false};
+
   /// \brief Have we initialized subscription to the IMU data yet?
   public: bool imuInitialized{false};
 
@@ -248,6 +246,21 @@ class ignition::gazebo::systems::ArduPilotPluginPrivate
   /// \brief Last received frame count from the ArduPilot controller
   public: uint32_t fcu_frame_count = -1;
 
+  /// \brief Last sent JSON string, so we can resend if needed.
+  public: std::string json_str;
+ 
+  /// \brief A copy of the most recently received signal.
+  public: int signal{0};
+
+  /// \brief Signal handler.
+  public: ignition::common::SignalHandler sigHandler;
+
+  /// \brief Signal handler callback.
+  public: void OnSignal(int _sig)
+  {
+      igndbg << "Plugin received signal[" << _sig  << "]\n";
+      this->signal = _sig;
+  }
 };
 
 /////////////////////////////////////////////////
@@ -319,6 +332,17 @@ void ignition::gazebo::systems::ArduPilotPlugin::Configure(
   // Missed update count before we declare arduPilotOnline status false
   this->dataPtr->connectionTimeoutMaxCount =
     sdfClone->Get("connectionTimeoutMaxCount", 10).first;
+
+  // Enforce lock-step simulation (has default: false)
+  this->dataPtr->isLockStep =
+    sdfClone->Get("lock_step", this->dataPtr->isLockStep).first;
+
+  // Add the signal handler
+  this->dataPtr->sigHandler.AddCallback(
+      std::bind(
+        &ignition::gazebo::systems::ArduPilotPluginPrivate::OnSignal,
+        this->dataPtr.get(),
+        std::placeholders::_1));
 
   ignlog << "[" << this->dataPtr->modelName << "] "
         << "ArduPilot ready to fly. The force will be with you" << "\n";
@@ -783,27 +807,29 @@ void ignition::gazebo::systems::ArduPilotPlugin::PreUpdate(
     else
     {
         // Update the control surfaces.
-        if (_info.simTime > this->dataPtr->lastControllerUpdateTime)
+        if (!_info.paused && _info.simTime > this->dataPtr->lastControllerUpdateTime)
         {
-            double dt = std::chrono::duration_cast<std::chrono::duration<double> >(_info.simTime -
-                this->dataPtr->lastControllerUpdateTime).count();
-
-            if (this->ReceiveServoPacket())
+            if (this->dataPtr->isLockStep)
             {
-                // debug: synchonisation checks
-                // double dt_pkt = std::chrono::duration_cast<std::chrono::duration<double> >(_info.simTime -
-                //     this->dataPtr->lastServoPacketRecvTime).count();
-                // igndbg << "fdm_frame_rate: " << 1/dt
-                // << ", fcu_frame_rate: " << this->dataPtr->fcu_frame_rate
-                // << "\n";
-                // igndbg << "fdm_frame_rate: " << 1/dt
-                // << ", servo_packet_rate: " << 1/dt_pkt
-                // << "\n";
+                while (!this->ReceiveServoPacket() && this->dataPtr->arduPilotOnline)
+                {
+                    // SIGNINT should interrupt this loop.
+                    if (this->dataPtr->signal != 0)
+                    {
+                        break;
+                    }
+                }
+                this->dataPtr->lastServoPacketRecvTime = _info.simTime;
+            }
+            else if (this->ReceiveServoPacket())
+            {
                 this->dataPtr->lastServoPacketRecvTime = _info.simTime;
             }
 
             if (this->dataPtr->arduPilotOnline)
             {
+                double dt = std::chrono::duration_cast<std::chrono::duration<double> >(
+                  _info.simTime - this->dataPtr->lastControllerUpdateTime).count();
                 this->ApplyMotorForces(dt, _ecm);
             }
         }
@@ -818,13 +844,12 @@ void ignition::gazebo::systems::ArduPilotPlugin::PostUpdate(
     std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
 
     // Publish the new state.
-    if (_info.simTime > this->dataPtr->lastControllerUpdateTime)
+    if (!_info.paused && _info.simTime > this->dataPtr->lastControllerUpdateTime
+        && this->dataPtr->arduPilotOnline)
     {
-        if (this->dataPtr->arduPilotOnline)
-        {
-            double t = std::chrono::duration_cast<std::chrono::duration<double>>(_info.simTime).count();
-            this->SendState(t, _ecm);
-        }
+        double t = std::chrono::duration_cast<std::chrono::duration<double>>(_info.simTime).count();
+        this->CreateStateJSON(t, _ecm);
+        this->SendState();
         this->dataPtr->lastControllerUpdateTime = _info.simTime;
     }
 }
@@ -1033,28 +1058,37 @@ bool ignition::gazebo::systems::ArduPilotPlugin::ReceiveServoPacket()
             this->dataPtr->connectionTimeoutMaxCount)
             {
                 this->dataPtr->connectionTimeoutCount = 0;
-                this->dataPtr->arduPilotOnline = false;
-                ignwarn << "[" << this->dataPtr->modelName << "] "
-                    << "Broken ArduPilot connection, resetting motor control.\n";
-                this->ResetPIDs();
+
+                // for lock-step resend last state rather than time out
+                if (this->dataPtr->isLockStep)
+                {
+                    this->SendState();
+                }
+                else
+                {
+                    this->dataPtr->arduPilotOnline = false;
+                    ignwarn << "[" << this->dataPtr->modelName << "] "
+                        << "Broken ArduPilot connection, resetting motor control.\n";
+                    this->ResetPIDs();
+                }
             }
         }
         return false;
     }
 
-#if 0
+#if DEBUG_JSON_IO
     // debug: inspect sitl packet
     std::ostringstream oss;
     oss << "recv " << recvSize << " bytes from "
         << this->dataPtr->fcu_address << ":" << this->dataPtr->fcu_port_out << "\n";
-    oss << "magic: " << pkt.magic << "\n";
-    oss << "frame_rate: " << pkt.frame_rate << "\n";
+    // oss << "magic: " << pkt.magic << "\n";
+    // oss << "frame_rate: " << pkt.frame_rate << "\n";
     oss << "frame_count: " << pkt.frame_count << "\n";
-    oss << "pwm: [";
-    for (auto i=0; i<MAX_SERVO_CHANNELS - 1; ++i) {
-        oss << pkt.pwm[i] << ", ";
-    }
-    oss << pkt.pwm[MAX_SERVO_CHANNELS - 1] << "]\n";
+    // oss << "pwm: [";
+    // for (auto i=0; i<MAX_SERVO_CHANNELS - 1; ++i) {
+    //     oss << pkt.pwm[i] << ", ";
+    // }
+    // oss << pkt.pwm[MAX_SERVO_CHANNELS - 1] << "]\n";
     igndbg << "\n" << oss.str();
 #endif
 
@@ -1068,31 +1102,7 @@ bool ignition::gazebo::systems::ArduPilotPlugin::ReceiveServoPacket()
         return false;
     }
 
-    // check frame rate and frame order
-    this->dataPtr->fcu_frame_rate = pkt.frame_rate;
-    if (pkt.frame_count < this->dataPtr->fcu_frame_count)
-    {
-        // @TODO - implement re-initialisation 
-        ignwarn << "ArduPilot controller has reset\n";
-    }
-    else if (pkt.frame_count == this->dataPtr->fcu_frame_count)
-    {
-        // received duplicate frame, skip
-        ignwarn << "Duplicate input frame\n";
-        return false;
-    }
-    else if (pkt.frame_count != this->dataPtr->fcu_frame_count + 1
-        && this->dataPtr->arduPilotOnline)
-    {
-        // missed frames, warn only
-        ignwarn << "Missed "
-            << this->dataPtr->fcu_frame_count - pkt.frame_count
-            << " input frames\n";
-    }
-    this->dataPtr->fcu_frame_count = pkt.frame_count;
-
-    // always reset the connection timeout so we don't accumulate
-    this->dataPtr->connectionTimeoutCount = 0;
+    // the controller is online
     if (!this->dataPtr->arduPilotOnline)
     {
         this->dataPtr->arduPilotOnline = true;
@@ -1103,6 +1113,53 @@ bool ignition::gazebo::systems::ArduPilotPlugin::ReceiveServoPacket()
             << "\n";
     }
 
+    // update frame rate
+    this->dataPtr->fcu_frame_rate = pkt.frame_rate;
+
+    // check for controller reset
+    if (pkt.frame_count < this->dataPtr->fcu_frame_count)
+    {
+        // @TODO - implement re-initialisation 
+        ignwarn << "ArduPilot controller has reset\n";
+    }
+
+    // check for duplicate frame
+    else if (pkt.frame_count == this->dataPtr->fcu_frame_count)
+    {
+        ignwarn << "Duplicate input frame\n";
+
+        // for lock-step resend last state rather than ignore
+        if (this->dataPtr->isLockStep)
+        {
+            this->SendState();
+        }
+        
+        return false;
+    }
+
+    // check for skipped frames
+    else if (pkt.frame_count != this->dataPtr->fcu_frame_count + 1
+        && this->dataPtr->arduPilotOnline)
+    {
+        ignwarn << "Missed "
+            << pkt.frame_count - this->dataPtr->fcu_frame_count
+            << " input frames\n";
+    }
+
+    // update frame count
+    this->dataPtr->fcu_frame_count = pkt.frame_count;
+
+    // reset the connection timeout so we don't accumulate
+    this->dataPtr->connectionTimeoutCount = 0;
+
+    this->UpdateMotorCommands(pkt);
+ 
+    return true;
+}
+
+/////////////////////////////////////////////////
+void ignition::gazebo::systems::ArduPilotPlugin::UpdateMotorCommands(const servo_packet &_pkt)
+{
     // compute command based on requested motorSpeed
     for (unsigned i = 0; i < this->dataPtr->controls.size(); ++i)
     {
@@ -1113,7 +1170,7 @@ bool ignition::gazebo::systems::ArduPilotPlugin::ReceiveServoPacket()
             {
                 // convert pwm to raw cmd: [servo_min, servo_max] => [0, 1],
                 // default is: [1000, 2000] => [0, 1]
-                const double pwm = pkt.pwm[this->dataPtr->controls[i].channel];
+                const double pwm = _pkt.pwm[this->dataPtr->controls[i].channel];
                 const double pwm_min = this->dataPtr->controls[i].servo_min;
                 const double pwm_max = this->dataPtr->controls[i].servo_max;
                 const double multiplier = this->dataPtr->controls[i].multiplier;
@@ -1147,16 +1204,15 @@ bool ignition::gazebo::systems::ArduPilotPlugin::ReceiveServoPacket()
         }
         else
         {
-        ignerr << "[" << this->dataPtr->modelName << "] "
+            ignerr << "[" << this->dataPtr->modelName << "] "
                 << "too many motors, skipping [" << i
                 << " > " << MAX_MOTORS << "].\n";
         }
     }
-    return true;
 }
 
 /////////////////////////////////////////////////
-void ignition::gazebo::systems::ArduPilotPlugin::SendState(
+void ignition::gazebo::systems::ArduPilotPlugin::CreateStateJSON(
     double _simTime,
     const ignition::gazebo::EntityComponentManager &_ecm) const
 {
@@ -1354,15 +1410,26 @@ void ignition::gazebo::systems::ArduPilotPlugin::SendState(
     // writer.Double(5.5);
     // writer.EndObject();
 
-    // send JSON
-    std::string json_str = "\n" + std::string(s.GetString()) + "\n";
-    // auto bytes_sent =
+    // get JSON
+    this->dataPtr->json_str = "\n" + std::string(s.GetString()) + "\n";
+    // igndbg << this->dataPtr->json_str << "\n";
+}
+
+/////////////////////////////////////////////////
+void ignition::gazebo::systems::ArduPilotPlugin::SendState() const
+{
+#if DEBUG_JSON_IO
+    auto bytes_sent =
+#endif
     this->dataPtr->sock.sendto(
-        json_str.c_str(), json_str.size(),
+        this->dataPtr->json_str.c_str(),
+        this->dataPtr->json_str.size(),
         this->dataPtr->fcu_address,
         this->dataPtr->fcu_port_out);
-    
-    // igndbg << "sent " << bytes_sent <<  " bytes to " 
-    //     << this->dataPtr->fcu_address << ":" << this->dataPtr->fcu_port_out << "\n";
-    // igndbg << json_str << "\n";
+
+#if DEBUG_JSON_IO
+    igndbg << "sent " << bytes_sent <<  " bytes to " 
+        << this->dataPtr->fcu_address << ":" << this->dataPtr->fcu_port_out << "\n"
+        << "frame_count: " << this->dataPtr->fcu_frame_count << "\n";
+#endif
 }

@@ -24,6 +24,14 @@ namespace ignition {
 namespace gazebo {
 namespace systems 
 {
+  // The servo packet received from ArduPilot SITL. Defined in SIM_JSON.h.
+  struct servo_packet {
+      uint16_t magic;         // 18458 expected magic value
+      uint16_t frame_rate;
+      uint32_t frame_count;
+      uint16_t pwm[16];
+  };
+
   // Forward declare private data class
   class ArduPilotSocketPrivate;
   class ArduPilotPluginPrivate;
@@ -117,10 +125,16 @@ namespace systems
     /// Returns true if a servo packet was received, otherwise false.
     private: bool ReceiveServoPacket();
 
-    /// \brief Send state to ArduPilot
-    private: void SendState(
+    /// \brief Update the motor commands given servo PWM values
+    private: void UpdateMotorCommands(const servo_packet &_pkt);
+
+    /// \brief Create the state JSON
+    private: void CreateStateJSON(
         double _simTime,
         const ignition::gazebo::EntityComponentManager &_ecm) const;
+
+    /// \brief Send state to ArduPilot
+    private: void SendState() const;
 
     /// \brief Initialise flight dynamics model socket
     private: bool InitSockets(sdf::ElementPtr _sdf) const;
