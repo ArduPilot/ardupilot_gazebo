@@ -919,9 +919,8 @@ void ignition::gazebo::systems::ArduPilotPlugin::ApplyMotorForces(
           this->dataPtr->controls[i].joint);
       if (jfcComp == nullptr)
       {
-        jfcComp = _ecm.Component<ignition::gazebo::components::JointForceCmd>(
-            _ecm.CreateComponent(this->dataPtr->controls[i].joint,
-                ignition::gazebo::components::JointForceCmd({0})));
+        jfcComp = _ecm.CreateComponent(this->dataPtr->controls[i].joint,
+            ignition::gazebo::components::JointForceCmd({0}));
       }
     }
     else if (this->dataPtr->controls[i].type == "VELOCITY")
@@ -930,9 +929,8 @@ void ignition::gazebo::systems::ArduPilotPlugin::ApplyMotorForces(
           this->dataPtr->controls[i].joint);
       if (jvcComp == nullptr)
       {
-        jvcComp = _ecm.Component<ignition::gazebo::components::JointVelocityCmd>(
-            _ecm.CreateComponent(this->dataPtr->controls[i].joint,
-                ignition::gazebo::components::JointVelocityCmd({0})));
+        jvcComp = _ecm.CreateComponent(this->dataPtr->controls[i].joint,
+            ignition::gazebo::components::JointVelocityCmd({0}));
       }
     }
 
