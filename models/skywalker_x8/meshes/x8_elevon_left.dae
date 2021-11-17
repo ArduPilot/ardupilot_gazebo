@@ -41,7 +41,7 @@
   </library_effects>
   <library_images>
     <image id="skywalker_x8_tga" name="skywalker_x8_tga">
-      <init_from>../materials/textures/skywalker_x8.tga</init_from>
+      <init_from>../materials/textures/x8.tga</init_from>
     </image>
   </library_images>
   <library_materials>

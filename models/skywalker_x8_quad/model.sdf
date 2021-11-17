@@ -7,14 +7,14 @@
       <pose>0 0 0 0 0 0</pose>
       <inertial>
         <pose>0 0 0 0 0 0</pose>
-        <mass>5</mass>
+        <mass>4.5</mass>
         <inertia>
-          <ixx>0.477708333333</ixx>
+          <ixx>0.45</ixx>
           <ixy>0</ixy>
-          <ixz>0</ixz>
-          <iyy>0.341666666667</iyy>
+          <ixz>0.06</ixz>
+          <iyy>0.325</iyy>
           <iyz>0</iyz>
-          <izz>0.811041666667</izz>
+          <izz>0.75</izz>
         </inertia>
       </inertial>
       <collision name='base_link_collision'>
@@ -36,8 +36,8 @@
           <specular>1.0 1.0 1.0</specular>
           <pbr>
             <metal>
-                <albedo_map>model://skywalker_x8/materials/textures/skywalker_x8.tga</albedo_map>
-                <metalness>0.5</metalness>
+                <albedo_map>model://skywalker_x8/materials/textures/x8.tga</albedo_map>
+                <metalness>0.1</metalness>
             </metal>
           </pbr>
         </material>
@@ -50,9 +50,19 @@
           </box>
         </geometry>
         <material>
-          <ambient>.175 .175 .175  1.0</ambient>
-          <diffuse>.175 .175 .175  1.0</diffuse>
-          <specular>.175 .175 .175 1.000000</specular>
+          <ambient>1 1 1</ambient>
+          <diffuse>1 1 1</diffuse>
+          <specular>1 1 1</specular>
+          <pbr>
+            <metal>
+              <albedo_map>model://skywalker_x8/materials/textures/metal_graphite/metal_graphite_basecolor.jpg</albedo_map>
+              <metalness_map>model://skywalker_x8/materials/textures/metal_graphite/metal_graphite_metallic.jpg</metalness_map>
+              <normal_map>model://skywalker_x8/materials/textures/metal_graphite/metal_graphite_normal.jpg</normal_map>
+              <roughness_map>model://skywalker_x8/materials/textures/metal_graphite/metal_graphite_roughness.jpg</roughness_map>
+              <roughness>1.0</roughness>
+              <metalness>1.0</metalness> 
+            </metal>
+          </pbr>
         </material>
       </visual>
       <visual name='right_motor_column'>
@@ -63,40 +73,22 @@
           </box>
         </geometry>
         <material>
-          <ambient>.175 .175 .175  1.0</ambient>
-          <diffuse>.175 .175 .175  1.0</diffuse>
-          <specular>.175 .175 .175 1.000000</specular>
+          <ambient>1 1 1</ambient>
+          <diffuse>1 1 1</diffuse>
+          <specular>1 1 1</specular>
+          <pbr>
+            <metal>
+              <albedo_map>model://skywalker_x8/materials/textures/metal_graphite/metal_graphite_basecolor.jpg</albedo_map>
+              <metalness_map>model://skywalker_x8/materials/textures/metal_graphite/metal_graphite_metallic.jpg</metalness_map>
+              <normal_map>model://skywalker_x8/materials/textures/metal_graphite/metal_graphite_normal.jpg</normal_map>
+              <roughness_map>model://skywalker_x8/materials/textures/metal_graphite/metal_graphite_roughness.jpg</roughness_map>
+              <roughness>1.0</roughness>
+              <metalness>1.0</metalness> 
+            </metal>
+          </pbr>
         </material>
       </visual>
       <visual name='m0'>
-        <pose>-0.35 0.35 0.045 0 0 0</pose>
-        <geometry>
-          <cylinder>
-            <length>0.035</length>
-            <radius>0.02</radius>
-          </cylinder>
-        </geometry>
-        <material>
-          <ambient>.175 .175 .175  1.0</ambient>
-          <diffuse>.175 .175 .175  1.0</diffuse>
-          <specular>.175 .175 .175 1.000000</specular>
-        </material>
-      </visual>
-      <visual name='m1'>
-        <pose>-0.35 -0.35 0.045 0 0 0</pose>
-        <geometry>
-          <cylinder>
-            <length>0.035</length>
-            <radius>0.02</radius>
-          </cylinder>
-        </geometry>
-        <material>
-          <ambient>.175 .175 .175  1.0</ambient>
-          <diffuse>.175 .175 .175  1.0</diffuse>
-          <specular>.175 .175 .175 1.000000</specular>
-        </material>
-      </visual>
-      <visual name='m2'>
         <pose>0.35 -0.35 0.045 0 0 0</pose>
         <geometry>
           <cylinder>
@@ -105,12 +97,46 @@
           </cylinder>
         </geometry>
         <material>
-          <ambient>.175 .175 .175  1.0</ambient>
-          <diffuse>.175 .175 .175  1.0</diffuse>
-          <specular>.175 .175 .175 1.000000</specular>
+          <ambient>1 1 1</ambient>
+          <diffuse>1 1 1</diffuse>
+          <specular>1 1 1</specular>
+          <pbr>
+            <metal>
+              <albedo_map>model://skywalker_x8/materials/textures/blue_metal/blue_metal_basecolor.jpg</albedo_map>
+              <metalness_map>model://skywalker_x8/materials/textures/blue_metal/blue_metal_metallic.jpg</metalness_map>
+              <normal_map>model://skywalker_x8/materials/textures/blue_metal/blue_metal_normal.jpg</normal_map>
+              <roughness_map>model://skywalker_x8/materials/textures/blue_metal/blue_metal_roughness.jpg</roughness_map>
+              <roughness>1.0</roughness>
+              <metalness>1.0</metalness> 
+            </metal>
+          </pbr>
         </material>
       </visual>
-      <visual name='m3'>
+      <visual name='m1'>
+        <pose>-0.35 0.35 0.045 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.035</length>
+            <radius>0.02</radius>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>1 1 1</ambient>
+          <diffuse>1 1 1</diffuse>
+          <specular>1 1 1</specular>
+          <pbr>
+            <metal>
+              <albedo_map>model://skywalker_x8/materials/textures/blue_metal/blue_metal_basecolor.jpg</albedo_map>
+              <metalness_map>model://skywalker_x8/materials/textures/blue_metal/blue_metal_metallic.jpg</metalness_map>
+              <normal_map>model://skywalker_x8/materials/textures/blue_metal/blue_metal_normal.jpg</normal_map>
+              <roughness_map>model://skywalker_x8/materials/textures/blue_metal/blue_metal_roughness.jpg</roughness_map>
+              <roughness>1.0</roughness>
+              <metalness>1.0</metalness> 
+            </metal>
+          </pbr>
+        </material>
+      </visual>
+      <visual name='m2'>
         <pose>0.35 0.35 0.045 0 0 0</pose>
         <geometry>
           <cylinder>
@@ -119,9 +145,67 @@
           </cylinder>
         </geometry>
         <material>
-          <ambient>.175 .175 .175  1.0</ambient>
-          <diffuse>.175 .175 .175  1.0</diffuse>
-          <specular>.175 .175 .175 1.000000</specular>
+          <ambient>1 1 1</ambient>
+          <diffuse>1 1 1</diffuse>
+          <specular>1 1 1</specular>
+          <pbr>
+            <metal>
+              <albedo_map>model://skywalker_x8/materials/textures/blue_metal/blue_metal_basecolor.jpg</albedo_map>
+              <metalness_map>model://skywalker_x8/materials/textures/blue_metal/blue_metal_metallic.jpg</metalness_map>
+              <normal_map>model://skywalker_x8/materials/textures/blue_metal/blue_metal_normal.jpg</normal_map>
+              <roughness_map>model://skywalker_x8/materials/textures/blue_metal/blue_metal_roughness.jpg</roughness_map>
+              <roughness>1.0</roughness>
+              <metalness>1.0</metalness> 
+            </metal>
+          </pbr>
+        </material>
+      </visual>
+      <visual name='m3'>
+        <pose>-0.35 -0.35 0.045 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.035</length>
+            <radius>0.02</radius>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>1 1 1</ambient>
+          <diffuse>1 1 1</diffuse>
+          <specular>1 1 1</specular>
+          <pbr>
+            <metal>
+              <albedo_map>model://skywalker_x8/materials/textures/blue_metal/blue_metal_basecolor.jpg</albedo_map>
+              <metalness_map>model://skywalker_x8/materials/textures/blue_metal/blue_metal_metallic.jpg</metalness_map>
+              <normal_map>model://skywalker_x8/materials/textures/blue_metal/blue_metal_normal.jpg</normal_map>
+              <roughness_map>model://skywalker_x8/materials/textures/blue_metal/blue_metal_roughness.jpg</roughness_map>
+              <roughness>1.0</roughness>
+              <metalness>1.0</metalness> 
+            </metal>
+          </pbr>
+        </material>
+      </visual>
+      <visual name='m4'>
+        <pose>-0.275 0 0.0 0 1.57 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.035</length>
+            <radius>0.02</radius>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>1 1 1</ambient>
+          <diffuse>1 1 1</diffuse>
+          <specular>1 1 1</specular>
+          <pbr>
+            <metal>
+              <albedo_map>model://skywalker_x8/materials/textures/blue_metal/blue_metal_basecolor.jpg</albedo_map>
+              <metalness_map>model://skywalker_x8/materials/textures/blue_metal/blue_metal_metallic.jpg</metalness_map>
+              <normal_map>model://skywalker_x8/materials/textures/blue_metal/blue_metal_normal.jpg</normal_map>
+              <roughness_map>model://skywalker_x8/materials/textures/blue_metal/blue_metal_roughness.jpg</roughness_map>
+              <roughness>1.0</roughness>
+              <metalness>1.0</metalness> 
+            </metal>
+          </pbr>
         </material>
       </visual>
       <!-- save for debugging use -->
@@ -211,7 +295,7 @@
         <geometry>
           <cylinder>
             <length>0.005</length>
-            <radius>0.1</radius>
+            <radius>0.105</radius>
           </cylinder>
         </geometry>
       </collision>
@@ -224,10 +308,20 @@
           </mesh>
         </geometry>
         <material>
+          <diffuse>1.0 1.0 1.0</diffuse>
+          <specular>1.0 1.0 1.0</specular>
+          <pbr>
+            <metal>
+                <albedo_map>model://skywalker_x8/materials/textures/x8.tga</albedo_map>
+                <metalness>0.5</metalness>
+            </metal>
+          </pbr>
+        </material>
+        <!-- <material>
           <ambient>0 1 0</ambient>
           <diffuse>0 1 0</diffuse>
           <specular>0.1 0.1 0.1 1</specular>
-        </material>
+        </material> -->
       </visual>
     </link>
     <joint name='rotor_0_joint' type='revolute'>
@@ -265,7 +359,7 @@
         <geometry>
           <cylinder>
             <length>0.005</length>
-            <radius>0.1</radius>
+            <radius>0.105</radius>
           </cylinder>
         </geometry>
       </collision>
@@ -278,10 +372,20 @@
           </mesh>
         </geometry>
         <material>
+          <diffuse>1.0 1.0 1.0</diffuse>
+          <specular>1.0 1.0 1.0</specular>
+          <pbr>
+            <metal>
+                <albedo_map>model://skywalker_x8/materials/textures/x8.tga</albedo_map>
+                <metalness>0.5</metalness>
+            </metal>
+          </pbr>
+        </material>
+        <!-- <material>
           <ambient>0 0 1</ambient>
           <diffuse>0 0 1</diffuse>
           <specular>0.1 0.1 0.1 1</specular>
-        </material>
+        </material> -->
       </visual>
     </link>
     <joint name='rotor_1_joint' type='revolute'>
@@ -319,7 +423,7 @@
         <geometry>
           <cylinder>
             <length>0.005</length>
-            <radius>0.1</radius>
+            <radius>0.105</radius>
           </cylinder>
         </geometry>
       </collision>
@@ -332,10 +436,20 @@
           </mesh>
         </geometry>
         <material>
+          <diffuse>1.0 1.0 1.0</diffuse>
+          <specular>1.0 1.0 1.0</specular>
+          <pbr>
+            <metal>
+                <albedo_map>model://skywalker_x8/materials/textures/x8.tga</albedo_map>
+                <metalness>0.5</metalness>
+            </metal>
+          </pbr>
+        </material>
+        <!-- <material>
           <ambient>1 0 0</ambient>
           <diffuse>1 0 0</diffuse>
           <specular>0.1 0.1 0.1 1</specular>
-        </material>
+        </material> -->
       </visual>
     </link>
     <joint name='rotor_2_joint' type='revolute'>
@@ -373,7 +487,7 @@
         <geometry>
           <cylinder>
             <length>0.005</length>
-            <radius>0.1</radius>
+            <radius>0.105</radius>
           </cylinder>
         </geometry>
       </collision>
@@ -386,10 +500,20 @@
           </mesh>
         </geometry>
         <material>
+          <diffuse>1.0 1.0 1.0</diffuse>
+          <specular>1.0 1.0 1.0</specular>
+          <pbr>
+            <metal>
+                <albedo_map>model://skywalker_x8/materials/textures/x8.tga</albedo_map>
+                <metalness>0.5</metalness>
+            </metal>
+          </pbr>
+        </material>
+        <!-- <material>
           <ambient>0 0 1</ambient>
           <diffuse>0 0 1</diffuse>
           <specular>0.1 0.1 0.1 1</specular>
-        </material>
+        </material> -->
       </visual>
     </link>
     <joint name='rotor_3_joint' type='revolute'>
@@ -409,7 +533,7 @@
     </joint>
 
     <link name='rotor_pusher'>
-      <pose>-0.22 0 0.0 0 1.57 0</pose>
+      <pose>-0.298 0 0.0 0 1.57 0</pose>
       <inertial>
         <mass>0.025</mass>
         <inertia>
@@ -422,16 +546,16 @@
         </inertia>
       </inertial>
       <collision name='collision'>
-        <pose>0.0 0 -0.04 0 0 0</pose>
+        <pose>0.0 0 0 0 0 0</pose>
         <geometry>
           <cylinder>
             <length>0.005</length>
-            <radius>0.06</radius>
+            <radius>0.065</radius>
           </cylinder>
         </geometry>
       </collision>
       <visual name='visual'>
-        <pose>0 0 -0.04 0 0 0</pose>
+        <pose>0 0 0 0 0 0</pose>
         <geometry>
           <mesh>
             <scale>0.8 0.8 0.8</scale>
@@ -439,9 +563,14 @@
           </mesh>
         </geometry>
         <material>
-          <ambient>0 0 1</ambient>
-          <diffuse>0 0 1</diffuse>
-          <specular>0.1 0.1 0.1 1</specular>
+          <diffuse>1.0 1.0 1.0</diffuse>
+          <specular>1.0 1.0 1.0</specular>
+          <pbr>
+            <metal>
+                <albedo_map>model://skywalker_x8/materials/textures/x8.tga</albedo_map>
+                <metalness>0.5</metalness>
+            </metal>
+          </pbr>
         </material>
       </visual>
     </link>
@@ -485,8 +614,8 @@
           <specular>1.0 1.0 1.0</specular>
           <pbr>
             <metal>
-                <albedo_map>model://skywalker_x8/materials/textures/skywalker_x8.tga</albedo_map>
-                <metalness>0.5</metalness>
+                <albedo_map>model://skywalker_x8/materials/textures/x8.tga</albedo_map>
+                <metalness>0.1</metalness>
             </metal>
           </pbr>
         </material>
@@ -517,8 +646,8 @@
           <specular>1.0 1.0 1.0</specular>
           <pbr>
             <metal>
-                <albedo_map>model://skywalker_x8/materials/textures/skywalker_x8.tga</albedo_map>
-                <metalness>0.5</metalness>
+                <albedo_map>model://skywalker_x8/materials/textures/x8.tga</albedo_map>
+                <metalness>0.1</metalness>
             </metal>
           </pbr>
         </material>

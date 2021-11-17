@@ -36,8 +36,8 @@
           <specular>1.0 1.0 1.0</specular>
           <pbr>
             <metal>
-                <albedo_map>model://skywalker_x8/materials/textures/skywalker_x8.tga</albedo_map>
-                <metalness>0.5</metalness>
+                <albedo_map>model://skywalker_x8/materials/textures/x8.tga</albedo_map>
+                <metalness>0.1</metalness>
             </metal>
           </pbr>
         </material>
@@ -108,50 +108,10 @@
           <specular>0.1 0.1 0.1 1</specular>
         </material>
       </visual>
-      <!-- original CP values -->
-      <!-- <visual name="cp_wing">
-        <pose>0 -0.1 0.0 0 0 0</pose>
-        <geometry>
-          <sphere>
-            <radius>0.03</radius>
-          </sphere>
-        </geometry>
-        <material>
-          <ambient>0 0 1</ambient>
-          <diffuse>0 0 1</diffuse>
-          <specular>0.1 0.1 0.1 1</specular>
-        </material>
-      </visual> 
-      <visual name="cp_left_elevon">
-        <pose>-0.05 0.3 0.05 0 0 0</pose>
-        <geometry>
-          <sphere>
-            <radius>0.03</radius>
-          </sphere>
-        </geometry>
-        <material>
-          <ambient>1 0 0</ambient>
-          <diffuse>1 0 0</diffuse>
-          <specular>0.1 0.1 0.1 1</specular>
-        </material>
-      </visual>
-      <visual name="cp_right_elevon">
-        <pose>-0.05 -0.3 0.05 0 0 0</pose>
-        <geometry>
-          <sphere>
-            <radius>0.03</radius>
-          </sphere>
-        </geometry>
-        <material>
-          <ambient>0 1 0</ambient>
-          <diffuse>0 1 0</diffuse>
-          <specular>0.1 0.1 0.1 1</specular>
-        </material>
-      </visual> -->
     </link>
 
     <link name='rotor_pusher'>
-      <pose>-0.22 0 0.0 0 1.57 0</pose>
+      <pose>-0.298 0 0.0 0 1.57 0</pose>
       <inertial>
         <mass>0.025</mass>
         <inertia>
@@ -164,16 +124,16 @@
         </inertia>
       </inertial>
       <collision name='collision'>
-        <pose>0.0 0 -0.04 0 0 0</pose>
+        <pose>0.0 0 0 0 0 0</pose>
         <geometry>
           <cylinder>
             <length>0.005</length>
-            <radius>0.06</radius>
+            <radius>0.065</radius>
           </cylinder>
         </geometry>
       </collision>
       <visual name='visual'>
-        <pose>0 0 -0.04 0 0 0</pose>
+        <pose>0 0 0 0 0 0</pose>
         <geometry>
           <mesh>
             <scale>0.8 0.8 0.8</scale>
@@ -181,9 +141,14 @@
           </mesh>
         </geometry>
         <material>
-          <ambient>0 0 1</ambient>
-          <diffuse>0 0 1</diffuse>
-          <specular>0.1 0.1 0.1 1</specular>
+          <diffuse>1.0 1.0 1.0</diffuse>
+          <specular>1.0 1.0 1.0</specular>
+          <pbr>
+            <metal>
+                <albedo_map>model://skywalker_x8/materials/textures/x8.tga</albedo_map>
+                <metalness>0.5</metalness>
+            </metal>
+          </pbr>
         </material>
       </visual>
     </link>
@@ -227,8 +192,8 @@
           <specular>1.0 1.0 1.0</specular>
           <pbr>
             <metal>
-                <albedo_map>model://skywalker_x8/materials/textures/skywalker_x8.tga</albedo_map>
-                <metalness>0.5</metalness>
+                <albedo_map>model://skywalker_x8/materials/textures/x8.tga</albedo_map>
+                <metalness>0.1</metalness>
             </metal>
           </pbr>
         </material>
@@ -259,8 +224,8 @@
           <specular>1.0 1.0 1.0</specular>
           <pbr>
             <metal>
-                <albedo_map>model://skywalker_x8/materials/textures/skywalker_x8.tga</albedo_map>
-                <metalness>0.5</metalness>
+                <albedo_map>model://skywalker_x8/materials/textures/x8.tga</albedo_map>
+                <metalness>0.1</metalness>
             </metal>
           </pbr>
         </material>
@@ -379,7 +344,6 @@
       <upward>0 0 1</upward>
       <link_name>rotor_pusher</link_name>
     </plugin>
-    <!-- from zephyr -->
     <!-- wing_lift-drag -->
     <plugin filename="libignition-gazebo-lift-drag-system.so"
         name="ignition::gazebo::systems::LiftDrag">
