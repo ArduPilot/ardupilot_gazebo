@@ -43,7 +43,7 @@
         </material>
       </visual>
       <visual name='m4'>
-        <pose>-0.275 0 0.0 0 1.57 0</pose>
+        <pose>-0.361 0 0.0 0 1.57 0</pose>
         <geometry>
           <cylinder>
             <length>0.035</length>
@@ -68,7 +68,7 @@
       </visual>
       <!-- save for debugging use -->
       <visual name="cp_wing">
-        <pose>0.1 0 0 0 0 0</pose>
+        <pose>0.01 0 0 0 0 0</pose>
         <geometry>
           <sphere>
             <radius>0.03</radius>
@@ -81,7 +81,7 @@
         </material>
       </visual>
       <visual name="cp_left_elevon">
-        <pose>-0.2 0.7 0 0 0 0</pose>
+        <pose>-0.30 0.75 -0.005 0 0 0</pose>
         <geometry>
           <sphere>
             <radius>0.03</radius>
@@ -94,7 +94,7 @@
         </material>
       </visual>
       <visual name="cp_right_elevon">
-        <pose>-0.2 -0.7 0 0 0 0</pose>
+        <pose>-0.30 -0.75 -0.005 0 0 0</pose>
         <geometry>
           <sphere>
             <radius>0.03</radius>
@@ -107,7 +107,7 @@
         </material>
       </visual>
       <visual name="cp_left_winglet">
-        <pose>-0.27 1.03 0.05 0 0 0</pose>
+        <pose>-0.36 1.04 0.08 0 0 0</pose>
         <geometry>
           <sphere>
             <radius>0.03</radius>
@@ -120,7 +120,7 @@
         </material>
       </visual>
       <visual name="cp_right_winglet">
-        <pose>-0.27 -1.03 0.05 0 0 0</pose>
+        <pose>-0.36 -1.04 0.08 0 0 0</pose>
         <geometry>
           <sphere>
             <radius>0.03</radius>
@@ -132,10 +132,36 @@
           <specular>0.1 0.1 0.1 1</specular>
         </material>
       </visual>
+      <visual name="cp_left_wing">
+        <pose>-0.14 0.5 -0.005 0 0 0</pose>
+        <geometry>
+          <sphere>
+            <radius>0.03</radius>
+          </sphere>
+        </geometry>
+        <material>
+          <ambient>1 1 0</ambient>
+          <diffuse>1 1 0</diffuse>
+          <specular>0.1 0.1 0.1 1</specular>
+        </material>
+      </visual>
+      <visual name="cp_right_wing">
+        <pose>-0.14 -0.5 -0.005 0 0 0</pose>
+        <geometry>
+          <sphere>
+            <radius>0.03</radius>
+          </sphere>
+        </geometry>
+        <material>
+          <ambient>1 1 0</ambient>
+          <diffuse>1 1 0</diffuse>
+          <specular>0.1 0.1 0.1 1</specular>
+        </material>
+      </visual>
     </link>
 
     <link name='rotor_pusher'>
-      <pose>-0.298 0 0.0 0 1.57 0</pose>
+      <pose>-0.385 0 0.0 0 1.57 0</pose>
       <inertial>
         <mass>0.025</mass>
         <inertia>
@@ -203,7 +229,7 @@
           <iyz>0</iyz>
           <izz>0.003446072</izz>
         </inertia>
-        <pose>-0.2 0.7 0 0 0 0</pose>
+        <pose>-0.30 0.75 -0.005 0 0 0</pose>
       </inertial>
       <visual name='left_elevon_visual'>
         <geometry>
@@ -235,7 +261,7 @@
           <iyz>0</iyz>
           <izz>0.003446072</izz>
         </inertia>
-        <pose>-0.2 -0.7 0 0 0 0</pose>
+        <pose>-0.30 -0.75 -0.005 0 0 0</pose>
       </inertial>
       <visual name='right_elevon_visual'>
         <geometry>
@@ -260,7 +286,7 @@
     <joint name='left_elevon_joint' type='revolute'>
       <parent>base_link</parent>
       <child>left_elevon</child>
-      <pose>-0.18 0.6 -0.005 0 0 0.265</pose>
+      <pose>-0.27 0.6 -0.005 0 0 0.265</pose>
       <axis>
         <xyz>0 1 0</xyz>
         <limit>
@@ -277,7 +303,7 @@
     <joint name='right_elevon_joint' type='revolute'>
       <parent>base_link</parent>
       <child>right_elevon</child>
-      <pose>-0.18 -0.6 -0.005 0 0 -0.265</pose>
+      <pose>-0.27 -0.6 -0.005 0 0 -0.265</pose>
       <axis>
         <xyz>0 1 0</xyz>
         <limit>
@@ -368,7 +394,7 @@
       <upward>0 0 1</upward>
       <link_name>rotor_pusher</link_name>
     </plugin>
-    <!-- wing_lift-drag -->
+    <!-- wing lift-drag -->
     <plugin filename="libignition-gazebo-lift-drag-system.so"
         name="ignition::gazebo::systems::LiftDrag">
       <a0>0.13</a0>
@@ -379,14 +405,14 @@
       <cla_stall>-3.85</cla_stall>
       <cda_stall>-0.9233984055</cda_stall>
       <cma_stall>0</cma_stall>
-      <cp>0.1 0 0</cp>
+      <cp>0.01 0 0</cp>
       <area>0.80</area>
       <air_density>1.2041</air_density>
       <forward>1 0 0</forward>
       <upward>0 0 1</upward>
       <link_name>base_link</link_name>
     </plugin>
-    <!-- left_wing_lift-drag -->
+    <!-- left_elevon lift-drag -->
     <plugin filename="libignition-gazebo-lift-drag-system.so"
         name="ignition::gazebo::systems::LiftDrag">
       <a0>0.15</a0>
@@ -397,7 +423,7 @@
       <cla_stall>-3.85</cla_stall>
       <cda_stall>-0.9233984055</cda_stall>
       <cma_stall>0</cma_stall>
-      <cp>-0.2 0.7 0</cp>
+      <cp>-0.30 0.75 -0.005</cp>
       <area>0.10</area>
       <air_density>1.2041</air_density>
       <forward>1 0 0</forward>
@@ -406,7 +432,7 @@
       <control_joint_name>left_elevon_joint</control_joint_name>
       <control_joint_rad_to_cl>-5.0</control_joint_rad_to_cl>
     </plugin>
-    <!-- right_wing -->
+    <!-- right_elevon lift-drag -->
     <plugin filename="libignition-gazebo-lift-drag-system.so"
         name="ignition::gazebo::systems::LiftDrag">
       <a0>0.15</a0>
@@ -417,7 +443,7 @@
       <cla_stall>-3.85</cla_stall>
       <cda_stall>-0.9233984055</cda_stall>
       <cma_stall>0</cma_stall>
-      <cp>-0.2 -0.7 0</cp>
+      <cp>-0.30 -0.75 -0.005</cp>
       <area>0.10</area>
       <air_density>1.2041</air_density>
       <forward>1 0 0</forward>
@@ -426,7 +452,7 @@
       <control_joint_name>right_elevon_joint</control_joint_name>
       <control_joint_rad_to_cl>-5.0</control_joint_rad_to_cl>
     </plugin>
-    <!-- left_winglet -->
+    <!-- left_winglet lift-drag -->
     <plugin filename="libignition-gazebo-lift-drag-system.so"
         name="ignition::gazebo::systems::LiftDrag">
       <a0>0.0</a0>
@@ -437,14 +463,14 @@
       <cla_stall>-3.85</cla_stall>
       <cda_stall>-0.9233984055</cda_stall>
       <cma_stall>0</cma_stall>
-      <cp>-0.27 1.03 0.05</cp>
+      <cp>-0.36 1.04 0.08</cp>
       <area>0.12</area>
       <air_density>1.2041</air_density>
       <forward>1 0 0</forward>
       <upward>0 1 0</upward>
       <link_name>base_link</link_name>
     </plugin>
-    <!-- right_winglet -->
+    <!-- right_winglet lift-drag -->
     <plugin filename="libignition-gazebo-lift-drag-system.so"
         name="ignition::gazebo::systems::LiftDrag">
       <a0>0.0</a0>
@@ -455,7 +481,7 @@
       <cla_stall>-3.85</cla_stall>
       <cda_stall>-0.9233984055</cda_stall>
       <cma_stall>0</cma_stall>
-      <cp>-0.27 -1.03 0.05</cp>
+      <cp>-0.36 -1.04 0.08</cp>
       <area>0.12</area>
       <air_density>1.2041</air_density>
       <forward>1 0 0</forward>

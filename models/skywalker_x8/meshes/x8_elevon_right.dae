@@ -5,8 +5,8 @@
       <author>Blender User</author>
       <authoring_tool>Blender 2.82.7 commit date:2020-03-12, commit time:05:06, hash:375c7dc4caf4</authoring_tool>
     </contributor>
-    <created>2021-11-15T21:01:32</created>
-    <modified>2021-11-15T21:01:32</modified>
+    <created>2021-11-17T21:34:26</created>
+    <modified>2021-11-17T21:34:26</modified>
     <unit name="meter" meter="1"/>
     <up_axis>Z_UP</up_axis>
   </asset>
@@ -15,7 +15,7 @@
       <profile_COMMON>
         <newparam sid="x8_tga-surface">
           <surface type="2D">
-            <init_from>x8_tga</init_from>
+            <init_from>../materials/textures/x8_tga</init_from>
           </surface>
         </newparam>
         <newparam sid="x8_tga-sampler">
@@ -41,7 +41,7 @@
   </library_effects>
   <library_images>
     <image id="x8_tga" name="x8_tga">
-      <init_from>../materials/textures/x8.tga</init_from>
+      <init_from>x8.tga</init_from>
     </image>
   </library_images>
   <library_materials>
@@ -95,9 +95,9 @@
   </library_geometries>
   <library_visual_scenes>
     <visual_scene id="Scene" name="Scene">
-      <node id="x8_right_elevon" name="x8_right_elevon" type="NODE">
-        <matrix sid="transform">-0.001 0 -8.74228e-11 -0.2389045 -8.74228e-11 1.62921e-10 0.001 -0.7264438 0 0.001 -1.62921e-10 0.003658682 0 0 0 1</matrix>
-        <instance_geometry url="#RightElevon-mesh" name="x8_right_elevon">
+      <node id="skywalker_x8_right_elevon" name="skywalker_x8_right_elevon" type="NODE">
+        <matrix sid="transform">-0.001 0 -8.74228e-11 -0.326 -8.74228e-11 1.62921e-10 0.001 -0.729 0 0.001 -1.62921e-10 -0.005 0 0 0 1</matrix>
+        <instance_geometry url="#RightElevon-mesh" name="skywalker_x8_right_elevon">
           <bind_material>
             <technique_common>
               <instance_material symbol="RightElevon-material" target="#RightElevon-material">
