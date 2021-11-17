@@ -917,7 +917,7 @@
       <cda_stall>-0.9233984055</cda_stall>
       <cma_stall>0</cma_stall>
       <cp>0.1 0 0</cp>
-      <area>0.50</area>
+      <area>0.80</area>
       <air_density>1.2041</air_density>
       <forward>1 0 0</forward>
       <upward>0 0 1</upward>

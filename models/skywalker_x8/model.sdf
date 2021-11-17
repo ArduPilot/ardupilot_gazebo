@@ -42,6 +42,30 @@
           </pbr>
         </material>
       </visual>
+      <visual name='m4'>
+        <pose>-0.275 0 0.0 0 1.57 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.035</length>
+            <radius>0.02</radius>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>1 1 1</ambient>
+          <diffuse>1 1 1</diffuse>
+          <specular>1 1 1</specular>
+          <pbr>
+            <metal>
+              <albedo_map>model://skywalker_x8/materials/textures/blue_metal/blue_metal_basecolor.jpg</albedo_map>
+              <metalness_map>model://skywalker_x8/materials/textures/blue_metal/blue_metal_metallic.jpg</metalness_map>
+              <normal_map>model://skywalker_x8/materials/textures/blue_metal/blue_metal_normal.jpg</normal_map>
+              <roughness_map>model://skywalker_x8/materials/textures/blue_metal/blue_metal_roughness.jpg</roughness_map>
+              <roughness>1.0</roughness>
+              <metalness>1.0</metalness> 
+            </metal>
+          </pbr>
+        </material>
+      </visual>
       <!-- save for debugging use -->
       <visual name="cp_wing">
         <pose>0.1 0 0 0 0 0</pose>
@@ -356,7 +380,7 @@
       <cda_stall>-0.9233984055</cda_stall>
       <cma_stall>0</cma_stall>
       <cp>0.1 0 0</cp>
-      <area>0.50</area>
+      <area>0.80</area>
       <air_density>1.2041</air_density>
       <forward>1 0 0</forward>
       <upward>0 0 1</upward>
