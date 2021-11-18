@@ -21,17 +21,58 @@ set(IGN_CMAKE_VER ${ignition-cmake2_VERSION_MAJOR})
 # Search for project-specific dependencies
 #============================================================================
 
+# ign_find_package(sdformat11 REQUIRED VERSION 11.2.2)
+# set(SDF_VER ${sdformat11_VERSION_MAJOR})
+
+#--------------------------------------
+# Find ignition-common
+# ign_find_package(ignition-common4 REQUIRED COMPONENTS all)
+# set(IGN_COMMON_VER ${ignition-common4_VERSION_MAJOR})
+
 #--------------------------------------
 # Find ignition-gazebo
-ign_find_package(ignition-gazebo7 REQUIRED)
-set(IGN_GAZEBO_VER ${ignition-gazebo7_VERSION_MAJOR})
+ign_find_package(ignition-gazebo5 REQUIRED)
+set(IGN_GAZEBO_VER ${ignition-gazebo5_VERSION_MAJOR})
+
+#--------------------------------------
+# Find ignition-math
+# ign_find_package(ignition-math6 REQUIRED VERSION 6.8)
+# set(IGN_MATH_VER ${ignition-math6_VERSION_MAJOR})
+
+#--------------------------------------
+# Find ignition-msgs
+# ign_find_package(ignition-msgs7 REQUIRED VERSION 7.1)
+# set(IGN_MSGS_VER ${ignition-msgs7_VERSION_MAJOR})
+
+#--------------------------------------
+# Find ignition-physics
+# ign_find_package(ignition-physics4 REQUIRED)
+# set(IGN_PHYSICS_VER ${ignition-physics4_VERSION_MAJOR})
+
+#--------------------------------------
+# Find ignition-plugin
+# ign_find_package(ignition-plugin1 REQUIRED)
+# set(IGN_PLUGIN_VER ${ignition-plugin1_VERSION_MAJOR})
+
+#--------------------------------------
+# Find ignition-sensors
+# ign_find_package(ignition-sensors5 REQUIRED)
+# set(IGN_SENSORS_VER ${ignition-sensors5_VERSION_MAJOR})
 
 #--------------------------------------
 # Find RapidJSON
 find_package(RapidJSON REQUIRED)
 
 #======================================
-# Build plugin
+# Find Qt
+# find_package(Qt5 REQUIRED COMPONENTS
+#     Core
+#     Gui
+#     Qml
+#     Quick
+#     QuickControls2
+#     Widgets
+# )
 
 add_library(ArduPilotPlugin
     SHARED
