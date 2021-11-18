@@ -67,7 +67,7 @@
         </material>
       </visual>
       <!-- save for debugging use -->
-      <visual name="cp_wing">
+      <!-- <visual name="cp_wing">
         <pose>0.01 0 0 0 0 0</pose>
         <geometry>
           <sphere>
@@ -157,7 +157,7 @@
           <diffuse>1 1 0</diffuse>
           <specular>0.1 0.1 0.1 1</specular>
         </material>
-      </visual>
+      </visual> -->
     </link>
 
     <link name='rotor_pusher'>

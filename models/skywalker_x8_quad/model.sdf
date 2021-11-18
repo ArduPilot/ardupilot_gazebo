@@ -43,7 +43,8 @@
         </material>
       </visual>
       <visual name='left_motor_column'>
-        <pose>0 0.35 0.01 0 0 0</pose>
+        <!-- <pose>0 0.35 0.01 0 0 0</pose> -->
+        <pose>-0.08 0.35 0.01 0 0 0</pose>
         <geometry>
           <box>
             <size>0.74 0.03 0.03</size>
@@ -66,7 +67,8 @@
         </material>
       </visual>
       <visual name='right_motor_column'>
-        <pose>0 -0.35 0.01 0 0 0</pose>
+        <!-- <pose>0 -0.35 0.01 0 0 0</pose> -->
+        <pose>-0.08 -0.35 0.01 0 0 0</pose>
         <geometry>
           <box>
             <size>0.74 0.03 0.03</size>
@@ -89,7 +91,8 @@
         </material>
       </visual>
       <visual name='m0'>
-        <pose>0.35 -0.35 0.045 0 0 0</pose>
+        <!-- <pose>0.35 -0.35 0.045 0 0 0</pose> -->
+        <pose>0.27 -0.35 0.045 0 0 0</pose>
         <geometry>
           <cylinder>
             <length>0.035</length>
@@ -113,7 +116,8 @@
         </material>
       </visual>
       <visual name='m1'>
-        <pose>-0.35 0.35 0.045 0 0 0</pose>
+        <!-- <pose>-0.35 0.35 0.045 0 0 0</pose> -->
+        <pose>-0.43 0.35 0.045 0 0 0</pose>
         <geometry>
           <cylinder>
             <length>0.035</length>
@@ -137,7 +141,8 @@
         </material>
       </visual>
       <visual name='m2'>
-        <pose>0.35 0.35 0.045 0 0 0</pose>
+        <!-- <pose>0.35 0.35 0.045 0 0 0</pose> -->
+        <pose>0.27 0.35 0.045 0 0 0</pose>
         <geometry>
           <cylinder>
             <length>0.035</length>
@@ -161,7 +166,8 @@
         </material>
       </visual>
       <visual name='m3'>
-        <pose>-0.35 -0.35 0.045 0 0 0</pose>
+        <!-- <pose>-0.35 -0.35 0.045 0 0 0</pose> -->
+        <pose>-0.43 -0.35 0.045 0 0 0</pose>
         <geometry>
           <cylinder>
             <length>0.035</length>
@@ -209,7 +215,7 @@
         </material>
       </visual>
       <!-- save for debugging use -->
-      <visual name="cp_wing">
+      <!-- <visual name="cp_wing">
         <pose>0.01 0 0 0 0 0</pose>
         <geometry>
           <sphere>
@@ -273,11 +279,12 @@
           <diffuse>0 1 0</diffuse>
           <specular>0.1 0.1 0.1 1</specular>
         </material>
-      </visual>
+      </visual> -->
     </link>
 
     <link name='rotor_0'>
-      <pose>0.35 -0.35 0.07 0 0 0</pose>
+      <!-- <pose>0.35 -0.35 0.07 0 0 0</pose> -->
+      <pose>0.27 -0.35 0.07 0 0 0</pose>
       <inertial>
         <pose>0 0 0 0 0 0</pose>
         <mass>0.025</mass>
@@ -336,7 +343,8 @@
     </joint>
 
     <link name='rotor_1'>
-      <pose>-0.35 0.35 0.07 0 0 0</pose>
+      <!-- <pose>-0.35 0.35 0.07 0 0 0</pose> -->
+      <pose>-0.43 0.35 0.07 0 0 0</pose>
       <inertial>
         <pose>0 0 0 0 0 0</pose>
         <mass>0.025</mass>
@@ -395,7 +403,8 @@
     </joint>
 
     <link name='rotor_2'>
-      <pose>0.35 0.35 0.07 0 0 0</pose>
+      <!-- <pose>0.35 0.35 0.07 0 0 0</pose> -->
+      <pose>0.27 0.35 0.07 0 0 0</pose>
       <inertial>
         <pose>0 0 0 0 0 0</pose>
         <mass>0.025</mass>
@@ -454,7 +463,8 @@
     </joint>
 
     <link name='rotor_3'>
-      <pose>-0.35 -0.35 0.07 0 0 0</pose>
+      <!-- <pose>-0.35 -0.35 0.07 0 0 0</pose> -->
+      <pose>-0.43 -0.35 0.07 0 0 0</pose>
       <inertial>
         <pose>0 0 0 0 0 0</pose>
         <mass>0.025</mass>
