@@ -34,7 +34,7 @@
         </material>
       </visual>
       <visual name="airfield">
-        <pose>0 0 -0.5 0 0 0</pose>
+        <pose>0 0 -0.001 0 0 0</pose>
         <cast_shadows>false</cast_shadows>
         <geometry>
           <mesh>

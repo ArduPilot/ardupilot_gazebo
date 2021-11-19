@@ -43,11 +43,10 @@
         </material>
       </visual>
       <visual name='left_motor_column'>
-        <!-- <pose>0 0.35 0.01 0 0 0</pose> -->
-        <pose>-0.08 0.35 0.01 0 0 0</pose>
+        <pose>0 0.35 0.01 0 0 0</pose>
         <geometry>
           <box>
-            <size>0.74 0.03 0.03</size>
+            <size>0.98 0.03 0.03</size>
           </box>
         </geometry>
         <material>
@@ -67,11 +66,10 @@
         </material>
       </visual>
       <visual name='right_motor_column'>
-        <!-- <pose>0 -0.35 0.01 0 0 0</pose> -->
-        <pose>-0.08 -0.35 0.01 0 0 0</pose>
+        <pose>0 -0.35 0.01 0 0 0</pose>
         <geometry>
           <box>
-            <size>0.74 0.03 0.03</size>
+            <size>0.98 0.03 0.03</size>
           </box>
         </geometry>
         <material>
@@ -91,8 +89,7 @@
         </material>
       </visual>
       <visual name='m0'>
-        <!-- <pose>0.35 -0.35 0.045 0 0 0</pose> -->
-        <pose>0.27 -0.35 0.045 0 0 0</pose>
+        <pose>0.49 -0.35 0.045 0 0 0</pose>
         <geometry>
           <cylinder>
             <length>0.035</length>
@@ -116,8 +113,7 @@
         </material>
       </visual>
       <visual name='m1'>
-        <!-- <pose>-0.35 0.35 0.045 0 0 0</pose> -->
-        <pose>-0.43 0.35 0.045 0 0 0</pose>
+        <pose>-0.49 0.35 0.045 0 0 0</pose>
         <geometry>
           <cylinder>
             <length>0.035</length>
@@ -141,8 +137,7 @@
         </material>
       </visual>
       <visual name='m2'>
-        <!-- <pose>0.35 0.35 0.045 0 0 0</pose> -->
-        <pose>0.27 0.35 0.045 0 0 0</pose>
+        <pose>0.49 0.35 0.045 0 0 0</pose>
         <geometry>
           <cylinder>
             <length>0.035</length>
@@ -166,8 +161,7 @@
         </material>
       </visual>
       <visual name='m3'>
-        <!-- <pose>-0.35 -0.35 0.045 0 0 0</pose> -->
-        <pose>-0.43 -0.35 0.045 0 0 0</pose>
+        <pose>-0.49 -0.35 0.045 0 0 0</pose>
         <geometry>
           <cylinder>
             <length>0.035</length>
@@ -283,8 +277,7 @@
     </link>
 
     <link name='rotor_0'>
-      <!-- <pose>0.35 -0.35 0.07 0 0 0</pose> -->
-      <pose>0.27 -0.35 0.07 0 0 0</pose>
+      <pose>0.49 -0.35 0.07 0 0 0</pose>
       <inertial>
         <pose>0 0 0 0 0 0</pose>
         <mass>0.025</mass>
@@ -311,7 +304,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://skywalker_x8/meshes/iris_prop_ccw.dae</uri>
+            <uri>model://skywalker_x8/meshes/iris_prop_cw.dae</uri>
           </mesh>
         </geometry>
         <material>
@@ -343,8 +336,7 @@
     </joint>
 
     <link name='rotor_1'>
-      <!-- <pose>-0.35 0.35 0.07 0 0 0</pose> -->
-      <pose>-0.43 0.35 0.07 0 0 0</pose>
+      <pose>-0.49 0.35 0.07 0 0 0</pose>
       <inertial>
         <pose>0 0 0 0 0 0</pose>
         <mass>0.025</mass>
@@ -371,7 +363,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://skywalker_x8/meshes/iris_prop_ccw.dae</uri>
+            <uri>model://skywalker_x8/meshes/iris_prop_cw.dae</uri>
           </mesh>
         </geometry>
         <material>
@@ -403,8 +395,7 @@
     </joint>
 
     <link name='rotor_2'>
-      <!-- <pose>0.35 0.35 0.07 0 0 0</pose> -->
-      <pose>0.27 0.35 0.07 0 0 0</pose>
+      <pose>0.49 0.35 0.07 0 0 0</pose>
       <inertial>
         <pose>0 0 0 0 0 0</pose>
         <mass>0.025</mass>
@@ -431,7 +422,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://skywalker_x8/meshes/iris_prop_cw.dae</uri>
+            <uri>model://skywalker_x8/meshes/iris_prop_ccw.dae</uri>
           </mesh>
         </geometry>
         <material>
@@ -463,8 +454,7 @@
     </joint>
 
     <link name='rotor_3'>
-      <!-- <pose>-0.35 -0.35 0.07 0 0 0</pose> -->
-      <pose>-0.43 -0.35 0.07 0 0 0</pose>
+      <pose>-0.49 -0.35 0.07 0 0 0</pose>
       <inertial>
         <pose>0 0 0 0 0 0</pose>
         <mass>0.025</mass>
@@ -491,7 +481,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://skywalker_x8/meshes/iris_prop_cw.dae</uri>
+            <uri>model://skywalker_x8/meshes/iris_prop_ccw.dae</uri>
           </mesh>
         </geometry>
         <material>
@@ -734,7 +724,7 @@
       <area>0.002</area>
       <air_density>1.2041</air_density>
       <cp>0.084 0 0</cp>
-      <forward>0 1 0</forward>
+      <forward>0 -1 0</forward>
       <upward>0 0 1</upward>
       <link_name>rotor_0</link_name>
     </plugin>
@@ -751,7 +741,7 @@
       <area>0.002</area>
       <air_density>1.2041</air_density>
       <cp>-0.084 0 0</cp>
-      <forward>0 -1 0</forward>
+      <forward>0 1 0</forward>
       <upward>0 0 1</upward>
       <link_name>rotor_0</link_name>
     </plugin>
@@ -769,7 +759,7 @@
       <area>0.002</area>
       <air_density>1.2041</air_density>
       <cp>0.084 0 0</cp>
-      <forward>0 1 0</forward>
+      <forward>0 -1 0</forward>
       <upward>0 0 1</upward>
       <link_name>rotor_1</link_name>
     </plugin>
@@ -786,7 +776,7 @@
       <area>0.002</area>
       <air_density>1.2041</air_density>
       <cp>-0.084 0 0</cp>
-      <forward>0 -1 0</forward>
+      <forward>0 1 0</forward>
       <upward>0 0 1</upward>
       <link_name>rotor_1</link_name>
     </plugin>
@@ -804,7 +794,7 @@
       <area>0.002</area>
       <air_density>1.2041</air_density>
       <cp>0.084 0 0</cp>
-      <forward>0 -1 0</forward>
+      <forward>0 1 0</forward>
       <upward>0 0 1</upward>
       <link_name>rotor_2</link_name>
     </plugin>
@@ -821,7 +811,7 @@
       <area>0.002</area>
       <air_density>1.2041</air_density>
       <cp>-0.084 0 0</cp>
-      <forward>0 1 0</forward>
+      <forward>0 -1 0</forward>
       <upward>0 0 1</upward>
       <link_name>rotor_2</link_name>
     </plugin>
@@ -839,7 +829,7 @@
       <area>0.002</area>
       <air_density>1.2041</air_density>
       <cp>0.084 0 0</cp>
-      <forward>0 -1 0</forward>
+      <forward>0 1 0</forward>
       <upward>0 0 1</upward>
       <link_name>rotor_3</link_name>
     </plugin>
@@ -856,7 +846,7 @@
       <area>0.002</area>
       <air_density>1.2041</air_density>
       <cp>-0.084 0 0</cp>
-      <forward>0 1 0</forward>
+      <forward>0 -1 0</forward>
       <upward>0 0 1</upward>
       <link_name>rotor_3</link_name>
     </plugin>
@@ -1138,7 +1128,7 @@
       <control channel="4">
         <jointName>rotor_0_joint</jointName>
         <useForce>1</useForce>
-        <multiplier>838</multiplier>
+        <multiplier>-1500</multiplier>
         <offset>0</offset>
         <servo_min>1100</servo_min>
         <servo_max>1900</servo_max>
@@ -1162,7 +1152,7 @@
       <control channel="5">
         <jointName>rotor_1_joint</jointName>
         <useForce>1</useForce>
-        <multiplier>838</multiplier>
+        <multiplier>-1500</multiplier>
         <offset>0</offset>
         <servo_min>1100</servo_min>
         <servo_max>1900</servo_max>
@@ -1186,7 +1176,7 @@
       <control channel="6">
         <jointName>rotor_2_joint</jointName>
         <useForce>1</useForce>
-        <multiplier>-838</multiplier>
+        <multiplier>1500</multiplier>
         <offset>0</offset>
         <servo_min>1100</servo_min>
         <servo_max>1900</servo_max>
@@ -1210,7 +1200,7 @@
       <control channel="7">
         <jointName>rotor_3_joint</jointName>
         <useForce>1</useForce>
-        <multiplier>-838</multiplier>
+        <multiplier>1500</multiplier>
         <offset>0</offset>
         <servo_min>1100</servo_min>
         <servo_max>1900</servo_max>
