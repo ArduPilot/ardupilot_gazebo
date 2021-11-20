@@ -89,7 +89,7 @@
         </material>
       </visual>
       <visual name='m0'>
-        <pose>0.49 -0.35 0.045 0 0 0</pose>
+        <pose>0.49 -0.35 0.045 -0.052 0 0</pose>
         <geometry>
           <cylinder>
             <length>0.035</length>
@@ -113,7 +113,7 @@
         </material>
       </visual>
       <visual name='m1'>
-        <pose>-0.49 0.35 0.045 0 0 0</pose>
+        <pose>-0.49 0.35 0.045 0.052 0 0</pose>
         <geometry>
           <cylinder>
             <length>0.035</length>
@@ -137,7 +137,7 @@
         </material>
       </visual>
       <visual name='m2'>
-        <pose>0.49 0.35 0.045 0 0 0</pose>
+        <pose>0.49 0.35 0.045 0.052 0 0</pose>
         <geometry>
           <cylinder>
             <length>0.035</length>
@@ -161,7 +161,7 @@
         </material>
       </visual>
       <visual name='m3'>
-        <pose>-0.49 -0.35 0.045 0 0 0</pose>
+        <pose>-0.49 -0.35 0.045 -0.052 0 0</pose>
         <geometry>
           <cylinder>
             <length>0.035</length>
@@ -277,7 +277,7 @@
     </link>
 
     <link name='rotor_0'>
-      <pose>0.49 -0.35 0.07 0 0 0</pose>
+      <pose>0.49 -0.35 0.07 -0.052 0 0</pose>
       <inertial>
         <pose>0 0 0 0 0 0</pose>
         <mass>0.025</mass>
@@ -336,7 +336,7 @@
     </joint>
 
     <link name='rotor_1'>
-      <pose>-0.49 0.35 0.07 0 0 0</pose>
+      <pose>-0.49 0.35 0.07 0.052 0 0</pose>
       <inertial>
         <pose>0 0 0 0 0 0</pose>
         <mass>0.025</mass>
@@ -395,7 +395,7 @@
     </joint>
 
     <link name='rotor_2'>
-      <pose>0.49 0.35 0.07 0 0 0</pose>
+      <pose>0.49 0.35 0.07 0.052 0 0</pose>
       <inertial>
         <pose>0 0 0 0 0 0</pose>
         <mass>0.025</mass>
@@ -454,7 +454,7 @@
     </joint>
 
     <link name='rotor_3'>
-      <pose>-0.49 -0.35 0.07 0 0 0</pose>
+      <pose>-0.49 -0.35 0.07 -0.052 0 0</pose>
       <inertial>
         <pose>0 0 0 0 0 0</pose>
         <mass>0.025</mass>
