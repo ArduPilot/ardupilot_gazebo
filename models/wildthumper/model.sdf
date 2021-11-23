@@ -1,0 +1,3235 @@
+<sdf version='1.9'>
+  <model name='wild1'>
+    <link name='base_link'>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.01</mass>
+        <inertia>
+          <ixx>0.01</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.01</iyy>
+          <iyz>0</iyz>
+          <izz>0.01</izz>
+        </inertia>
+      </inertial>
+      <collision name='base_link_collision'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.001 0.001 0.001</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='base_link_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.001 0.001 0.001</size>
+          </box>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Orange</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>1 0.3125 0 1</diffuse>
+          <ambient>1 0.3125 0 1</ambient>
+        </material>
+      </visual>
+    </link>
+    <joint name='depth_camera0_joint' type='fixed'>
+      <pose relative_to='base_link'>0.2 0 0.0825 0 0 0</pose>
+      <parent>base_link</parent>
+      <child>depth_camera0_link</child>
+      <axis>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e16</lower>
+          <upper>1e16</upper>
+        </limit>
+      </axis>
+      <physics>
+        <ode>
+          <limit>
+            <cfm>0.0</cfm>
+            <erp>0.2</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <link name='depth_camera0_link'>
+      <pose relative_to='depth_camera0_joint'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.07199999999999999</mass>
+        <inertia>
+          <ixx>6.198e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>5.573999999999999e-06</iyy>
+          <iyz>0</iyz>
+          <izz>6.1206e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name='depth_camera0_link_collision'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.02 0.099 0.023</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='depth_camera0_link_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://wild1_description/meshes/sensors/intel_realsense_d415.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Gray</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>1 1 1 1</diffuse>
+          <ambient>1 1 1 1</ambient>
+        </material>
+      </visual>
+    </link>
+    <joint name='front_small_chassis_joint' type='fixed'>
+      <pose relative_to='base_link'>0.075 0 -0.02 0 0 0</pose>
+      <parent>base_link</parent>
+      <child>front_small_chassis_link</child>
+      <axis>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e16</lower>
+          <upper>1e16</upper>
+        </limit>
+      </axis>
+      <physics>
+        <ode>
+          <limit>
+            <cfm>0.0</cfm>
+            <erp>0.2</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <link name='front_small_chassis_link'>
+      <pose relative_to='front_small_chassis_joint'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.2</mass>
+        <inertia>
+          <ixx>0.0002666666666666667</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.0001083333333333333</iyy>
+          <iyz>0</iyz>
+          <izz>0.0003216666666666667</izz>
+        </inertia>
+      </inertial>
+      <collision name='front_small_chassis_link_collision'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.07000000000000001 0.12 0.04</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='front_small_chassis_link_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://wild1_description/meshes/bases/small_chassis_with_frame_connector.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/DarkGray</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>0.625 0.625 0.625 1</diffuse>
+          <ambient>0.625 0.625 0.625 1</ambient>
+        </material>
+      </visual>
+    </link>
+    <joint name='front_wheel_chassis_short_joint' type='fixed'>
+      <pose relative_to='base_link'>0.15 0 -0.02 0 0 0</pose>
+      <parent>base_link</parent>
+      <child>front_wheel_chassis_short_link</child>
+      <axis>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e16</lower>
+          <upper>1e16</upper>
+        </limit>
+      </axis>
+      <physics>
+        <ode>
+          <limit>
+            <cfm>0.0</cfm>
+            <erp>0.2</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <link name='front_wheel_chassis_short_link'>
+      <pose relative_to='front_wheel_chassis_short_joint'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.2</mass>
+        <inertia>
+          <ixx>0.0002666666666666667</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.0001083333333333333</iyy>
+          <iyz>0</iyz>
+          <izz>0.0003216666666666667</izz>
+        </inertia>
+      </inertial>
+      <collision name='front_wheel_chassis_short_link_collision'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.07000000000000001 0.12 0.04</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='front_wheel_chassis_short_link_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://wild1_description/meshes/bases/wheel_chassis_short.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/DarkGray</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>0.625 0.625 0.625 1</diffuse>
+          <ambient>0.625 0.625 0.625 1</ambient>
+        </material>
+      </visual>
+    </link>
+    <joint name='front_left_motor_asm_joint' type='revolute'>
+      <pose relative_to='front_wheel_chassis_short_link'>0 0.03 -0.01 0 0 0</pose>
+      <parent>front_wheel_chassis_short_link</parent>
+      <child>front_left_motor_asm_link</child>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>-0.5</lower>
+          <upper>0.5</upper>
+          <effort>50</effort>
+          <velocity>10</velocity>
+        </limit>
+        <dynamics>
+          <damping>0.7</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>3</spring_stiffness>
+        </dynamics>
+      </axis>
+      <physics>
+        <provide_feedback>true</provide_feedback>
+        <ode>
+          <implicit_spring_damper>true</implicit_spring_damper>
+          <cfm_damping>true</cfm_damping>
+          <limit>
+            <cfm>0.0</cfm>
+            <erp>0.2</erp>
+          </limit>
+          <provide_feedback>true</provide_feedback>
+        </ode>
+      </physics>
+    </joint>
+    <link name='front_left_motor_asm_link'>
+      <pose relative_to='front_left_motor_asm_joint'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0.025 0 1.570796326794896 0 0</pose>
+        <mass>0.1</mass>
+        <inertia>
+          <ixx>2.723333333333334e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>2.723333333333334e-05</iyy>
+          <iyz>0</iyz>
+          <izz>1.28e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name='front_left_motor_asm_link_collision'>
+        <pose>0 0 0 0 1.570796326794897 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.064</length>
+            <radius>0.016</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <collision name='front_left_motor_asm_link_collision_1'>
+        <pose>0 0.025 0 1.570796326794896 0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.05</length>
+            <radius>0.016</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='front_left_motor_asm_link_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://wild1_description/meshes/bases/left_motor_asm.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Black</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>0 0 0 1</diffuse>
+          <ambient>0 0 0 1</ambient>
+        </material>
+      </visual>
+    </link>
+    <joint name='front_left_wheel_joint' type='revolute'>
+      <pose relative_to='front_left_motor_asm_link'>0 0.09 0 0 0 0</pose>
+      <parent>front_left_motor_asm_link</parent>
+      <child>front_left_wheel_link</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-1e16</lower>
+          <upper>1e16</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+      <physics>
+        <provide_feedback>true</provide_feedback>
+        <ode>
+          <limit>
+            <cfm>0.0</cfm>
+            <erp>0.2</erp>
+          </limit>
+          <provide_feedback>true</provide_feedback>
+        </ode>
+      </physics>
+    </joint>
+    <link name='front_left_wheel_link'>
+      <pose relative_to='front_left_wheel_joint'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 1.570796326794896 0 0</pose>
+        <mass>0.19</mass>
+        <inertia>
+          <ixx>0.0002022409166666667</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.0002022409166666667</iyy>
+          <iyz>1.203706215242022e-35</iyz>
+          <izz>0.0002973904999999999</izz>
+        </inertia>
+      </inertial>
+      <collision name='front_left_wheel_link_collision'>
+        <pose>0 0 0 1.570796326794896 0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.062</length>
+            <radius>0.062</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>10.0</mu>
+              <mu2>5.0</mu2>
+              <fdir1>1 0 0</fdir1>
+              <slip1>0.0</slip1>
+              <slip2>0.0</slip2>
+            </ode>
+          </friction>
+          <contact>
+            <ode/>
+          </contact>
+        </surface>
+      </collision>
+      <collision name='front_left_wheel_link_fixed_joint_lump__front_left_wheel_adapter_link_collision_1'>
+        <pose>0 0 0 1.570796326794896 0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.024</length>
+            <radius>0.005</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <collision name='front_left_wheel_link_fixed_joint_lump__front_left_wheel_rim_link_collision_2'>
+        <pose>0 0 0 1.570796326794896 0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.05</length>
+            <radius>0.03</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='front_left_wheel_link_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://wild1_description/meshes/wheels/left_wheel_tyre.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/FlatBlack</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>0 0 0 1</diffuse>
+          <ambient>0 0 0 1</ambient>
+        </material>
+      </visual>
+      <visual name='front_left_wheel_link_fixed_joint_lump__front_left_wheel_adapter_link_visual_1'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://wild1_description/meshes/wheels/left_wheel_adapter.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Gray</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>0.9412500262260437 0.9412500262260437 0.9412500262260437 1</diffuse>
+          <ambient>0.9412500262260437 0.9412500262260437 0.9412500262260437 1</ambient>
+        </material>
+      </visual>
+      <visual name='front_left_wheel_link_fixed_joint_lump__front_left_wheel_rim_link_visual_2'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://wild1_description/meshes/wheels/left_wheel_rim.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Red</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>1 0 0 1</diffuse>
+          <ambient>1 0 0 1</ambient>
+        </material>
+      </visual>
+    </link>
+    <joint name='front_right_motor_asm_joint' type='revolute'>
+      <pose relative_to='front_wheel_chassis_short_link'>0 -0.03 -0.01 0 0 0</pose>
+      <parent>front_wheel_chassis_short_link</parent>
+      <child>front_right_motor_asm_link</child>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>-0.5</lower>
+          <upper>0.5</upper>
+          <effort>50</effort>
+          <velocity>10</velocity>
+        </limit>
+        <dynamics>
+          <damping>0.7</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>3</spring_stiffness>
+        </dynamics>
+      </axis>
+      <physics>
+        <provide_feedback>true</provide_feedback>
+        <ode>
+          <implicit_spring_damper>true</implicit_spring_damper>
+          <cfm_damping>true</cfm_damping>
+          <limit>
+            <cfm>0.0</cfm>
+            <erp>0.2</erp>
+          </limit>
+          <provide_feedback>true</provide_feedback>
+        </ode>
+      </physics>
+    </joint>
+    <link name='front_right_motor_asm_link'>
+      <pose relative_to='front_right_motor_asm_joint'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 -0.025 0 1.570796326794896 0 0</pose>
+        <mass>0.1</mass>
+        <inertia>
+          <ixx>2.723333333333334e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>2.723333333333334e-05</iyy>
+          <iyz>0</iyz>
+          <izz>1.28e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name='front_right_motor_asm_link_collision'>
+        <pose>0 0 0 0 1.570796326794897 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.064</length>
+            <radius>0.016</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <collision name='front_right_motor_asm_link_collision_1'>
+        <pose>0 -0.025 0 1.570796326794896 0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.05</length>
+            <radius>0.016</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='front_right_motor_asm_link_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://wild1_description/meshes/bases/right_motor_asm.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Black</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>0 0 0 1</diffuse>
+          <ambient>0 0 0 1</ambient>
+        </material>
+      </visual>
+    </link>
+    <joint name='front_right_wheel_joint' type='revolute'>
+      <pose relative_to='front_right_motor_asm_link'>0 -0.09 0 0 0 0</pose>
+      <parent>front_right_motor_asm_link</parent>
+      <child>front_right_wheel_link</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-1e16</lower>
+          <upper>1e16</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+      <physics>
+        <provide_feedback>true</provide_feedback>
+        <ode>
+          <limit>
+            <cfm>0.0</cfm>
+            <erp>0.2</erp>
+          </limit>
+          <provide_feedback>true</provide_feedback>
+        </ode>
+      </physics>
+    </joint>
+    <link name='front_right_wheel_link'>
+      <pose relative_to='front_right_wheel_joint'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 1.570796326794896 0 0</pose>
+        <mass>0.19</mass>
+        <inertia>
+          <ixx>0.0002022409166666667</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.0002022409166666667</iyy>
+          <iyz>1.203706215242022e-35</iyz>
+          <izz>0.0002973904999999999</izz>
+        </inertia>
+      </inertial>
+      <collision name='front_right_wheel_link_collision'>
+        <pose>0 0 0 1.570796326794896 0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.062</length>
+            <radius>0.062</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>10.0</mu>
+              <mu2>5.0</mu2>
+              <fdir1>1 0 0</fdir1>
+              <slip1>0.0</slip1>
+              <slip2>0.0</slip2>
+            </ode>
+          </friction>
+          <contact>
+            <ode/>
+          </contact>
+        </surface>
+      </collision>
+      <collision name='front_right_wheel_link_fixed_joint_lump__front_right_wheel_adapter_link_collision_1'>
+        <pose>0 0 0 1.570796326794896 0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.024</length>
+            <radius>0.005</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <collision name='front_right_wheel_link_fixed_joint_lump__front_right_wheel_rim_link_collision_2'>
+        <pose>0 0 0 1.570796326794896 0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.05</length>
+            <radius>0.03</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='front_right_wheel_link_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://wild1_description/meshes/wheels/right_wheel_tyre.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/FlatBlack</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>0 0 0 1</diffuse>
+          <ambient>0 0 0 1</ambient>
+        </material>
+      </visual>
+      <visual name='front_right_wheel_link_fixed_joint_lump__front_right_wheel_adapter_link_visual_1'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://wild1_description/meshes/wheels/right_wheel_adapter.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Gray</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>0.9412500262260437 0.9412500262260437 0.9412500262260437 1</diffuse>
+          <ambient>0.9412500262260437 0.9412500262260437 0.9412500262260437 1</ambient>
+        </material>
+      </visual>
+      <visual name='front_right_wheel_link_fixed_joint_lump__front_right_wheel_rim_link_visual_2'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://wild1_description/meshes/wheels/right_wheel_rim.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Red</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>1 0 0 1</diffuse>
+          <ambient>1 0 0 1</ambient>
+        </material>
+      </visual>
+    </link>
+    <joint name='imu0_joint' type='fixed'>
+      <pose relative_to='base_link'>-0.11 -0.03 0.06 0 0 -1.570796326794896</pose>
+      <parent>base_link</parent>
+      <child>imu0</child>
+      <axis>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e16</lower>
+          <upper>1e16</upper>
+        </limit>
+      </axis>
+      <physics>
+        <ode>
+          <limit>
+            <cfm>0.0</cfm>
+            <erp>0.2</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <link name='imu0'>
+      <pose relative_to='imu0_joint'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.02</mass>
+        <inertia>
+          <ixx>7.426666666666668e-06</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>4.848333333333333e-06</iyy>
+          <iyz>0</iyz>
+          <izz>1.194166666666667e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name='imu0_collision'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.053 0.066 0.01</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='imu0_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.053 0.066 0.01</size>
+          </box>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Green</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>0 1 0 1</diffuse>
+          <ambient>0 1 0 1</ambient>
+        </material>
+      </visual>
+      <sensor name='imu_sensor0' type='imu'>
+        <always_on>true</always_on>
+        <update_rate>50</update_rate>
+        <visualize>true</visualize>
+        <topic>sensors/imu0</topic>
+        <pose>0 0 0 0 0 0</pose>
+        <imu>
+          <topic>sensors/imu0</topic>
+        </imu>
+        <plugin name='imu_plugin' filename='libgazebo_ros_imu_sensor.so'>
+          <gaussianNoise>0.0</gaussianNoise>
+          <always_on>true</always_on>
+          <updateRateHz>50</updateRateHz>
+          <topicName>sensors/imu0</topicName>
+          <frameName>imu0</frameName>
+          <bodyName>imu0</bodyName>
+          <xyzOffset>0 0 0</xyzOffset>
+          <rpyOffset>0 0 0</rpyOffset>
+        </plugin>
+      </sensor>
+    </link>
+    <joint name='infrared0_joint' type='fixed'>
+      <pose relative_to='base_link'>0.2 0 -0.017 -3.141592653589793 1.570796326794897 0</pose>
+      <parent>base_link</parent>
+      <child>infrared0</child>
+      <axis>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e16</lower>
+          <upper>1e16</upper>
+        </limit>
+      </axis>
+      <physics>
+        <ode>
+          <limit>
+            <cfm>0.0</cfm>
+            <erp>0.2</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <link name='infrared0'>
+      <pose relative_to='infrared0_joint'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.02</mass>
+        <inertia>
+          <ixx>3.041666666666667e-06</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>7.5e-07</iyy>
+          <iyz>0</iyz>
+          <izz>3.041666666666667e-06</izz>
+        </inertia>
+      </inertial>
+      <collision name='infrared0_collision'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.015 0.04 0.015</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='infrared0_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://wild1_description/meshes/sensors/gp2y0a21yk.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Black</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>0 0 0 1</diffuse>
+          <ambient>0 0 0 1</ambient>
+        </material>
+      </visual>
+      <sensor name='infrared_sensor0' type='ray'>
+        <always_on>true</always_on>
+        <update_rate>20</update_rate>
+        <visualize>true</visualize>
+        <topic>sensors/infrared0</topic>
+        <pose>0 0 0 0 0 0</pose>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>5</samples>
+              <resolution>1</resolution>
+              <min_angle>-0.14835</min_angle>
+              <max_angle>0.14835</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>5</samples>
+              <resolution>1</resolution>
+              <min_angle>-0.14835</min_angle>
+              <max_angle>0.14835</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>0.01</min>
+            <max>0.3</max>
+            <resolution>0.005</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.01</mean>
+            <stddev>0.005</stddev>
+          </noise>
+        </ray>
+        <plugin name='gazebo_ros_range' filename='libgazebo_ros_range.so'>
+          <gaussianNoise>0.005</gaussianNoise>
+          <always_on>true</always_on>
+          <updateRate>20</updateRate>
+          <topicName>sensors/infrared0</topicName>
+          <frameName>infrared0</frameName>
+          <radiation>INFRARED</radiation>
+          <fov>0.2967</fov>
+        </plugin>
+      </sensor>
+    </link>
+    <joint name='infrared1_joint' type='fixed'>
+      <pose relative_to='base_link'>-0.2 0 -0.017 0 1.570796326794897 0</pose>
+      <parent>base_link</parent>
+      <child>infrared1</child>
+      <axis>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e16</lower>
+          <upper>1e16</upper>
+        </limit>
+      </axis>
+      <physics>
+        <ode>
+          <limit>
+            <cfm>0.0</cfm>
+            <erp>0.2</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <link name='infrared1'>
+      <pose relative_to='infrared1_joint'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.02</mass>
+        <inertia>
+          <ixx>3.041666666666667e-06</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>7.5e-07</iyy>
+          <iyz>0</iyz>
+          <izz>3.041666666666667e-06</izz>
+        </inertia>
+      </inertial>
+      <collision name='infrared1_collision'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.015 0.04 0.015</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='infrared1_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://wild1_description/meshes/sensors/gp2y0a21yk.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Black</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>0 0 0 1</diffuse>
+          <ambient>0 0 0 1</ambient>
+        </material>
+      </visual>
+      <sensor name='infrared_sensor1' type='ray'>
+        <always_on>true</always_on>
+        <update_rate>20</update_rate>
+        <visualize>true</visualize>
+        <topic>sensors/infrared1</topic>
+        <pose>0 0 0 0 0 0</pose>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>5</samples>
+              <resolution>1</resolution>
+              <min_angle>-0.14835</min_angle>
+              <max_angle>0.14835</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>5</samples>
+              <resolution>1</resolution>
+              <min_angle>-0.14835</min_angle>
+              <max_angle>0.14835</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>0.01</min>
+            <max>0.3</max>
+            <resolution>0.005</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.01</mean>
+            <stddev>0.005</stddev>
+          </noise>
+        </ray>
+        <plugin name='gazebo_ros_range' filename='libgazebo_ros_range.so'>
+          <gaussianNoise>0.005</gaussianNoise>
+          <always_on>true</always_on>
+          <updateRate>20</updateRate>
+          <topicName>sensors/infrared1</topicName>
+          <frameName>infrared1</frameName>
+          <radiation>INFRARED</radiation>
+          <fov>0.2967</fov>
+        </plugin>
+      </sensor>
+    </link>
+    <joint name='laser0_joint' type='fixed'>
+      <pose relative_to='base_link'>0.11 0 0.09 0 0 0</pose>
+      <parent>base_link</parent>
+      <child>laser0</child>
+      <axis>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e16</lower>
+          <upper>1e16</upper>
+        </limit>
+      </axis>
+      <physics>
+        <ode>
+          <limit>
+            <cfm>0.0</cfm>
+            <erp>0.2</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <link name='laser0'>
+      <pose relative_to='laser0_joint'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.15</mass>
+        <inertia>
+          <ixx>9.093749999999999e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>9.093749999999999e-05</iyy>
+          <iyz>0</iyz>
+          <izz>9.187500000000001e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name='laser0_collision'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.06</length>
+            <radius>0.035</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='laser0_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://wild1_description/meshes/sensors/rplidar_a1_low.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Black</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>0 0 0 1</diffuse>
+          <ambient>0 0 0 1</ambient>
+        </material>
+      </visual>
+      <sensor name='laser_sensor0' type='ray'>
+        <always_on>true</always_on>
+        <update_rate>5</update_rate>
+        <visualize>true</visualize>
+        <topic>sensors/laser0</topic>
+        <pose>0 0 0.045 0 0 0</pose>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>360</samples>
+              <resolution>1</resolution>
+              <min_angle>0</min_angle>
+              <max_angle>6.283185307179586</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>1</samples>
+              <resolution>1</resolution>
+              <min_angle>0</min_angle>
+              <max_angle>0</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>0.1</min>
+            <max>12.0</max>
+            <resolution>0.05</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.01</stddev>
+          </noise>
+        </ray>
+        <plugin name='gazebo_ros_laser' filename='libgazebo_ros_laser.so'>
+          <frameName>laser0</frameName>
+          <topicName>sensors/laser0</topicName>
+        </plugin>
+      </sensor>
+    </link>
+    <joint name='mid_wheel_chassis_long_joint' type='fixed'>
+      <pose relative_to='base_link'>0 0 -0.025 0 0 0</pose>
+      <parent>base_link</parent>
+      <child>mid_wheel_chassis_long_link</child>
+      <axis>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e16</lower>
+          <upper>1e16</upper>
+        </limit>
+      </axis>
+      <physics>
+        <ode>
+          <limit>
+            <cfm>0.0</cfm>
+            <erp>0.2</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <link name='mid_wheel_chassis_long_link'>
+      <pose relative_to='mid_wheel_chassis_long_joint'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.2</mass>
+        <inertia>
+          <ixx>0.0002816666666666667</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.0001233333333333334</iyy>
+          <iyz>0</iyz>
+          <izz>0.0003216666666666667</izz>
+        </inertia>
+      </inertial>
+      <collision name='mid_wheel_chassis_long_link_collision'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.07000000000000001 0.12 0.05</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='mid_wheel_chassis_long_link_visual'>
+        <pose>0 0 0.005 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://wild1_description/meshes/bases/wheel_chassis_long.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/DarkGray</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>0.625 0.625 0.625 1</diffuse>
+          <ambient>0.625 0.625 0.625 1</ambient>
+        </material>
+      </visual>
+    </link>
+    <joint name='mid_left_motor_asm_joint' type='revolute'>
+      <pose relative_to='mid_wheel_chassis_long_link'>0 0.03 -0.015 0 0 0</pose>
+      <parent>mid_wheel_chassis_long_link</parent>
+      <child>mid_left_motor_asm_link</child>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>-0.5</lower>
+          <upper>0.5</upper>
+          <effort>50</effort>
+          <velocity>10</velocity>
+        </limit>
+        <dynamics>
+          <damping>0.7</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>3</spring_stiffness>
+        </dynamics>
+      </axis>
+      <physics>
+        <provide_feedback>true</provide_feedback>
+        <ode>
+          <implicit_spring_damper>true</implicit_spring_damper>
+          <cfm_damping>true</cfm_damping>
+          <limit>
+            <cfm>0.0</cfm>
+            <erp>0.2</erp>
+          </limit>
+          <provide_feedback>true</provide_feedback>
+        </ode>
+      </physics>
+    </joint>
+    <link name='mid_left_motor_asm_link'>
+      <pose relative_to='mid_left_motor_asm_joint'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0.025 0 1.570796326794896 0 0</pose>
+        <mass>0.1</mass>
+        <inertia>
+          <ixx>2.723333333333334e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>2.723333333333334e-05</iyy>
+          <iyz>0</iyz>
+          <izz>1.28e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name='mid_left_motor_asm_link_collision'>
+        <pose>0 0 0 0 1.570796326794897 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.064</length>
+            <radius>0.016</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <collision name='mid_left_motor_asm_link_collision_1'>
+        <pose>0 0.025 0 1.570796326794896 0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.05</length>
+            <radius>0.016</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='mid_left_motor_asm_link_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://wild1_description/meshes/bases/left_motor_asm.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Black</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>0 0 0 1</diffuse>
+          <ambient>0 0 0 1</ambient>
+        </material>
+      </visual>
+    </link>
+    <joint name='mid_left_wheel_joint' type='revolute'>
+      <pose relative_to='mid_left_motor_asm_link'>0 0.09 0 0 0 0</pose>
+      <parent>mid_left_motor_asm_link</parent>
+      <child>mid_left_wheel_link</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-1e16</lower>
+          <upper>1e16</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+      <physics>
+        <provide_feedback>true</provide_feedback>
+        <ode>
+          <limit>
+            <cfm>0.0</cfm>
+            <erp>0.2</erp>
+          </limit>
+          <provide_feedback>true</provide_feedback>
+        </ode>
+      </physics>
+    </joint>
+    <link name='mid_left_wheel_link'>
+      <pose relative_to='mid_left_wheel_joint'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 1.570796326794896 0 0</pose>
+        <mass>0.19</mass>
+        <inertia>
+          <ixx>0.0002022409166666667</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.0002022409166666667</iyy>
+          <iyz>1.203706215242022e-35</iyz>
+          <izz>0.0002973904999999999</izz>
+        </inertia>
+      </inertial>
+      <collision name='mid_left_wheel_link_collision'>
+        <pose>0 0 0 1.570796326794896 0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.062</length>
+            <radius>0.062</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>10.0</mu>
+              <mu2>5.0</mu2>
+              <fdir1>1 0 0</fdir1>
+              <slip1>0.0</slip1>
+              <slip2>0.0</slip2>
+            </ode>
+          </friction>
+          <contact>
+            <ode/>
+          </contact>
+        </surface>
+      </collision>
+      <collision name='mid_left_wheel_link_fixed_joint_lump__mid_left_wheel_adapter_link_collision_1'>
+        <pose>0 0 0 1.570796326794896 0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.024</length>
+            <radius>0.005</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <collision name='mid_left_wheel_link_fixed_joint_lump__mid_left_wheel_rim_link_collision_2'>
+        <pose>0 0 0 1.570796326794896 0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.05</length>
+            <radius>0.03</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='mid_left_wheel_link_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://wild1_description/meshes/wheels/left_wheel_tyre.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/FlatBlack</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>0 0 0 1</diffuse>
+          <ambient>0 0 0 1</ambient>
+        </material>
+      </visual>
+      <visual name='mid_left_wheel_link_fixed_joint_lump__mid_left_wheel_adapter_link_visual_1'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://wild1_description/meshes/wheels/left_wheel_adapter.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Gray</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>0.9412500262260437 0.9412500262260437 0.9412500262260437 1</diffuse>
+          <ambient>0.9412500262260437 0.9412500262260437 0.9412500262260437 1</ambient>
+        </material>
+      </visual>
+      <visual name='mid_left_wheel_link_fixed_joint_lump__mid_left_wheel_rim_link_visual_2'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://wild1_description/meshes/wheels/left_wheel_rim.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Red</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>1 0 0 1</diffuse>
+          <ambient>1 0 0 1</ambient>
+        </material>
+      </visual>
+    </link>
+    <joint name='mid_right_motor_asm_joint' type='revolute'>
+      <pose relative_to='mid_wheel_chassis_long_link'>0 -0.03 -0.015 0 0 0</pose>
+      <parent>mid_wheel_chassis_long_link</parent>
+      <child>mid_right_motor_asm_link</child>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>-0.5</lower>
+          <upper>0.5</upper>
+          <effort>50</effort>
+          <velocity>10</velocity>
+        </limit>
+        <dynamics>
+          <damping>0.7</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>3</spring_stiffness>
+        </dynamics>
+      </axis>
+      <physics>
+        <provide_feedback>true</provide_feedback>
+        <ode>
+          <implicit_spring_damper>true</implicit_spring_damper>
+          <cfm_damping>true</cfm_damping>
+          <limit>
+            <cfm>0.0</cfm>
+            <erp>0.2</erp>
+          </limit>
+          <provide_feedback>true</provide_feedback>
+        </ode>
+      </physics>
+    </joint>
+    <link name='mid_right_motor_asm_link'>
+      <pose relative_to='mid_right_motor_asm_joint'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 -0.025 0 1.570796326794896 0 0</pose>
+        <mass>0.1</mass>
+        <inertia>
+          <ixx>2.723333333333334e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>2.723333333333334e-05</iyy>
+          <iyz>0</iyz>
+          <izz>1.28e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name='mid_right_motor_asm_link_collision'>
+        <pose>0 0 0 0 1.570796326794897 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.064</length>
+            <radius>0.016</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <collision name='mid_right_motor_asm_link_collision_1'>
+        <pose>0 -0.025 0 1.570796326794896 0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.05</length>
+            <radius>0.016</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='mid_right_motor_asm_link_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://wild1_description/meshes/bases/right_motor_asm.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Black</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>0 0 0 1</diffuse>
+          <ambient>0 0 0 1</ambient>
+        </material>
+      </visual>
+    </link>
+    <joint name='mid_right_wheel_joint' type='revolute'>
+      <pose relative_to='mid_right_motor_asm_link'>0 -0.09 0 0 0 0</pose>
+      <parent>mid_right_motor_asm_link</parent>
+      <child>mid_right_wheel_link</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-1e16</lower>
+          <upper>1e16</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+      <physics>
+        <provide_feedback>true</provide_feedback>
+        <ode>
+          <limit>
+            <cfm>0.0</cfm>
+            <erp>0.2</erp>
+          </limit>
+          <provide_feedback>true</provide_feedback>
+        </ode>
+      </physics>
+    </joint>
+    <link name='mid_right_wheel_link'>
+      <pose relative_to='mid_right_wheel_joint'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 1.570796326794896 0 0</pose>
+        <mass>0.19</mass>
+        <inertia>
+          <ixx>0.0002022409166666667</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.0002022409166666667</iyy>
+          <iyz>1.203706215242022e-35</iyz>
+          <izz>0.0002973904999999999</izz>
+        </inertia>
+      </inertial>
+      <collision name='mid_right_wheel_link_collision'>
+        <pose>0 0 0 1.570796326794896 0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.062</length>
+            <radius>0.062</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>10.0</mu>
+              <mu2>5.0</mu2>
+              <fdir1>1 0 0</fdir1>
+              <slip1>0.0</slip1>
+              <slip2>0.0</slip2>
+            </ode>
+          </friction>
+          <contact>
+            <ode/>
+          </contact>
+        </surface>
+      </collision>
+      <collision name='mid_right_wheel_link_fixed_joint_lump__mid_right_wheel_adapter_link_collision_1'>
+        <pose>0 0 0 1.570796326794896 0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.024</length>
+            <radius>0.005</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <collision name='mid_right_wheel_link_fixed_joint_lump__mid_right_wheel_rim_link_collision_2'>
+        <pose>0 0 0 1.570796326794896 0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.05</length>
+            <radius>0.03</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='mid_right_wheel_link_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://wild1_description/meshes/wheels/right_wheel_tyre.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/FlatBlack</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>0 0 0 1</diffuse>
+          <ambient>0 0 0 1</ambient>
+        </material>
+      </visual>
+      <visual name='mid_right_wheel_link_fixed_joint_lump__mid_right_wheel_adapter_link_visual_1'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://wild1_description/meshes/wheels/right_wheel_adapter.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Gray</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>0.9412500262260437 0.9412500262260437 0.9412500262260437 1</diffuse>
+          <ambient>0.9412500262260437 0.9412500262260437 0.9412500262260437 1</ambient>
+        </material>
+      </visual>
+      <visual name='mid_right_wheel_link_fixed_joint_lump__mid_right_wheel_rim_link_visual_2'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://wild1_description/meshes/wheels/right_wheel_rim.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Red</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>1 0 0 1</diffuse>
+          <ambient>1 0 0 1</ambient>
+        </material>
+      </visual>
+    </link>
+    <joint name='rear_small_chassis_joint' type='fixed'>
+      <pose relative_to='base_link'>-0.075 0 -0.02 0 0 0</pose>
+      <parent>base_link</parent>
+      <child>rear_small_chassis_link</child>
+      <axis>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e16</lower>
+          <upper>1e16</upper>
+        </limit>
+      </axis>
+      <physics>
+        <ode>
+          <limit>
+            <cfm>0.0</cfm>
+            <erp>0.2</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <link name='rear_small_chassis_link'>
+      <pose relative_to='rear_small_chassis_joint'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.2</mass>
+        <inertia>
+          <ixx>0.0002666666666666667</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.0001083333333333333</iyy>
+          <iyz>0</iyz>
+          <izz>0.0003216666666666667</izz>
+        </inertia>
+      </inertial>
+      <collision name='rear_small_chassis_link_collision'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.07000000000000001 0.12 0.04</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='rear_small_chassis_link_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://wild1_description/meshes/bases/small_chassis_with_frame_connector.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/DarkGray</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>0.625 0.625 0.625 1</diffuse>
+          <ambient>0.625 0.625 0.625 1</ambient>
+        </material>
+      </visual>
+    </link>
+    <joint name='rear_wheel_chassis_short_joint' type='fixed'>
+      <pose relative_to='base_link'>-0.15 0 -0.02 0 0 0</pose>
+      <parent>base_link</parent>
+      <child>rear_wheel_chassis_short_link</child>
+      <axis>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e16</lower>
+          <upper>1e16</upper>
+        </limit>
+      </axis>
+      <physics>
+        <ode>
+          <limit>
+            <cfm>0.0</cfm>
+            <erp>0.2</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <link name='rear_wheel_chassis_short_link'>
+      <pose relative_to='rear_wheel_chassis_short_joint'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.2</mass>
+        <inertia>
+          <ixx>0.0002666666666666667</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.0001083333333333333</iyy>
+          <iyz>0</iyz>
+          <izz>0.0003216666666666667</izz>
+        </inertia>
+      </inertial>
+      <collision name='rear_wheel_chassis_short_link_collision'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.07000000000000001 0.12 0.04</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='rear_wheel_chassis_short_link_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://wild1_description/meshes/bases/wheel_chassis_short.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/DarkGray</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>0.625 0.625 0.625 1</diffuse>
+          <ambient>0.625 0.625 0.625 1</ambient>
+        </material>
+      </visual>
+    </link>
+    <joint name='rear_left_motor_asm_joint' type='revolute'>
+      <pose relative_to='rear_wheel_chassis_short_link'>0 0.03 -0.01 0 0 0</pose>
+      <parent>rear_wheel_chassis_short_link</parent>
+      <child>rear_left_motor_asm_link</child>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>-0.5</lower>
+          <upper>0.5</upper>
+          <effort>50</effort>
+          <velocity>10</velocity>
+        </limit>
+        <dynamics>
+          <damping>0.7</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>3</spring_stiffness>
+        </dynamics>
+      </axis>
+      <physics>
+        <provide_feedback>true</provide_feedback>
+        <ode>
+          <implicit_spring_damper>true</implicit_spring_damper>
+          <cfm_damping>true</cfm_damping>
+          <limit>
+            <cfm>0.0</cfm>
+            <erp>0.2</erp>
+          </limit>
+          <provide_feedback>true</provide_feedback>
+        </ode>
+      </physics>
+    </joint>
+    <link name='rear_left_motor_asm_link'>
+      <pose relative_to='rear_left_motor_asm_joint'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0.025 0 1.570796326794896 0 0</pose>
+        <mass>0.1</mass>
+        <inertia>
+          <ixx>2.723333333333334e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>2.723333333333334e-05</iyy>
+          <iyz>0</iyz>
+          <izz>1.28e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name='rear_left_motor_asm_link_collision'>
+        <pose>0 0 0 0 1.570796326794897 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.064</length>
+            <radius>0.016</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <collision name='rear_left_motor_asm_link_collision_1'>
+        <pose>0 0.025 0 1.570796326794896 0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.05</length>
+            <radius>0.016</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='rear_left_motor_asm_link_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://wild1_description/meshes/bases/left_motor_asm.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Black</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>0 0 0 1</diffuse>
+          <ambient>0 0 0 1</ambient>
+        </material>
+      </visual>
+    </link>
+    <joint name='rear_left_wheel_joint' type='revolute'>
+      <pose relative_to='rear_left_motor_asm_link'>0 0.09 0 0 0 0</pose>
+      <parent>rear_left_motor_asm_link</parent>
+      <child>rear_left_wheel_link</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-1e16</lower>
+          <upper>1e16</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+      <physics>
+        <provide_feedback>true</provide_feedback>
+        <ode>
+          <limit>
+            <cfm>0.0</cfm>
+            <erp>0.2</erp>
+          </limit>
+          <provide_feedback>true</provide_feedback>
+        </ode>
+      </physics>
+    </joint>
+    <link name='rear_left_wheel_link'>
+      <pose relative_to='rear_left_wheel_joint'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 1.570796326794896 0 0</pose>
+        <mass>0.19</mass>
+        <inertia>
+          <ixx>0.0002022409166666667</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.0002022409166666667</iyy>
+          <iyz>1.203706215242022e-35</iyz>
+          <izz>0.0002973904999999999</izz>
+        </inertia>
+      </inertial>
+      <collision name='rear_left_wheel_link_collision'>
+        <pose>0 0 0 1.570796326794896 0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.062</length>
+            <radius>0.062</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>10.0</mu>
+              <mu2>5.0</mu2>
+              <fdir1>1 0 0</fdir1>
+              <slip1>0.0</slip1>
+              <slip2>0.0</slip2>
+            </ode>
+          </friction>
+          <contact>
+            <ode/>
+          </contact>
+        </surface>
+      </collision>
+      <collision name='rear_left_wheel_link_fixed_joint_lump__rear_left_wheel_adapter_link_collision_1'>
+        <pose>0 0 0 1.570796326794896 0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.024</length>
+            <radius>0.005</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <collision name='rear_left_wheel_link_fixed_joint_lump__rear_left_wheel_rim_link_collision_2'>
+        <pose>0 0 0 1.570796326794896 0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.05</length>
+            <radius>0.03</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='rear_left_wheel_link_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://wild1_description/meshes/wheels/left_wheel_tyre.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/FlatBlack</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>0 0 0 1</diffuse>
+          <ambient>0 0 0 1</ambient>
+        </material>
+      </visual>
+      <visual name='rear_left_wheel_link_fixed_joint_lump__rear_left_wheel_adapter_link_visual_1'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://wild1_description/meshes/wheels/left_wheel_adapter.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Gray</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>0.9412500262260437 0.9412500262260437 0.9412500262260437 1</diffuse>
+          <ambient>0.9412500262260437 0.9412500262260437 0.9412500262260437 1</ambient>
+        </material>
+      </visual>
+      <visual name='rear_left_wheel_link_fixed_joint_lump__rear_left_wheel_rim_link_visual_2'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://wild1_description/meshes/wheels/left_wheel_rim.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Red</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>1 0 0 1</diffuse>
+          <ambient>1 0 0 1</ambient>
+        </material>
+      </visual>
+    </link>
+    <joint name='rear_right_motor_asm_joint' type='revolute'>
+      <pose relative_to='rear_wheel_chassis_short_link'>0 -0.03 -0.01 0 0 0</pose>
+      <parent>rear_wheel_chassis_short_link</parent>
+      <child>rear_right_motor_asm_link</child>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>-0.5</lower>
+          <upper>0.5</upper>
+          <effort>50</effort>
+          <velocity>10</velocity>
+        </limit>
+        <dynamics>
+          <damping>0.7</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>3</spring_stiffness>
+        </dynamics>
+      </axis>
+      <physics>
+        <provide_feedback>true</provide_feedback>
+        <ode>
+          <implicit_spring_damper>true</implicit_spring_damper>
+          <cfm_damping>true</cfm_damping>
+          <limit>
+            <cfm>0.0</cfm>
+            <erp>0.2</erp>
+          </limit>
+          <provide_feedback>true</provide_feedback>
+        </ode>
+      </physics>
+    </joint>
+    <link name='rear_right_motor_asm_link'>
+      <pose relative_to='rear_right_motor_asm_joint'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 -0.025 0 1.570796326794896 0 0</pose>
+        <mass>0.1</mass>
+        <inertia>
+          <ixx>2.723333333333334e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>2.723333333333334e-05</iyy>
+          <iyz>0</iyz>
+          <izz>1.28e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name='rear_right_motor_asm_link_collision'>
+        <pose>0 0 0 0 1.570796326794897 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.064</length>
+            <radius>0.016</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <collision name='rear_right_motor_asm_link_collision_1'>
+        <pose>0 -0.025 0 1.570796326794896 0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.05</length>
+            <radius>0.016</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='rear_right_motor_asm_link_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://wild1_description/meshes/bases/right_motor_asm.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Black</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>0 0 0 1</diffuse>
+          <ambient>0 0 0 1</ambient>
+        </material>
+      </visual>
+    </link>
+    <joint name='rear_right_wheel_joint' type='revolute'>
+      <pose relative_to='rear_right_motor_asm_link'>0 -0.09 0 0 0 0</pose>
+      <parent>rear_right_motor_asm_link</parent>
+      <child>rear_right_wheel_link</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-1e16</lower>
+          <upper>1e16</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+      <physics>
+        <provide_feedback>true</provide_feedback>
+        <ode>
+          <limit>
+            <cfm>0.0</cfm>
+            <erp>0.2</erp>
+          </limit>
+          <provide_feedback>true</provide_feedback>
+        </ode>
+      </physics>
+    </joint>
+    <link name='rear_right_wheel_link'>
+      <pose relative_to='rear_right_wheel_joint'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 1.570796326794896 0 0</pose>
+        <mass>0.19</mass>
+        <inertia>
+          <ixx>0.0002022409166666667</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.0002022409166666667</iyy>
+          <iyz>1.203706215242022e-35</iyz>
+          <izz>0.0002973904999999999</izz>
+        </inertia>
+      </inertial>
+      <collision name='rear_right_wheel_link_collision'>
+        <pose>0 0 0 1.570796326794896 0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.062</length>
+            <radius>0.062</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>10.0</mu>
+              <mu2>5.0</mu2>
+              <fdir1>1 0 0</fdir1>
+              <slip1>0.0</slip1>
+              <slip2>0.0</slip2>
+            </ode>
+          </friction>
+          <contact>
+            <ode/>
+          </contact>
+        </surface>
+      </collision>
+      <collision name='rear_right_wheel_link_fixed_joint_lump__rear_right_wheel_adapter_link_collision_1'>
+        <pose>0 0 0 1.570796326794896 0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.024</length>
+            <radius>0.005</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <collision name='rear_right_wheel_link_fixed_joint_lump__rear_right_wheel_rim_link_collision_2'>
+        <pose>0 0 0 1.570796326794896 0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.05</length>
+            <radius>0.03</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='rear_right_wheel_link_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://wild1_description/meshes/wheels/right_wheel_tyre.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/FlatBlack</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>0 0 0 1</diffuse>
+          <ambient>0 0 0 1</ambient>
+        </material>
+      </visual>
+      <visual name='rear_right_wheel_link_fixed_joint_lump__rear_right_wheel_adapter_link_visual_1'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://wild1_description/meshes/wheels/right_wheel_adapter.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Gray</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>0.9412500262260437 0.9412500262260437 0.9412500262260437 1</diffuse>
+          <ambient>0.9412500262260437 0.9412500262260437 0.9412500262260437 1</ambient>
+        </material>
+      </visual>
+      <visual name='rear_right_wheel_link_fixed_joint_lump__rear_right_wheel_rim_link_visual_2'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://wild1_description/meshes/wheels/right_wheel_rim.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Red</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>1 0 0 1</diffuse>
+          <ambient>1 0 0 1</ambient>
+        </material>
+      </visual>
+    </link>
+    <joint name='sonar0_joint' type='fixed'>
+      <pose relative_to='base_link'>0.21 -0.05 0.01 0 0 -0.7853981633974484</pose>
+      <parent>base_link</parent>
+      <child>sonar0</child>
+      <axis>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e16</lower>
+          <upper>1e16</upper>
+        </limit>
+      </axis>
+      <physics>
+        <ode>
+          <limit>
+            <cfm>0.0</cfm>
+            <erp>0.2</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <link name='sonar0'>
+      <pose relative_to='sonar0_joint'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.02</mass>
+        <inertia>
+          <ixx>3.041666666666667e-06</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>7.5e-07</iyy>
+          <iyz>0</iyz>
+          <izz>3.041666666666667e-06</izz>
+        </inertia>
+      </inertial>
+      <collision name='sonar0_collision'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.015 0.04 0.015</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='sonar0_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://wild1_description/meshes/sensors/hcsr04.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Blue</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>0 0 1 1</diffuse>
+          <ambient>0 0 1 1</ambient>
+        </material>
+      </visual>
+      <sensor name='sonar_sensor0' type='ray'>
+        <always_on>true</always_on>
+        <update_rate>20</update_rate>
+        <visualize>true</visualize>
+        <topic>sensors/sonar0</topic>
+        <pose>0 0 0 0 0 0</pose>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>5</samples>
+              <resolution>1</resolution>
+              <min_angle>-0.14835</min_angle>
+              <max_angle>0.14835</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>5</samples>
+              <resolution>1</resolution>
+              <min_angle>-0.14835</min_angle>
+              <max_angle>0.14835</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>0.01</min>
+            <max>4.0</max>
+            <resolution>0.02</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.1</mean>
+            <stddev>0.005</stddev>
+          </noise>
+        </ray>
+        <plugin name='gazebo_ros_range' filename='libgazebo_ros_range.so'>
+          <gaussianNoise>0.005</gaussianNoise>
+          <always_on>true</always_on>
+          <updateRate>20</updateRate>
+          <topicName>sensors/sonar0</topicName>
+          <frameName>sonar0</frameName>
+          <radiation>ULTRASONIC</radiation>
+          <fov>0.2967</fov>
+        </plugin>
+      </sensor>
+    </link>
+    <joint name='sonar1_joint' type='fixed'>
+      <pose relative_to='base_link'>0.225 0 0.01 0 0 0</pose>
+      <parent>base_link</parent>
+      <child>sonar1</child>
+      <axis>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e16</lower>
+          <upper>1e16</upper>
+        </limit>
+      </axis>
+      <physics>
+        <ode>
+          <limit>
+            <cfm>0.0</cfm>
+            <erp>0.2</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <link name='sonar1'>
+      <pose relative_to='sonar1_joint'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.02</mass>
+        <inertia>
+          <ixx>3.041666666666667e-06</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>7.5e-07</iyy>
+          <iyz>0</iyz>
+          <izz>3.041666666666667e-06</izz>
+        </inertia>
+      </inertial>
+      <collision name='sonar1_collision'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.015 0.04 0.015</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='sonar1_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://wild1_description/meshes/sensors/hcsr04.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Blue</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>0 0 1 1</diffuse>
+          <ambient>0 0 1 1</ambient>
+        </material>
+      </visual>
+      <sensor name='sonar_sensor1' type='ray'>
+        <always_on>true</always_on>
+        <update_rate>20</update_rate>
+        <visualize>true</visualize>
+        <topic>sensors/sonar1</topic>
+        <pose>0 0 0 0 0 0</pose>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>5</samples>
+              <resolution>1</resolution>
+              <min_angle>-0.14835</min_angle>
+              <max_angle>0.14835</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>5</samples>
+              <resolution>1</resolution>
+              <min_angle>-0.14835</min_angle>
+              <max_angle>0.14835</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>0.01</min>
+            <max>4.0</max>
+            <resolution>0.02</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.1</mean>
+            <stddev>0.005</stddev>
+          </noise>
+        </ray>
+        <plugin name='gazebo_ros_range' filename='libgazebo_ros_range.so'>
+          <gaussianNoise>0.005</gaussianNoise>
+          <always_on>true</always_on>
+          <updateRate>20</updateRate>
+          <topicName>sensors/sonar1</topicName>
+          <frameName>sonar1</frameName>
+          <radiation>ULTRASONIC</radiation>
+          <fov>0.2967</fov>
+        </plugin>
+      </sensor>
+    </link>
+    <joint name='sonar2_joint' type='fixed'>
+      <pose relative_to='base_link'>0.21 0.05 0.01 0 0 0.7853981633974484</pose>
+      <parent>base_link</parent>
+      <child>sonar2</child>
+      <axis>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e16</lower>
+          <upper>1e16</upper>
+        </limit>
+      </axis>
+      <physics>
+        <ode>
+          <limit>
+            <cfm>0.0</cfm>
+            <erp>0.2</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <link name='sonar2'>
+      <pose relative_to='sonar2_joint'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.02</mass>
+        <inertia>
+          <ixx>3.041666666666667e-06</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>7.5e-07</iyy>
+          <iyz>0</iyz>
+          <izz>3.041666666666667e-06</izz>
+        </inertia>
+      </inertial>
+      <collision name='sonar2_collision'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.015 0.04 0.015</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='sonar2_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://wild1_description/meshes/sensors/hcsr04.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Blue</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>0 0 1 1</diffuse>
+          <ambient>0 0 1 1</ambient>
+        </material>
+      </visual>
+      <sensor name='sonar_sensor2' type='ray'>
+        <always_on>true</always_on>
+        <update_rate>20</update_rate>
+        <visualize>true</visualize>
+        <topic>sensors/sonar2</topic>
+        <pose>0 0 0 0 0 0</pose>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>5</samples>
+              <resolution>1</resolution>
+              <min_angle>-0.14835</min_angle>
+              <max_angle>0.14835</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>5</samples>
+              <resolution>1</resolution>
+              <min_angle>-0.14835</min_angle>
+              <max_angle>0.14835</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>0.01</min>
+            <max>4.0</max>
+            <resolution>0.02</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.1</mean>
+            <stddev>0.005</stddev>
+          </noise>
+        </ray>
+        <plugin name='gazebo_ros_range' filename='libgazebo_ros_range.so'>
+          <gaussianNoise>0.005</gaussianNoise>
+          <always_on>true</always_on>
+          <updateRate>20</updateRate>
+          <topicName>sensors/sonar2</topicName>
+          <frameName>sonar2</frameName>
+          <radiation>ULTRASONIC</radiation>
+          <fov>0.2967</fov>
+        </plugin>
+      </sensor>
+    </link>
+    <joint name='sonar3_joint' type='fixed'>
+      <pose relative_to='base_link'>-0.21 -0.05 0.01 0 0 -2.356194490192345</pose>
+      <parent>base_link</parent>
+      <child>sonar3</child>
+      <axis>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e16</lower>
+          <upper>1e16</upper>
+        </limit>
+      </axis>
+      <physics>
+        <ode>
+          <limit>
+            <cfm>0.0</cfm>
+            <erp>0.2</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <link name='sonar3'>
+      <pose relative_to='sonar3_joint'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.02</mass>
+        <inertia>
+          <ixx>3.041666666666667e-06</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>7.5e-07</iyy>
+          <iyz>0</iyz>
+          <izz>3.041666666666667e-06</izz>
+        </inertia>
+      </inertial>
+      <collision name='sonar3_collision'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.015 0.04 0.015</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='sonar3_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://wild1_description/meshes/sensors/hcsr04.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Blue</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>0 0 1 1</diffuse>
+          <ambient>0 0 1 1</ambient>
+        </material>
+      </visual>
+      <sensor name='sonar_sensor3' type='ray'>
+        <always_on>true</always_on>
+        <update_rate>20</update_rate>
+        <visualize>true</visualize>
+        <topic>sensors/sonar3</topic>
+        <pose>0 0 0 0 0 0</pose>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>5</samples>
+              <resolution>1</resolution>
+              <min_angle>-0.14835</min_angle>
+              <max_angle>0.14835</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>5</samples>
+              <resolution>1</resolution>
+              <min_angle>-0.14835</min_angle>
+              <max_angle>0.14835</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>0.01</min>
+            <max>4.0</max>
+            <resolution>0.02</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.1</mean>
+            <stddev>0.005</stddev>
+          </noise>
+        </ray>
+        <plugin name='gazebo_ros_range' filename='libgazebo_ros_range.so'>
+          <gaussianNoise>0.005</gaussianNoise>
+          <always_on>true</always_on>
+          <updateRate>20</updateRate>
+          <topicName>sensors/sonar3</topicName>
+          <frameName>sonar3</frameName>
+          <radiation>ULTRASONIC</radiation>
+          <fov>0.2967</fov>
+        </plugin>
+      </sensor>
+    </link>
+    <joint name='sonar4_joint' type='fixed'>
+      <pose relative_to='base_link'>-0.225 0 0.01 0 0 3.141592653589793</pose>
+      <parent>base_link</parent>
+      <child>sonar4</child>
+      <axis>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e16</lower>
+          <upper>1e16</upper>
+        </limit>
+      </axis>
+      <physics>
+        <ode>
+          <limit>
+            <cfm>0.0</cfm>
+            <erp>0.2</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <link name='sonar4'>
+      <pose relative_to='sonar4_joint'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.02</mass>
+        <inertia>
+          <ixx>3.041666666666667e-06</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>7.5e-07</iyy>
+          <iyz>0</iyz>
+          <izz>3.041666666666667e-06</izz>
+        </inertia>
+      </inertial>
+      <collision name='sonar4_collision'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.015 0.04 0.015</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='sonar4_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://wild1_description/meshes/sensors/hcsr04.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Blue</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>0 0 1 1</diffuse>
+          <ambient>0 0 1 1</ambient>
+        </material>
+      </visual>
+      <sensor name='sonar_sensor4' type='ray'>
+        <always_on>true</always_on>
+        <update_rate>20</update_rate>
+        <visualize>true</visualize>
+        <topic>sensors/sonar4</topic>
+        <pose>0 0 0 0 0 0</pose>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>5</samples>
+              <resolution>1</resolution>
+              <min_angle>-0.14835</min_angle>
+              <max_angle>0.14835</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>5</samples>
+              <resolution>1</resolution>
+              <min_angle>-0.14835</min_angle>
+              <max_angle>0.14835</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>0.01</min>
+            <max>4.0</max>
+            <resolution>0.02</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.1</mean>
+            <stddev>0.005</stddev>
+          </noise>
+        </ray>
+        <plugin name='gazebo_ros_range' filename='libgazebo_ros_range.so'>
+          <gaussianNoise>0.005</gaussianNoise>
+          <always_on>true</always_on>
+          <updateRate>20</updateRate>
+          <topicName>sensors/sonar4</topicName>
+          <frameName>sonar4</frameName>
+          <radiation>ULTRASONIC</radiation>
+          <fov>0.2967</fov>
+        </plugin>
+      </sensor>
+    </link>
+    <joint name='sonar5_joint' type='fixed'>
+      <pose relative_to='base_link'>-0.21 0.05 0.01 0 0 2.356194490192345</pose>
+      <parent>base_link</parent>
+      <child>sonar5</child>
+      <axis>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e16</lower>
+          <upper>1e16</upper>
+        </limit>
+      </axis>
+      <physics>
+        <ode>
+          <limit>
+            <cfm>0.0</cfm>
+            <erp>0.2</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <link name='sonar5'>
+      <pose relative_to='sonar5_joint'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.02</mass>
+        <inertia>
+          <ixx>3.041666666666667e-06</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>7.5e-07</iyy>
+          <iyz>0</iyz>
+          <izz>3.041666666666667e-06</izz>
+        </inertia>
+      </inertial>
+      <collision name='sonar5_collision'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.015 0.04 0.015</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='sonar5_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://wild1_description/meshes/sensors/hcsr04.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Blue</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>0 0 1 1</diffuse>
+          <ambient>0 0 1 1</ambient>
+        </material>
+      </visual>
+      <sensor name='sonar_sensor5' type='ray'>
+        <always_on>true</always_on>
+        <update_rate>20</update_rate>
+        <visualize>true</visualize>
+        <topic>sensors/sonar5</topic>
+        <pose>0 0 0 0 0 0</pose>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>5</samples>
+              <resolution>1</resolution>
+              <min_angle>-0.14835</min_angle>
+              <max_angle>0.14835</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>5</samples>
+              <resolution>1</resolution>
+              <min_angle>-0.14835</min_angle>
+              <max_angle>0.14835</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>0.01</min>
+            <max>4.0</max>
+            <resolution>0.02</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.1</mean>
+            <stddev>0.005</stddev>
+          </noise>
+        </ray>
+        <plugin name='gazebo_ros_range' filename='libgazebo_ros_range.so'>
+          <gaussianNoise>0.005</gaussianNoise>
+          <always_on>true</always_on>
+          <updateRate>20</updateRate>
+          <topicName>sensors/sonar5</topicName>
+          <frameName>sonar5</frameName>
+          <radiation>ULTRASONIC</radiation>
+          <fov>0.2967</fov>
+        </plugin>
+      </sensor>
+    </link>
+    <joint name='top_chassis_joint' type='fixed'>
+      <pose relative_to='base_link'>0 0 0.0145 0 0 0</pose>
+      <parent>base_link</parent>
+      <child>top_chassis_link</child>
+      <axis>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e16</lower>
+          <upper>1e16</upper>
+        </limit>
+      </axis>
+      <physics>
+        <ode>
+          <limit>
+            <cfm>0.0</cfm>
+            <erp>0.2</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <link name='top_chassis_link'>
+      <pose relative_to='top_chassis_joint'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.2</mass>
+        <inertia>
+          <ixx>0.0002504166666666667</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.002417083333333333</iyy>
+          <iyz>0</iyz>
+          <izz>0.002646666666666667</izz>
+        </inertia>
+      </inertial>
+      <collision name='top_chassis_link_collision'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.38 0.12 0.025</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='top_chassis_link_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://wild1_description/meshes/bases/top_chassis_with_standoffs.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/DarkGray</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>0.625 0.625 0.625 1</diffuse>
+          <ambient>0.625 0.625 0.625 1</ambient>
+        </material>
+      </visual>
+    </link>
+    <joint name='tracking_camera0_joint' type='fixed'>
+      <pose relative_to='base_link'>0.2 0.0095 0.1125 0 0 0</pose>
+      <parent>base_link</parent>
+      <child>tracking_camera0_link</child>
+      <axis>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e16</lower>
+          <upper>1e16</upper>
+        </limit>
+      </axis>
+      <physics>
+        <ode>
+          <limit>
+            <cfm>0.0</cfm>
+            <erp>0.2</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <link name='tracking_camera0_link'>
+      <pose relative_to='tracking_camera0_joint'>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.06</mass>
+        <inertia>
+          <ixx>6.132125e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>3.7825e-06</iyy>
+          <iyz>0</iyz>
+          <izz>5.910124999999999e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name='tracking_camera0_link_collision'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.0125 0.108 0.0245</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='tracking_camera0_link_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://wild1_description/meshes/sensors/intel_realsense_t265.stl</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Gray</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+          <diffuse>1 1 1 1</diffuse>
+          <ambient>1 1 1 1</ambient>
+        </material>
+      </visual>
+    </link>
+    <static>false</static>
+    <plugin name='gazebo_ros_control' filename='libgazebo_ros_control.so'>
+      <robotNamespace>/</robotNamespace>
+      <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+      <legacyModeNS>false</legacyModeNS>
+    </plugin>
+    <plugin name='gazebo_ros_joint_state_publisher' filename='libgazebo_ros_joint_state_publisher.so'>
+      <robotNamespace>/</robotNamespace>
+      <jointName>
+                front_right_motor_asm_joint, mid_right_motor_asm_joint, rear_right_motor_asm_joint, front_left_motor_asm_joint, mid_left_motor_asm_joint, rear_left_motor_asm_joint
+            </jointName>
+      <updateRate>50</updateRate>
+      <alwaysOn>true</alwaysOn>
+    </plugin>
+  </model>
+</sdf>
