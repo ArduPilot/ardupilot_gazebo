@@ -38,7 +38,7 @@
         </material>
       </visual>
     </link>
-    <joint name='depth_camera0_joint' type='fixed'>
+    <!-- <joint name='depth_camera0_joint' type='fixed'>
       <pose relative_to='base_link'>0.2 0 0.0825 0 0 0</pose>
       <parent>base_link</parent>
       <child>depth_camera0_link</child>
@@ -92,7 +92,7 @@
           <ambient>1 1 1 1</ambient>
         </material>
       </visual>
-    </link>
+    </link> -->
     <joint name='front_small_chassis_joint' type='fixed'>
       <pose relative_to='base_link'>0.075 0 -0.02 0 0 0</pose>
       <parent>base_link</parent>
@@ -593,7 +593,7 @@
         </material>
       </visual>
     </link>
-    <joint name='imu0_joint' type='fixed'>
+    <!-- <joint name='imu0_joint' type='fixed'>
       <pose relative_to='base_link'>-0.11 -0.03 0.06 0 0 -1.570796326794896</pose>
       <parent>base_link</parent>
       <child>imu0</child>
@@ -655,19 +655,9 @@
         <imu>
           <topic>sensors/imu0</topic>
         </imu>
-        <!-- <plugin name='imu_plugin' filename='libgazebo_ros_imu_sensor.so'>
-          <gaussianNoise>0.0</gaussianNoise>
-          <always_on>true</always_on>
-          <updateRateHz>50</updateRateHz>
-          <topicName>sensors/imu0</topicName>
-          <frameName>imu0</frameName>
-          <bodyName>imu0</bodyName>
-          <xyzOffset>0 0 0</xyzOffset>
-          <rpyOffset>0 0 0</rpyOffset>
-        </plugin> -->
       </sensor>
-    </link>
-    <joint name='infrared0_joint' type='fixed'>
+    </link> -->
+    <!-- <joint name='infrared0_joint' type='fixed'>
       <pose relative_to='base_link'>0.2 0 -0.017 -3.141592653589793 1.570796326794897 0</pose>
       <parent>base_link</parent>
       <child>infrared0</child>
@@ -753,15 +743,6 @@
             <stddev>0.005</stddev>
           </noise>
         </ray>
-        <!-- <plugin name='gazebo_ros_range' filename='libgazebo_ros_range.so'>
-          <gaussianNoise>0.005</gaussianNoise>
-          <always_on>true</always_on>
-          <updateRate>20</updateRate>
-          <topicName>sensors/infrared0</topicName>
-          <frameName>infrared0</frameName>
-          <radiation>INFRARED</radiation>
-          <fov>0.2967</fov>
-        </plugin> -->
       </sensor>
     </link>
     <joint name='infrared1_joint' type='fixed'>
@@ -850,18 +831,9 @@
             <stddev>0.005</stddev>
           </noise>
         </ray>
-        <!-- <plugin name='gazebo_ros_range' filename='libgazebo_ros_range.so'>
-          <gaussianNoise>0.005</gaussianNoise>
-          <always_on>true</always_on>
-          <updateRate>20</updateRate>
-          <topicName>sensors/infrared1</topicName>
-          <frameName>infrared1</frameName>
-          <radiation>INFRARED</radiation>
-          <fov>0.2967</fov>
-        </plugin> -->
       </sensor>
-    </link>
-    <joint name='laser0_joint' type='fixed'>
+    </link> -->
+    <!-- <joint name='laser0_joint' type='fixed'>
       <pose relative_to='base_link'>0.11 0 0.09 0 0 0</pose>
       <parent>base_link</parent>
       <child>laser0</child>
@@ -948,12 +920,8 @@
             <stddev>0.01</stddev>
           </noise>
         </ray>
-        <!-- <plugin name='gazebo_ros_laser' filename='libgazebo_ros_laser.so'>
-          <frameName>laser0</frameName>
-          <topicName>sensors/laser0</topicName>
-        </plugin> -->
       </sensor>
-    </link>
+    </link> -->
     <joint name='mid_wheel_chassis_long_joint' type='fixed'>
       <pose relative_to='base_link'>0 0 -0.025 0 0 0</pose>
       <parent>base_link</parent>
@@ -1875,7 +1843,7 @@
         </material>
       </visual>
     </link>
-    <joint name='sonar0_joint' type='fixed'>
+    <!-- <joint name='sonar0_joint' type='fixed'>
       <pose relative_to='base_link'>0.21 -0.05 0.01 0 0 -0.7853981633974484</pose>
       <parent>base_link</parent>
       <child>sonar0</child>
@@ -1961,15 +1929,6 @@
             <stddev>0.005</stddev>
           </noise>
         </ray>
-        <!-- <plugin name='gazebo_ros_range' filename='libgazebo_ros_range.so'>
-          <gaussianNoise>0.005</gaussianNoise>
-          <always_on>true</always_on>
-          <updateRate>20</updateRate>
-          <topicName>sensors/sonar0</topicName>
-          <frameName>sonar0</frameName>
-          <radiation>ULTRASONIC</radiation>
-          <fov>0.2967</fov>
-        </plugin> -->
       </sensor>
     </link>
     <joint name='sonar1_joint' type='fixed'>
@@ -2058,15 +2017,6 @@
             <stddev>0.005</stddev>
           </noise>
         </ray>
-        <!-- <plugin name='gazebo_ros_range' filename='libgazebo_ros_range.so'>
-          <gaussianNoise>0.005</gaussianNoise>
-          <always_on>true</always_on>
-          <updateRate>20</updateRate>
-          <topicName>sensors/sonar1</topicName>
-          <frameName>sonar1</frameName>
-          <radiation>ULTRASONIC</radiation>
-          <fov>0.2967</fov>
-        </plugin> -->
       </sensor>
     </link>
     <joint name='sonar2_joint' type='fixed'>
@@ -2155,15 +2105,6 @@
             <stddev>0.005</stddev>
           </noise>
         </ray>
-        <!-- <plugin name='gazebo_ros_range' filename='libgazebo_ros_range.so'>
-          <gaussianNoise>0.005</gaussianNoise>
-          <always_on>true</always_on>
-          <updateRate>20</updateRate>
-          <topicName>sensors/sonar2</topicName>
-          <frameName>sonar2</frameName>
-          <radiation>ULTRASONIC</radiation>
-          <fov>0.2967</fov>
-        </plugin> -->
       </sensor>
     </link>
     <joint name='sonar3_joint' type='fixed'>
@@ -2252,15 +2193,6 @@
             <stddev>0.005</stddev>
           </noise>
         </ray>
-        <!-- <plugin name='gazebo_ros_range' filename='libgazebo_ros_range.so'>
-          <gaussianNoise>0.005</gaussianNoise>
-          <always_on>true</always_on>
-          <updateRate>20</updateRate>
-          <topicName>sensors/sonar3</topicName>
-          <frameName>sonar3</frameName>
-          <radiation>ULTRASONIC</radiation>
-          <fov>0.2967</fov>
-        </plugin> -->
       </sensor>
     </link>
     <joint name='sonar4_joint' type='fixed'>
@@ -2349,15 +2281,6 @@
             <stddev>0.005</stddev>
           </noise>
         </ray>
-        <!-- <plugin name='gazebo_ros_range' filename='libgazebo_ros_range.so'>
-          <gaussianNoise>0.005</gaussianNoise>
-          <always_on>true</always_on>
-          <updateRate>20</updateRate>
-          <topicName>sensors/sonar4</topicName>
-          <frameName>sonar4</frameName>
-          <radiation>ULTRASONIC</radiation>
-          <fov>0.2967</fov>
-        </plugin> -->
       </sensor>
     </link>
     <joint name='sonar5_joint' type='fixed'>
@@ -2446,17 +2369,8 @@
             <stddev>0.005</stddev>
           </noise>
         </ray>
-        <!-- <plugin name='gazebo_ros_range' filename='libgazebo_ros_range.so'>
-          <gaussianNoise>0.005</gaussianNoise>
-          <always_on>true</always_on>
-          <updateRate>20</updateRate>
-          <topicName>sensors/sonar5</topicName>
-          <frameName>sonar5</frameName>
-          <radiation>ULTRASONIC</radiation>
-          <fov>0.2967</fov>
-        </plugin> -->
       </sensor>
-    </link>
+    </link> -->
     <joint name='top_chassis_joint' type='fixed'>
       <pose relative_to='base_link'>0 0 0.0145 0 0 0</pose>
       <parent>base_link</parent>
@@ -2512,7 +2426,7 @@
         </material>
       </visual>
     </link>
-    <joint name='tracking_camera0_joint' type='fixed'>
+    <!-- <joint name='tracking_camera0_joint' type='fixed'>
       <pose relative_to='base_link'>0.2 0.0095 0.1125 0 0 0</pose>
       <parent>base_link</parent>
       <child>tracking_camera0_link</child>
@@ -2566,20 +2480,77 @@
           <ambient>1 1 1 1</ambient>
         </material>
       </visual>
+    </link> -->
+
+    <!-- sensors -->
+    <link name='imu_link'>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.15</mass>
+        <inertia>
+          <ixx>0.00002</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.00002</iyy>
+          <iyz>0</iyz>
+          <izz>0.00002</izz>
+        </inertia>
+      </inertial>
+      <sensor name="imu_sensor" type="imu">
+        <pose>0 0 0 3.141593 0 0</pose>
+        <always_on>1</always_on>
+        <update_rate>1000.0</update_rate>
+      </sensor>
     </link>
-    <static>false</static>
-    <!-- <plugin name='gazebo_ros_control' filename='libgazebo_ros_control.so'>
-      <robotNamespace>/</robotNamespace>
-      <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
-      <legacyModeNS>false</legacyModeNS>
+    <joint name='wildthumper/imu_joint' type='revolute'>
+      <child>imu_link</child>
+      <parent>base_link</parent>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>0</lower>
+          <upper>0</upper>
+          <effort>0</effort>
+          <velocity>0</velocity>
+        </limit>
+        <dynamics>
+          <damping>1.0</damping>
+        </dynamics>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+    </joint>
+
+    <!-- plugins -->
+    <plugin filename="libignition-gazebo-joint-state-publisher-system.so"
+      name="ignition::gazebo::systems::JointStatePublisher">
     </plugin>
-    <plugin name='gazebo_ros_joint_state_publisher' filename='libgazebo_ros_joint_state_publisher.so'>
-      <robotNamespace>/</robotNamespace>
-      <jointName>
-                front_right_motor_asm_joint, mid_right_motor_asm_joint, rear_right_motor_asm_joint, front_left_motor_asm_joint, mid_left_motor_asm_joint, rear_left_motor_asm_joint
-            </jointName>
-      <updateRate>50</updateRate>
-      <alwaysOn>true</alwaysOn>
-    </plugin> -->
+    <plugin filename="libignition-gazebo-apply-joint-force-system.so"
+      name="ignition::gazebo::systems::ApplyJointForce">
+      <joint_name>front_left_wheel_joint</joint_name>
+    </plugin>
+    <plugin filename="libignition-gazebo-apply-joint-force-system.so"
+      name="ignition::gazebo::systems::ApplyJointForce">
+      <joint_name>front_right_wheel_joint</joint_name>
+    </plugin>
+    <plugin filename="libignition-gazebo-apply-joint-force-system.so"
+      name="ignition::gazebo::systems::ApplyJointForce">
+      <joint_name>mid_left_wheel_joint</joint_name>
+    </plugin>
+    <plugin filename="libignition-gazebo-apply-joint-force-system.so"
+      name="ignition::gazebo::systems::ApplyJointForce">
+      <joint_name>mid_right_wheel_joint</joint_name>
+    </plugin>
+    <plugin filename="libignition-gazebo-apply-joint-force-system.so"
+      name="ignition::gazebo::systems::ApplyJointForce">
+      <joint_name>rear_left_wheel_joint</joint_name>
+    </plugin>
+    <plugin filename="libignition-gazebo-apply-joint-force-system.so"
+      name="ignition::gazebo::systems::ApplyJointForce">
+      <joint_name>rear_right_wheel_joint</joint_name>
+    </plugin>
+
+
+
+
   </model>
 </sdf>
