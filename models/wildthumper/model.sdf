@@ -105,7 +105,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wild1_description/meshes/sensors/intel_realsense_d415.stl</uri>
+            <uri>model://wildthumper/meshes/sensors/intel_realsense_d415.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -177,7 +177,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wild1_description/meshes/bases/small_chassis_with_frame_connector.stl</uri>
+            <uri>model://wildthumper/meshes/bases/small_chassis_with_frame_connector.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -249,7 +249,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wild1_description/meshes/bases/wheel_chassis_short.stl</uri>
+            <uri>model://wildthumper/meshes/bases/wheel_chassis_short.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -347,7 +347,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wild1_description/meshes/bases/left_motor_asm.stl</uri>
+            <uri>model://wildthumper/meshes/bases/left_motor_asm.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -462,7 +462,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wild1_description/meshes/wheels/left_wheel_tyre.stl</uri>
+            <uri>model://wildthumper/meshes/wheels/left_wheel_tyre.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -479,7 +479,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wild1_description/meshes/wheels/left_wheel_adapter.stl</uri>
+            <uri>model://wildthumper/meshes/wheels/left_wheel_adapter.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -496,7 +496,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wild1_description/meshes/wheels/left_wheel_rim.stl</uri>
+            <uri>model://wildthumper/meshes/wheels/left_wheel_rim.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -594,7 +594,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wild1_description/meshes/bases/right_motor_asm.stl</uri>
+            <uri>model://wildthumper/meshes/bases/right_motor_asm.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -709,7 +709,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wild1_description/meshes/wheels/right_wheel_tyre.stl</uri>
+            <uri>model://wildthumper/meshes/wheels/right_wheel_tyre.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -726,7 +726,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wild1_description/meshes/wheels/right_wheel_adapter.stl</uri>
+            <uri>model://wildthumper/meshes/wheels/right_wheel_adapter.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -743,7 +743,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wild1_description/meshes/wheels/right_wheel_rim.stl</uri>
+            <uri>model://wildthumper/meshes/wheels/right_wheel_rim.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -835,7 +835,7 @@
         <imu>
           <topic>sensors/imu0</topic>
         </imu>
-        <plugin name='imu_plugin' filename='libgazebo_ros_imu_sensor.so'>
+        <!-- <plugin name='imu_plugin' filename='libgazebo_ros_imu_sensor.so'>
           <gaussianNoise>0.0</gaussianNoise>
           <always_on>true</always_on>
           <updateRateHz>50</updateRateHz>
@@ -844,7 +844,7 @@
           <bodyName>imu0</bodyName>
           <xyzOffset>0 0 0</xyzOffset>
           <rpyOffset>0 0 0</rpyOffset>
-        </plugin>
+        </plugin> -->
       </sensor>
     </link>
     <joint name='infrared0_joint' type='fixed'>
@@ -906,7 +906,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wild1_description/meshes/sensors/gp2y0a21yk.stl</uri>
+            <uri>model://wildthumper/meshes/sensors/gp2y0a21yk.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -918,7 +918,7 @@
           <ambient>0 0 0 1</ambient>
         </material>
       </visual>
-      <sensor name='infrared_sensor0' type='ray'>
+      <sensor name='infrared_sensor0' type='gpu_ray'>
         <always_on>true</always_on>
         <update_rate>20</update_rate>
         <visualize>true</visualize>
@@ -950,7 +950,7 @@
             <stddev>0.005</stddev>
           </noise>
         </ray>
-        <plugin name='gazebo_ros_range' filename='libgazebo_ros_range.so'>
+        <!-- <plugin name='gazebo_ros_range' filename='libgazebo_ros_range.so'>
           <gaussianNoise>0.005</gaussianNoise>
           <always_on>true</always_on>
           <updateRate>20</updateRate>
@@ -958,7 +958,7 @@
           <frameName>infrared0</frameName>
           <radiation>INFRARED</radiation>
           <fov>0.2967</fov>
-        </plugin>
+        </plugin> -->
       </sensor>
     </link>
     <joint name='infrared1_joint' type='fixed'>
@@ -1020,7 +1020,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wild1_description/meshes/sensors/gp2y0a21yk.stl</uri>
+            <uri>model://wildthumper/meshes/sensors/gp2y0a21yk.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -1032,7 +1032,7 @@
           <ambient>0 0 0 1</ambient>
         </material>
       </visual>
-      <sensor name='infrared_sensor1' type='ray'>
+      <sensor name='infrared_sensor1' type='gpu_ray'>
         <always_on>true</always_on>
         <update_rate>20</update_rate>
         <visualize>true</visualize>
@@ -1064,7 +1064,7 @@
             <stddev>0.005</stddev>
           </noise>
         </ray>
-        <plugin name='gazebo_ros_range' filename='libgazebo_ros_range.so'>
+        <!-- <plugin name='gazebo_ros_range' filename='libgazebo_ros_range.so'>
           <gaussianNoise>0.005</gaussianNoise>
           <always_on>true</always_on>
           <updateRate>20</updateRate>
@@ -1072,7 +1072,7 @@
           <frameName>infrared1</frameName>
           <radiation>INFRARED</radiation>
           <fov>0.2967</fov>
-        </plugin>
+        </plugin> -->
       </sensor>
     </link>
     <joint name='laser0_joint' type='fixed'>
@@ -1135,7 +1135,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wild1_description/meshes/sensors/rplidar_a1_low.stl</uri>
+            <uri>model://wildthumper/meshes/sensors/rplidar_a1_low.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -1147,7 +1147,7 @@
           <ambient>0 0 0 1</ambient>
         </material>
       </visual>
-      <sensor name='laser_sensor0' type='ray'>
+      <sensor name='laser_sensor0' type='gpu_ray'>
         <always_on>true</always_on>
         <update_rate>5</update_rate>
         <visualize>true</visualize>
@@ -1179,10 +1179,10 @@
             <stddev>0.01</stddev>
           </noise>
         </ray>
-        <plugin name='gazebo_ros_laser' filename='libgazebo_ros_laser.so'>
+        <!-- <plugin name='gazebo_ros_laser' filename='libgazebo_ros_laser.so'>
           <frameName>laser0</frameName>
           <topicName>sensors/laser0</topicName>
-        </plugin>
+        </plugin> -->
       </sensor>
     </link>
     <joint name='mid_wheel_chassis_long_joint' type='fixed'>
@@ -1244,7 +1244,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wild1_description/meshes/bases/wheel_chassis_long.stl</uri>
+            <uri>model://wildthumper/meshes/bases/wheel_chassis_long.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -1342,7 +1342,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wild1_description/meshes/bases/left_motor_asm.stl</uri>
+            <uri>model://wildthumper/meshes/bases/left_motor_asm.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -1457,7 +1457,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wild1_description/meshes/wheels/left_wheel_tyre.stl</uri>
+            <uri>model://wildthumper/meshes/wheels/left_wheel_tyre.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -1474,7 +1474,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wild1_description/meshes/wheels/left_wheel_adapter.stl</uri>
+            <uri>model://wildthumper/meshes/wheels/left_wheel_adapter.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -1491,7 +1491,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wild1_description/meshes/wheels/left_wheel_rim.stl</uri>
+            <uri>model://wildthumper/meshes/wheels/left_wheel_rim.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -1589,7 +1589,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wild1_description/meshes/bases/right_motor_asm.stl</uri>
+            <uri>model://wildthumper/meshes/bases/right_motor_asm.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -1704,7 +1704,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wild1_description/meshes/wheels/right_wheel_tyre.stl</uri>
+            <uri>model://wildthumper/meshes/wheels/right_wheel_tyre.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -1721,7 +1721,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wild1_description/meshes/wheels/right_wheel_adapter.stl</uri>
+            <uri>model://wildthumper/meshes/wheels/right_wheel_adapter.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -1738,7 +1738,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wild1_description/meshes/wheels/right_wheel_rim.stl</uri>
+            <uri>model://wildthumper/meshes/wheels/right_wheel_rim.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -1810,7 +1810,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wild1_description/meshes/bases/small_chassis_with_frame_connector.stl</uri>
+            <uri>model://wildthumper/meshes/bases/small_chassis_with_frame_connector.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -1882,7 +1882,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wild1_description/meshes/bases/wheel_chassis_short.stl</uri>
+            <uri>model://wildthumper/meshes/bases/wheel_chassis_short.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -1980,7 +1980,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wild1_description/meshes/bases/left_motor_asm.stl</uri>
+            <uri>model://wildthumper/meshes/bases/left_motor_asm.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -2095,7 +2095,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wild1_description/meshes/wheels/left_wheel_tyre.stl</uri>
+            <uri>model://wildthumper/meshes/wheels/left_wheel_tyre.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -2112,7 +2112,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wild1_description/meshes/wheels/left_wheel_adapter.stl</uri>
+            <uri>model://wildthumper/meshes/wheels/left_wheel_adapter.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -2129,7 +2129,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wild1_description/meshes/wheels/left_wheel_rim.stl</uri>
+            <uri>model://wildthumper/meshes/wheels/left_wheel_rim.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -2227,7 +2227,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wild1_description/meshes/bases/right_motor_asm.stl</uri>
+            <uri>model://wildthumper/meshes/bases/right_motor_asm.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -2342,7 +2342,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wild1_description/meshes/wheels/right_wheel_tyre.stl</uri>
+            <uri>model://wildthumper/meshes/wheels/right_wheel_tyre.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -2359,7 +2359,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wild1_description/meshes/wheels/right_wheel_adapter.stl</uri>
+            <uri>model://wildthumper/meshes/wheels/right_wheel_adapter.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -2376,7 +2376,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wild1_description/meshes/wheels/right_wheel_rim.stl</uri>
+            <uri>model://wildthumper/meshes/wheels/right_wheel_rim.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -2448,7 +2448,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wild1_description/meshes/sensors/hcsr04.stl</uri>
+            <uri>model://wildthumper/meshes/sensors/hcsr04.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -2460,7 +2460,7 @@
           <ambient>0 0 1 1</ambient>
         </material>
       </visual>
-      <sensor name='sonar_sensor0' type='ray'>
+      <sensor name='sonar_sensor0' type='gpu_ray'>
         <always_on>true</always_on>
         <update_rate>20</update_rate>
         <visualize>true</visualize>
@@ -2492,7 +2492,7 @@
             <stddev>0.005</stddev>
           </noise>
         </ray>
-        <plugin name='gazebo_ros_range' filename='libgazebo_ros_range.so'>
+        <!-- <plugin name='gazebo_ros_range' filename='libgazebo_ros_range.so'>
           <gaussianNoise>0.005</gaussianNoise>
           <always_on>true</always_on>
           <updateRate>20</updateRate>
@@ -2500,7 +2500,7 @@
           <frameName>sonar0</frameName>
           <radiation>ULTRASONIC</radiation>
           <fov>0.2967</fov>
-        </plugin>
+        </plugin> -->
       </sensor>
     </link>
     <joint name='sonar1_joint' type='fixed'>
@@ -2562,7 +2562,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wild1_description/meshes/sensors/hcsr04.stl</uri>
+            <uri>model://wildthumper/meshes/sensors/hcsr04.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -2574,7 +2574,7 @@
           <ambient>0 0 1 1</ambient>
         </material>
       </visual>
-      <sensor name='sonar_sensor1' type='ray'>
+      <sensor name='sonar_sensor1' type='gpu_ray'>
         <always_on>true</always_on>
         <update_rate>20</update_rate>
         <visualize>true</visualize>
@@ -2606,7 +2606,7 @@
             <stddev>0.005</stddev>
           </noise>
         </ray>
-        <plugin name='gazebo_ros_range' filename='libgazebo_ros_range.so'>
+        <!-- <plugin name='gazebo_ros_range' filename='libgazebo_ros_range.so'>
           <gaussianNoise>0.005</gaussianNoise>
           <always_on>true</always_on>
           <updateRate>20</updateRate>
@@ -2614,7 +2614,7 @@
           <frameName>sonar1</frameName>
           <radiation>ULTRASONIC</radiation>
           <fov>0.2967</fov>
-        </plugin>
+        </plugin> -->
       </sensor>
     </link>
     <joint name='sonar2_joint' type='fixed'>
@@ -2676,7 +2676,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wild1_description/meshes/sensors/hcsr04.stl</uri>
+            <uri>model://wildthumper/meshes/sensors/hcsr04.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -2688,7 +2688,7 @@
           <ambient>0 0 1 1</ambient>
         </material>
       </visual>
-      <sensor name='sonar_sensor2' type='ray'>
+      <sensor name='sonar_sensor2' type='gpu_ray'>
         <always_on>true</always_on>
         <update_rate>20</update_rate>
         <visualize>true</visualize>
@@ -2720,7 +2720,7 @@
             <stddev>0.005</stddev>
           </noise>
         </ray>
-        <plugin name='gazebo_ros_range' filename='libgazebo_ros_range.so'>
+        <!-- <plugin name='gazebo_ros_range' filename='libgazebo_ros_range.so'>
           <gaussianNoise>0.005</gaussianNoise>
           <always_on>true</always_on>
           <updateRate>20</updateRate>
@@ -2728,7 +2728,7 @@
           <frameName>sonar2</frameName>
           <radiation>ULTRASONIC</radiation>
           <fov>0.2967</fov>
-        </plugin>
+        </plugin> -->
       </sensor>
     </link>
     <joint name='sonar3_joint' type='fixed'>
@@ -2790,7 +2790,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wild1_description/meshes/sensors/hcsr04.stl</uri>
+            <uri>model://wildthumper/meshes/sensors/hcsr04.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -2802,7 +2802,7 @@
           <ambient>0 0 1 1</ambient>
         </material>
       </visual>
-      <sensor name='sonar_sensor3' type='ray'>
+      <sensor name='sonar_sensor3' type='gpu_ray'>
         <always_on>true</always_on>
         <update_rate>20</update_rate>
         <visualize>true</visualize>
@@ -2834,7 +2834,7 @@
             <stddev>0.005</stddev>
           </noise>
         </ray>
-        <plugin name='gazebo_ros_range' filename='libgazebo_ros_range.so'>
+        <!-- <plugin name='gazebo_ros_range' filename='libgazebo_ros_range.so'>
           <gaussianNoise>0.005</gaussianNoise>
           <always_on>true</always_on>
           <updateRate>20</updateRate>
@@ -2842,7 +2842,7 @@
           <frameName>sonar3</frameName>
           <radiation>ULTRASONIC</radiation>
           <fov>0.2967</fov>
-        </plugin>
+        </plugin> -->
       </sensor>
     </link>
     <joint name='sonar4_joint' type='fixed'>
@@ -2904,7 +2904,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wild1_description/meshes/sensors/hcsr04.stl</uri>
+            <uri>model://wildthumper/meshes/sensors/hcsr04.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -2916,7 +2916,7 @@
           <ambient>0 0 1 1</ambient>
         </material>
       </visual>
-      <sensor name='sonar_sensor4' type='ray'>
+      <sensor name='sonar_sensor4' type='gpu_ray'>
         <always_on>true</always_on>
         <update_rate>20</update_rate>
         <visualize>true</visualize>
@@ -2948,7 +2948,7 @@
             <stddev>0.005</stddev>
           </noise>
         </ray>
-        <plugin name='gazebo_ros_range' filename='libgazebo_ros_range.so'>
+        <!-- <plugin name='gazebo_ros_range' filename='libgazebo_ros_range.so'>
           <gaussianNoise>0.005</gaussianNoise>
           <always_on>true</always_on>
           <updateRate>20</updateRate>
@@ -2956,7 +2956,7 @@
           <frameName>sonar4</frameName>
           <radiation>ULTRASONIC</radiation>
           <fov>0.2967</fov>
-        </plugin>
+        </plugin> -->
       </sensor>
     </link>
     <joint name='sonar5_joint' type='fixed'>
@@ -3018,7 +3018,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wild1_description/meshes/sensors/hcsr04.stl</uri>
+            <uri>model://wildthumper/meshes/sensors/hcsr04.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -3030,7 +3030,7 @@
           <ambient>0 0 1 1</ambient>
         </material>
       </visual>
-      <sensor name='sonar_sensor5' type='ray'>
+      <sensor name='sonar_sensor5' type='gpu_ray'>
         <always_on>true</always_on>
         <update_rate>20</update_rate>
         <visualize>true</visualize>
@@ -3062,7 +3062,7 @@
             <stddev>0.005</stddev>
           </noise>
         </ray>
-        <plugin name='gazebo_ros_range' filename='libgazebo_ros_range.so'>
+        <!-- <plugin name='gazebo_ros_range' filename='libgazebo_ros_range.so'>
           <gaussianNoise>0.005</gaussianNoise>
           <always_on>true</always_on>
           <updateRate>20</updateRate>
@@ -3070,7 +3070,7 @@
           <frameName>sonar5</frameName>
           <radiation>ULTRASONIC</radiation>
           <fov>0.2967</fov>
-        </plugin>
+        </plugin> -->
       </sensor>
     </link>
     <joint name='top_chassis_joint' type='fixed'>
@@ -3132,7 +3132,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wild1_description/meshes/bases/top_chassis_with_standoffs.stl</uri>
+            <uri>model://wildthumper/meshes/bases/top_chassis_with_standoffs.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -3204,7 +3204,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wild1_description/meshes/sensors/intel_realsense_t265.stl</uri>
+            <uri>model://wildthumper/meshes/sensors/intel_realsense_t265.stl</uri>
           </mesh>
         </geometry>
         <material>
@@ -3218,7 +3218,7 @@
       </visual>
     </link>
     <static>false</static>
-    <plugin name='gazebo_ros_control' filename='libgazebo_ros_control.so'>
+    <!-- <plugin name='gazebo_ros_control' filename='libgazebo_ros_control.so'>
       <robotNamespace>/</robotNamespace>
       <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
       <legacyModeNS>false</legacyModeNS>
@@ -3230,6 +3230,6 @@
             </jointName>
       <updateRate>50</updateRate>
       <alwaysOn>true</alwaysOn>
-    </plugin>
+    </plugin> -->
   </model>
 </sdf>
