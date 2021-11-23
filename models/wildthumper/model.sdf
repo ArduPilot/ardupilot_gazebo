@@ -20,14 +20,6 @@
             <size>0.001 0.001 0.001</size>
           </box>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <visual name='base_link_visual'>
         <pose>0 0 0 0 0 0</pose>
@@ -52,8 +44,7 @@
       <child>depth_camera0_link</child>
       <axis>
         <dynamics>
-          <spring_reference>0</spring_reference>
-          <spring_stiffness>0</spring_stiffness>
+          <damping>1.0</damping>
         </dynamics>
         <xyz>0 0 1</xyz>
         <limit>
@@ -61,14 +52,6 @@
           <upper>1e16</upper>
         </limit>
       </axis>
-      <physics>
-        <ode>
-          <limit>
-            <cfm>0.0</cfm>
-            <erp>0.2</erp>
-          </limit>
-        </ode>
-      </physics>
     </joint>
     <link name='depth_camera0_link'>
       <pose relative_to='depth_camera0_joint'>0 0 0 0 0 0</pose>
@@ -91,14 +74,6 @@
             <size>0.02 0.099 0.023</size>
           </box>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <visual name='depth_camera0_link_visual'>
         <pose>0 0 0 0 0 0</pose>
@@ -124,8 +99,7 @@
       <child>front_small_chassis_link</child>
       <axis>
         <dynamics>
-          <spring_reference>0</spring_reference>
-          <spring_stiffness>0</spring_stiffness>
+          <damping>1.0</damping>
         </dynamics>
         <xyz>0 0 1</xyz>
         <limit>
@@ -133,14 +107,6 @@
           <upper>1e16</upper>
         </limit>
       </axis>
-      <physics>
-        <ode>
-          <limit>
-            <cfm>0.0</cfm>
-            <erp>0.2</erp>
-          </limit>
-        </ode>
-      </physics>
     </joint>
     <link name='front_small_chassis_link'>
       <pose relative_to='front_small_chassis_joint'>0 0 0 0 0 0</pose>
@@ -163,14 +129,6 @@
             <size>0.07000000000000001 0.12 0.04</size>
           </box>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <visual name='front_small_chassis_link_visual'>
         <pose>0 0 0 0 0 0</pose>
@@ -196,8 +154,7 @@
       <child>front_wheel_chassis_short_link</child>
       <axis>
         <dynamics>
-          <spring_reference>0</spring_reference>
-          <spring_stiffness>0</spring_stiffness>
+          <damping>1.0</damping>
         </dynamics>
         <xyz>0 0 1</xyz>
         <limit>
@@ -205,14 +162,6 @@
           <upper>1e16</upper>
         </limit>
       </axis>
-      <physics>
-        <ode>
-          <limit>
-            <cfm>0.0</cfm>
-            <erp>0.2</erp>
-          </limit>
-        </ode>
-      </physics>
     </joint>
     <link name='front_wheel_chassis_short_link'>
       <pose relative_to='front_wheel_chassis_short_joint'>0 0 0 0 0 0</pose>
@@ -235,14 +184,6 @@
             <size>0.07000000000000001 0.12 0.04</size>
           </box>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <visual name='front_wheel_chassis_short_link_visual'>
         <pose>0 0 0 0 0 0</pose>
@@ -316,14 +257,6 @@
             <radius>0.016</radius>
           </cylinder>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <collision name='front_left_motor_asm_link_collision_1'>
         <pose>0 0.025 0 1.570796326794896 0 0</pose>
@@ -333,14 +266,6 @@
             <radius>0.016</radius>
           </cylinder>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <visual name='front_left_motor_asm_link_visual'>
         <pose>0 0 0 0 0 0</pose>
@@ -371,20 +296,9 @@
           <upper>1e16</upper>
         </limit>
         <dynamics>
-          <spring_reference>0</spring_reference>
-          <spring_stiffness>0</spring_stiffness>
+          <damping>1.0</damping>
         </dynamics>
       </axis>
-      <physics>
-        <provide_feedback>true</provide_feedback>
-        <ode>
-          <limit>
-            <cfm>0.0</cfm>
-            <erp>0.2</erp>
-          </limit>
-          <provide_feedback>true</provide_feedback>
-        </ode>
-      </physics>
     </joint>
     <link name='front_left_wheel_link'>
       <pose relative_to='front_left_wheel_joint'>0 0 0 0 0 0</pose>
@@ -418,9 +332,6 @@
               <slip2>0.0</slip2>
             </ode>
           </friction>
-          <contact>
-            <ode/>
-          </contact>
         </surface>
       </collision>
       <collision name='front_left_wheel_link_fixed_joint_lump__front_left_wheel_adapter_link_collision_1'>
@@ -431,14 +342,6 @@
             <radius>0.005</radius>
           </cylinder>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <collision name='front_left_wheel_link_fixed_joint_lump__front_left_wheel_rim_link_collision_2'>
         <pose>0 0 0 1.570796326794896 0 0</pose>
@@ -448,14 +351,6 @@
             <radius>0.03</radius>
           </cylinder>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <visual name='front_left_wheel_link_visual'>
         <pose>0 0 0 0 0 0</pose>
@@ -528,18 +423,6 @@
           <spring_stiffness>3</spring_stiffness>
         </dynamics>
       </axis>
-      <physics>
-        <provide_feedback>true</provide_feedback>
-        <ode>
-          <implicit_spring_damper>true</implicit_spring_damper>
-          <cfm_damping>true</cfm_damping>
-          <limit>
-            <cfm>0.0</cfm>
-            <erp>0.2</erp>
-          </limit>
-          <provide_feedback>true</provide_feedback>
-        </ode>
-      </physics>
     </joint>
     <link name='front_right_motor_asm_link'>
       <pose relative_to='front_right_motor_asm_joint'>0 0 0 0 0 0</pose>
@@ -563,14 +446,6 @@
             <radius>0.016</radius>
           </cylinder>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <collision name='front_right_motor_asm_link_collision_1'>
         <pose>0 -0.025 0 1.570796326794896 0 0</pose>
@@ -580,14 +455,6 @@
             <radius>0.016</radius>
           </cylinder>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <visual name='front_right_motor_asm_link_visual'>
         <pose>0 0 0 0 0 0</pose>
@@ -618,20 +485,9 @@
           <upper>1e16</upper>
         </limit>
         <dynamics>
-          <spring_reference>0</spring_reference>
-          <spring_stiffness>0</spring_stiffness>
+          <damping>1.0</damping>
         </dynamics>
       </axis>
-      <physics>
-        <provide_feedback>true</provide_feedback>
-        <ode>
-          <limit>
-            <cfm>0.0</cfm>
-            <erp>0.2</erp>
-          </limit>
-          <provide_feedback>true</provide_feedback>
-        </ode>
-      </physics>
     </joint>
     <link name='front_right_wheel_link'>
       <pose relative_to='front_right_wheel_joint'>0 0 0 0 0 0</pose>
@@ -665,9 +521,6 @@
               <slip2>0.0</slip2>
             </ode>
           </friction>
-          <contact>
-            <ode/>
-          </contact>
         </surface>
       </collision>
       <collision name='front_right_wheel_link_fixed_joint_lump__front_right_wheel_adapter_link_collision_1'>
@@ -678,14 +531,6 @@
             <radius>0.005</radius>
           </cylinder>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <collision name='front_right_wheel_link_fixed_joint_lump__front_right_wheel_rim_link_collision_2'>
         <pose>0 0 0 1.570796326794896 0 0</pose>
@@ -695,14 +540,6 @@
             <radius>0.03</radius>
           </cylinder>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <visual name='front_right_wheel_link_visual'>
         <pose>0 0 0 0 0 0</pose>
@@ -762,8 +599,7 @@
       <child>imu0</child>
       <axis>
         <dynamics>
-          <spring_reference>0</spring_reference>
-          <spring_stiffness>0</spring_stiffness>
+          <damping>1.0</damping>
         </dynamics>
         <xyz>0 0 1</xyz>
         <limit>
@@ -771,14 +607,6 @@
           <upper>1e16</upper>
         </limit>
       </axis>
-      <physics>
-        <ode>
-          <limit>
-            <cfm>0.0</cfm>
-            <erp>0.2</erp>
-          </limit>
-        </ode>
-      </physics>
     </joint>
     <link name='imu0'>
       <pose relative_to='imu0_joint'>0 0 0 0 0 0</pose>
@@ -801,14 +629,6 @@
             <size>0.053 0.066 0.01</size>
           </box>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <visual name='imu0_visual'>
         <pose>0 0 0 0 0 0</pose>
@@ -853,8 +673,7 @@
       <child>infrared0</child>
       <axis>
         <dynamics>
-          <spring_reference>0</spring_reference>
-          <spring_stiffness>0</spring_stiffness>
+          <damping>1.0</damping>
         </dynamics>
         <xyz>0 0 1</xyz>
         <limit>
@@ -862,14 +681,6 @@
           <upper>1e16</upper>
         </limit>
       </axis>
-      <physics>
-        <ode>
-          <limit>
-            <cfm>0.0</cfm>
-            <erp>0.2</erp>
-          </limit>
-        </ode>
-      </physics>
     </joint>
     <link name='infrared0'>
       <pose relative_to='infrared0_joint'>0 0 0 0 0 0</pose>
@@ -892,14 +703,6 @@
             <size>0.015 0.04 0.015</size>
           </box>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <visual name='infrared0_visual'>
         <pose>0 0 0 0 0 0</pose>
@@ -967,8 +770,7 @@
       <child>infrared1</child>
       <axis>
         <dynamics>
-          <spring_reference>0</spring_reference>
-          <spring_stiffness>0</spring_stiffness>
+          <damping>1.0</damping>
         </dynamics>
         <xyz>0 0 1</xyz>
         <limit>
@@ -976,14 +778,6 @@
           <upper>1e16</upper>
         </limit>
       </axis>
-      <physics>
-        <ode>
-          <limit>
-            <cfm>0.0</cfm>
-            <erp>0.2</erp>
-          </limit>
-        </ode>
-      </physics>
     </joint>
     <link name='infrared1'>
       <pose relative_to='infrared1_joint'>0 0 0 0 0 0</pose>
@@ -1006,14 +800,6 @@
             <size>0.015 0.04 0.015</size>
           </box>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <visual name='infrared1_visual'>
         <pose>0 0 0 0 0 0</pose>
@@ -1081,8 +867,7 @@
       <child>laser0</child>
       <axis>
         <dynamics>
-          <spring_reference>0</spring_reference>
-          <spring_stiffness>0</spring_stiffness>
+          <damping>1.0</damping>
         </dynamics>
         <xyz>0 0 1</xyz>
         <limit>
@@ -1090,14 +875,6 @@
           <upper>1e16</upper>
         </limit>
       </axis>
-      <physics>
-        <ode>
-          <limit>
-            <cfm>0.0</cfm>
-            <erp>0.2</erp>
-          </limit>
-        </ode>
-      </physics>
     </joint>
     <link name='laser0'>
       <pose relative_to='laser0_joint'>0 0 0 0 0 0</pose>
@@ -1121,14 +898,6 @@
             <radius>0.035</radius>
           </cylinder>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <visual name='laser0_visual'>
         <pose>0 0 0 0 0 0</pose>
@@ -1191,8 +960,7 @@
       <child>mid_wheel_chassis_long_link</child>
       <axis>
         <dynamics>
-          <spring_reference>0</spring_reference>
-          <spring_stiffness>0</spring_stiffness>
+          <damping>1.0</damping>
         </dynamics>
         <xyz>0 0 1</xyz>
         <limit>
@@ -1200,14 +968,6 @@
           <upper>1e16</upper>
         </limit>
       </axis>
-      <physics>
-        <ode>
-          <limit>
-            <cfm>0.0</cfm>
-            <erp>0.2</erp>
-          </limit>
-        </ode>
-      </physics>
     </joint>
     <link name='mid_wheel_chassis_long_link'>
       <pose relative_to='mid_wheel_chassis_long_joint'>0 0 0 0 0 0</pose>
@@ -1230,14 +990,6 @@
             <size>0.07000000000000001 0.12 0.05</size>
           </box>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <visual name='mid_wheel_chassis_long_link_visual'>
         <pose>0 0 0.005 0 0 0</pose>
@@ -1276,18 +1028,6 @@
           <spring_stiffness>3</spring_stiffness>
         </dynamics>
       </axis>
-      <physics>
-        <provide_feedback>true</provide_feedback>
-        <ode>
-          <implicit_spring_damper>true</implicit_spring_damper>
-          <cfm_damping>true</cfm_damping>
-          <limit>
-            <cfm>0.0</cfm>
-            <erp>0.2</erp>
-          </limit>
-          <provide_feedback>true</provide_feedback>
-        </ode>
-      </physics>
     </joint>
     <link name='mid_left_motor_asm_link'>
       <pose relative_to='mid_left_motor_asm_joint'>0 0 0 0 0 0</pose>
@@ -1311,14 +1051,6 @@
             <radius>0.016</radius>
           </cylinder>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <collision name='mid_left_motor_asm_link_collision_1'>
         <pose>0 0.025 0 1.570796326794896 0 0</pose>
@@ -1328,14 +1060,6 @@
             <radius>0.016</radius>
           </cylinder>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <visual name='mid_left_motor_asm_link_visual'>
         <pose>0 0 0 0 0 0</pose>
@@ -1366,20 +1090,9 @@
           <upper>1e16</upper>
         </limit>
         <dynamics>
-          <spring_reference>0</spring_reference>
-          <spring_stiffness>0</spring_stiffness>
+          <damping>1.0</damping>
         </dynamics>
       </axis>
-      <physics>
-        <provide_feedback>true</provide_feedback>
-        <ode>
-          <limit>
-            <cfm>0.0</cfm>
-            <erp>0.2</erp>
-          </limit>
-          <provide_feedback>true</provide_feedback>
-        </ode>
-      </physics>
     </joint>
     <link name='mid_left_wheel_link'>
       <pose relative_to='mid_left_wheel_joint'>0 0 0 0 0 0</pose>
@@ -1413,9 +1126,6 @@
               <slip2>0.0</slip2>
             </ode>
           </friction>
-          <contact>
-            <ode/>
-          </contact>
         </surface>
       </collision>
       <collision name='mid_left_wheel_link_fixed_joint_lump__mid_left_wheel_adapter_link_collision_1'>
@@ -1426,14 +1136,6 @@
             <radius>0.005</radius>
           </cylinder>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <collision name='mid_left_wheel_link_fixed_joint_lump__mid_left_wheel_rim_link_collision_2'>
         <pose>0 0 0 1.570796326794896 0 0</pose>
@@ -1443,14 +1145,6 @@
             <radius>0.03</radius>
           </cylinder>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <visual name='mid_left_wheel_link_visual'>
         <pose>0 0 0 0 0 0</pose>
@@ -1523,18 +1217,6 @@
           <spring_stiffness>3</spring_stiffness>
         </dynamics>
       </axis>
-      <physics>
-        <provide_feedback>true</provide_feedback>
-        <ode>
-          <implicit_spring_damper>true</implicit_spring_damper>
-          <cfm_damping>true</cfm_damping>
-          <limit>
-            <cfm>0.0</cfm>
-            <erp>0.2</erp>
-          </limit>
-          <provide_feedback>true</provide_feedback>
-        </ode>
-      </physics>
     </joint>
     <link name='mid_right_motor_asm_link'>
       <pose relative_to='mid_right_motor_asm_joint'>0 0 0 0 0 0</pose>
@@ -1558,14 +1240,6 @@
             <radius>0.016</radius>
           </cylinder>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <collision name='mid_right_motor_asm_link_collision_1'>
         <pose>0 -0.025 0 1.570796326794896 0 0</pose>
@@ -1575,14 +1249,6 @@
             <radius>0.016</radius>
           </cylinder>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <visual name='mid_right_motor_asm_link_visual'>
         <pose>0 0 0 0 0 0</pose>
@@ -1613,20 +1279,9 @@
           <upper>1e16</upper>
         </limit>
         <dynamics>
-          <spring_reference>0</spring_reference>
-          <spring_stiffness>0</spring_stiffness>
+          <damping>1.0</damping>
         </dynamics>
       </axis>
-      <physics>
-        <provide_feedback>true</provide_feedback>
-        <ode>
-          <limit>
-            <cfm>0.0</cfm>
-            <erp>0.2</erp>
-          </limit>
-          <provide_feedback>true</provide_feedback>
-        </ode>
-      </physics>
     </joint>
     <link name='mid_right_wheel_link'>
       <pose relative_to='mid_right_wheel_joint'>0 0 0 0 0 0</pose>
@@ -1660,9 +1315,6 @@
               <slip2>0.0</slip2>
             </ode>
           </friction>
-          <contact>
-            <ode/>
-          </contact>
         </surface>
       </collision>
       <collision name='mid_right_wheel_link_fixed_joint_lump__mid_right_wheel_adapter_link_collision_1'>
@@ -1673,14 +1325,6 @@
             <radius>0.005</radius>
           </cylinder>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <collision name='mid_right_wheel_link_fixed_joint_lump__mid_right_wheel_rim_link_collision_2'>
         <pose>0 0 0 1.570796326794896 0 0</pose>
@@ -1690,14 +1334,6 @@
             <radius>0.03</radius>
           </cylinder>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <visual name='mid_right_wheel_link_visual'>
         <pose>0 0 0 0 0 0</pose>
@@ -1757,8 +1393,7 @@
       <child>rear_small_chassis_link</child>
       <axis>
         <dynamics>
-          <spring_reference>0</spring_reference>
-          <spring_stiffness>0</spring_stiffness>
+          <damping>1.0</damping>
         </dynamics>
         <xyz>0 0 1</xyz>
         <limit>
@@ -1766,14 +1401,6 @@
           <upper>1e16</upper>
         </limit>
       </axis>
-      <physics>
-        <ode>
-          <limit>
-            <cfm>0.0</cfm>
-            <erp>0.2</erp>
-          </limit>
-        </ode>
-      </physics>
     </joint>
     <link name='rear_small_chassis_link'>
       <pose relative_to='rear_small_chassis_joint'>0 0 0 0 0 0</pose>
@@ -1796,14 +1423,6 @@
             <size>0.07000000000000001 0.12 0.04</size>
           </box>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <visual name='rear_small_chassis_link_visual'>
         <pose>0 0 0 0 0 0</pose>
@@ -1829,8 +1448,7 @@
       <child>rear_wheel_chassis_short_link</child>
       <axis>
         <dynamics>
-          <spring_reference>0</spring_reference>
-          <spring_stiffness>0</spring_stiffness>
+          <damping>1.0</damping>
         </dynamics>
         <xyz>0 0 1</xyz>
         <limit>
@@ -1838,14 +1456,6 @@
           <upper>1e16</upper>
         </limit>
       </axis>
-      <physics>
-        <ode>
-          <limit>
-            <cfm>0.0</cfm>
-            <erp>0.2</erp>
-          </limit>
-        </ode>
-      </physics>
     </joint>
     <link name='rear_wheel_chassis_short_link'>
       <pose relative_to='rear_wheel_chassis_short_joint'>0 0 0 0 0 0</pose>
@@ -1868,14 +1478,6 @@
             <size>0.07000000000000001 0.12 0.04</size>
           </box>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <visual name='rear_wheel_chassis_short_link_visual'>
         <pose>0 0 0 0 0 0</pose>
@@ -1914,18 +1516,6 @@
           <spring_stiffness>3</spring_stiffness>
         </dynamics>
       </axis>
-      <physics>
-        <provide_feedback>true</provide_feedback>
-        <ode>
-          <implicit_spring_damper>true</implicit_spring_damper>
-          <cfm_damping>true</cfm_damping>
-          <limit>
-            <cfm>0.0</cfm>
-            <erp>0.2</erp>
-          </limit>
-          <provide_feedback>true</provide_feedback>
-        </ode>
-      </physics>
     </joint>
     <link name='rear_left_motor_asm_link'>
       <pose relative_to='rear_left_motor_asm_joint'>0 0 0 0 0 0</pose>
@@ -1949,14 +1539,6 @@
             <radius>0.016</radius>
           </cylinder>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <collision name='rear_left_motor_asm_link_collision_1'>
         <pose>0 0.025 0 1.570796326794896 0 0</pose>
@@ -1966,14 +1548,6 @@
             <radius>0.016</radius>
           </cylinder>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <visual name='rear_left_motor_asm_link_visual'>
         <pose>0 0 0 0 0 0</pose>
@@ -2004,20 +1578,9 @@
           <upper>1e16</upper>
         </limit>
         <dynamics>
-          <spring_reference>0</spring_reference>
-          <spring_stiffness>0</spring_stiffness>
+          <damping>1.0</damping>
         </dynamics>
       </axis>
-      <physics>
-        <provide_feedback>true</provide_feedback>
-        <ode>
-          <limit>
-            <cfm>0.0</cfm>
-            <erp>0.2</erp>
-          </limit>
-          <provide_feedback>true</provide_feedback>
-        </ode>
-      </physics>
     </joint>
     <link name='rear_left_wheel_link'>
       <pose relative_to='rear_left_wheel_joint'>0 0 0 0 0 0</pose>
@@ -2051,9 +1614,6 @@
               <slip2>0.0</slip2>
             </ode>
           </friction>
-          <contact>
-            <ode/>
-          </contact>
         </surface>
       </collision>
       <collision name='rear_left_wheel_link_fixed_joint_lump__rear_left_wheel_adapter_link_collision_1'>
@@ -2064,14 +1624,6 @@
             <radius>0.005</radius>
           </cylinder>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <collision name='rear_left_wheel_link_fixed_joint_lump__rear_left_wheel_rim_link_collision_2'>
         <pose>0 0 0 1.570796326794896 0 0</pose>
@@ -2081,14 +1633,6 @@
             <radius>0.03</radius>
           </cylinder>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <visual name='rear_left_wheel_link_visual'>
         <pose>0 0 0 0 0 0</pose>
@@ -2161,18 +1705,6 @@
           <spring_stiffness>3</spring_stiffness>
         </dynamics>
       </axis>
-      <physics>
-        <provide_feedback>true</provide_feedback>
-        <ode>
-          <implicit_spring_damper>true</implicit_spring_damper>
-          <cfm_damping>true</cfm_damping>
-          <limit>
-            <cfm>0.0</cfm>
-            <erp>0.2</erp>
-          </limit>
-          <provide_feedback>true</provide_feedback>
-        </ode>
-      </physics>
     </joint>
     <link name='rear_right_motor_asm_link'>
       <pose relative_to='rear_right_motor_asm_joint'>0 0 0 0 0 0</pose>
@@ -2196,14 +1728,6 @@
             <radius>0.016</radius>
           </cylinder>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <collision name='rear_right_motor_asm_link_collision_1'>
         <pose>0 -0.025 0 1.570796326794896 0 0</pose>
@@ -2213,14 +1737,6 @@
             <radius>0.016</radius>
           </cylinder>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <visual name='rear_right_motor_asm_link_visual'>
         <pose>0 0 0 0 0 0</pose>
@@ -2251,20 +1767,9 @@
           <upper>1e16</upper>
         </limit>
         <dynamics>
-          <spring_reference>0</spring_reference>
-          <spring_stiffness>0</spring_stiffness>
+          <damping>1.0</damping>
         </dynamics>
       </axis>
-      <physics>
-        <provide_feedback>true</provide_feedback>
-        <ode>
-          <limit>
-            <cfm>0.0</cfm>
-            <erp>0.2</erp>
-          </limit>
-          <provide_feedback>true</provide_feedback>
-        </ode>
-      </physics>
     </joint>
     <link name='rear_right_wheel_link'>
       <pose relative_to='rear_right_wheel_joint'>0 0 0 0 0 0</pose>
@@ -2298,9 +1803,6 @@
               <slip2>0.0</slip2>
             </ode>
           </friction>
-          <contact>
-            <ode/>
-          </contact>
         </surface>
       </collision>
       <collision name='rear_right_wheel_link_fixed_joint_lump__rear_right_wheel_adapter_link_collision_1'>
@@ -2311,14 +1813,6 @@
             <radius>0.005</radius>
           </cylinder>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <collision name='rear_right_wheel_link_fixed_joint_lump__rear_right_wheel_rim_link_collision_2'>
         <pose>0 0 0 1.570796326794896 0 0</pose>
@@ -2328,14 +1822,6 @@
             <radius>0.03</radius>
           </cylinder>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <visual name='rear_right_wheel_link_visual'>
         <pose>0 0 0 0 0 0</pose>
@@ -2395,8 +1881,7 @@
       <child>sonar0</child>
       <axis>
         <dynamics>
-          <spring_reference>0</spring_reference>
-          <spring_stiffness>0</spring_stiffness>
+          <damping>1.0</damping>
         </dynamics>
         <xyz>0 0 1</xyz>
         <limit>
@@ -2404,14 +1889,6 @@
           <upper>1e16</upper>
         </limit>
       </axis>
-      <physics>
-        <ode>
-          <limit>
-            <cfm>0.0</cfm>
-            <erp>0.2</erp>
-          </limit>
-        </ode>
-      </physics>
     </joint>
     <link name='sonar0'>
       <pose relative_to='sonar0_joint'>0 0 0 0 0 0</pose>
@@ -2434,14 +1911,6 @@
             <size>0.015 0.04 0.015</size>
           </box>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <visual name='sonar0_visual'>
         <pose>0 0 0 0 0 0</pose>
@@ -2509,8 +1978,7 @@
       <child>sonar1</child>
       <axis>
         <dynamics>
-          <spring_reference>0</spring_reference>
-          <spring_stiffness>0</spring_stiffness>
+          <damping>1.0</damping>
         </dynamics>
         <xyz>0 0 1</xyz>
         <limit>
@@ -2518,14 +1986,6 @@
           <upper>1e16</upper>
         </limit>
       </axis>
-      <physics>
-        <ode>
-          <limit>
-            <cfm>0.0</cfm>
-            <erp>0.2</erp>
-          </limit>
-        </ode>
-      </physics>
     </joint>
     <link name='sonar1'>
       <pose relative_to='sonar1_joint'>0 0 0 0 0 0</pose>
@@ -2548,14 +2008,6 @@
             <size>0.015 0.04 0.015</size>
           </box>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <visual name='sonar1_visual'>
         <pose>0 0 0 0 0 0</pose>
@@ -2623,8 +2075,7 @@
       <child>sonar2</child>
       <axis>
         <dynamics>
-          <spring_reference>0</spring_reference>
-          <spring_stiffness>0</spring_stiffness>
+          <damping>1.0</damping>
         </dynamics>
         <xyz>0 0 1</xyz>
         <limit>
@@ -2632,14 +2083,6 @@
           <upper>1e16</upper>
         </limit>
       </axis>
-      <physics>
-        <ode>
-          <limit>
-            <cfm>0.0</cfm>
-            <erp>0.2</erp>
-          </limit>
-        </ode>
-      </physics>
     </joint>
     <link name='sonar2'>
       <pose relative_to='sonar2_joint'>0 0 0 0 0 0</pose>
@@ -2662,14 +2105,6 @@
             <size>0.015 0.04 0.015</size>
           </box>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <visual name='sonar2_visual'>
         <pose>0 0 0 0 0 0</pose>
@@ -2737,8 +2172,7 @@
       <child>sonar3</child>
       <axis>
         <dynamics>
-          <spring_reference>0</spring_reference>
-          <spring_stiffness>0</spring_stiffness>
+          <damping>1.0</damping>
         </dynamics>
         <xyz>0 0 1</xyz>
         <limit>
@@ -2746,14 +2180,6 @@
           <upper>1e16</upper>
         </limit>
       </axis>
-      <physics>
-        <ode>
-          <limit>
-            <cfm>0.0</cfm>
-            <erp>0.2</erp>
-          </limit>
-        </ode>
-      </physics>
     </joint>
     <link name='sonar3'>
       <pose relative_to='sonar3_joint'>0 0 0 0 0 0</pose>
@@ -2776,14 +2202,6 @@
             <size>0.015 0.04 0.015</size>
           </box>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <visual name='sonar3_visual'>
         <pose>0 0 0 0 0 0</pose>
@@ -2851,8 +2269,7 @@
       <child>sonar4</child>
       <axis>
         <dynamics>
-          <spring_reference>0</spring_reference>
-          <spring_stiffness>0</spring_stiffness>
+          <damping>1.0</damping>
         </dynamics>
         <xyz>0 0 1</xyz>
         <limit>
@@ -2860,14 +2277,6 @@
           <upper>1e16</upper>
         </limit>
       </axis>
-      <physics>
-        <ode>
-          <limit>
-            <cfm>0.0</cfm>
-            <erp>0.2</erp>
-          </limit>
-        </ode>
-      </physics>
     </joint>
     <link name='sonar4'>
       <pose relative_to='sonar4_joint'>0 0 0 0 0 0</pose>
@@ -2890,14 +2299,6 @@
             <size>0.015 0.04 0.015</size>
           </box>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <visual name='sonar4_visual'>
         <pose>0 0 0 0 0 0</pose>
@@ -2965,8 +2366,7 @@
       <child>sonar5</child>
       <axis>
         <dynamics>
-          <spring_reference>0</spring_reference>
-          <spring_stiffness>0</spring_stiffness>
+          <damping>1.0</damping>
         </dynamics>
         <xyz>0 0 1</xyz>
         <limit>
@@ -2974,14 +2374,6 @@
           <upper>1e16</upper>
         </limit>
       </axis>
-      <physics>
-        <ode>
-          <limit>
-            <cfm>0.0</cfm>
-            <erp>0.2</erp>
-          </limit>
-        </ode>
-      </physics>
     </joint>
     <link name='sonar5'>
       <pose relative_to='sonar5_joint'>0 0 0 0 0 0</pose>
@@ -3004,14 +2396,6 @@
             <size>0.015 0.04 0.015</size>
           </box>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <visual name='sonar5_visual'>
         <pose>0 0 0 0 0 0</pose>
@@ -3079,8 +2463,7 @@
       <child>top_chassis_link</child>
       <axis>
         <dynamics>
-          <spring_reference>0</spring_reference>
-          <spring_stiffness>0</spring_stiffness>
+          <damping>1.0</damping>
         </dynamics>
         <xyz>0 0 1</xyz>
         <limit>
@@ -3088,14 +2471,6 @@
           <upper>1e16</upper>
         </limit>
       </axis>
-      <physics>
-        <ode>
-          <limit>
-            <cfm>0.0</cfm>
-            <erp>0.2</erp>
-          </limit>
-        </ode>
-      </physics>
     </joint>
     <link name='top_chassis_link'>
       <pose relative_to='top_chassis_joint'>0 0 0 0 0 0</pose>
@@ -3118,14 +2493,6 @@
             <size>0.38 0.12 0.025</size>
           </box>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <visual name='top_chassis_link_visual'>
         <pose>0 0 0 0 0 0</pose>
@@ -3151,8 +2518,7 @@
       <child>tracking_camera0_link</child>
       <axis>
         <dynamics>
-          <spring_reference>0</spring_reference>
-          <spring_stiffness>0</spring_stiffness>
+          <damping>1.0</damping>
         </dynamics>
         <xyz>0 0 1</xyz>
         <limit>
@@ -3160,14 +2526,6 @@
           <upper>1e16</upper>
         </limit>
       </axis>
-      <physics>
-        <ode>
-          <limit>
-            <cfm>0.0</cfm>
-            <erp>0.2</erp>
-          </limit>
-        </ode>
-      </physics>
     </joint>
     <link name='tracking_camera0_link'>
       <pose relative_to='tracking_camera0_joint'>0 0 0 0 0 0</pose>
@@ -3190,14 +2548,6 @@
             <size>0.0125 0.108 0.0245</size>
           </box>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
       <visual name='tracking_camera0_link_visual'>
         <pose>0 0 0 0 0 0</pose>
