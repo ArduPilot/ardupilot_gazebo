@@ -138,16 +138,23 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wildthumper/meshes/bases/small_chassis_with_frame_connector.stl</uri>
+            <uri>model://wildthumper/meshes/bases/small_chassis_with_frame_connector.dae</uri>
           </mesh>
         </geometry>
         <material>
-          <script>
-            <name>Gazebo/DarkGray</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script>
-          <diffuse>0.625 0.625 0.625 1</diffuse>
-          <ambient>0.625 0.625 0.625 1</ambient>
+          <ambient>1 1 1</ambient>
+          <diffuse>1 1 1</diffuse>
+          <specular>1 1 1</specular>
+          <pbr>
+            <metal>
+              <albedo_map>model://wildthumper/materials/textures/black_metal/black_metal_diffuse.jpg</albedo_map>
+              <metalness_map>model://wildthumper/materials/textures/black_metal/black_metal_metallic.jpg</metalness_map>
+              <normal_map>model://wildthumper/materials/textures/black_metal/black_metal_normal.jpg</normal_map>
+              <roughness_map>model://wildthumper/materials/textures/black_metal/black_metal_roughness.jpg</roughness_map>
+              <roughness>1.0</roughness>
+              <metalness>1.0</metalness> 
+            </metal>
+          </pbr>
         </material>
       </visual>
     </link>
@@ -193,16 +200,23 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wildthumper/meshes/bases/wheel_chassis_short.stl</uri>
+            <uri>model://wildthumper/meshes/bases/wheel_chassis_short.dae</uri>
           </mesh>
         </geometry>
         <material>
-          <script>
-            <name>Gazebo/DarkGray</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script>
-          <diffuse>0.625 0.625 0.625 1</diffuse>
-          <ambient>0.625 0.625 0.625 1</ambient>
+          <ambient>1 1 1</ambient>
+          <diffuse>1 1 1</diffuse>
+          <specular>1 1 1</specular>
+          <pbr>
+            <metal>
+              <albedo_map>model://wildthumper/materials/textures/black_metal/black_metal_diffuse.jpg</albedo_map>
+              <metalness_map>model://wildthumper/materials/textures/black_metal/black_metal_metallic.jpg</metalness_map>
+              <normal_map>model://wildthumper/materials/textures/black_metal/black_metal_normal.jpg</normal_map>
+              <roughness_map>model://wildthumper/materials/textures/black_metal/black_metal_roughness.jpg</roughness_map>
+              <roughness>1.0</roughness>
+              <metalness>1.0</metalness> 
+            </metal>
+          </pbr>
         </material>
       </visual>
     </link>
@@ -275,16 +289,23 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wildthumper/meshes/bases/left_motor_asm.stl</uri>
+            <uri>model://wildthumper/meshes/bases/left_motor_asm.dae</uri>
           </mesh>
         </geometry>
         <material>
-          <script>
-            <name>Gazebo/Black</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script>
-          <diffuse>0 0 0 1</diffuse>
-          <ambient>0 0 0 1</ambient>
+          <ambient>1 1 1</ambient>
+          <diffuse>1 1 1</diffuse>
+          <specular>1 1 1</specular>
+          <pbr>
+            <metal>
+              <albedo_map>model://wildthumper/materials/textures/black_metal/black_metal_diffuse.jpg</albedo_map>
+              <metalness_map>model://wildthumper/materials/textures/black_metal/black_metal_metallic.jpg</metalness_map>
+              <normal_map>model://wildthumper/materials/textures/black_metal/black_metal_normal.jpg</normal_map>
+              <roughness_map>model://wildthumper/materials/textures/black_metal/black_metal_roughness.jpg</roughness_map>
+              <roughness>1.0</roughness>
+              <metalness>1.0</metalness> 
+            </metal>
+          </pbr>
         </material>
       </visual>
     </link>
@@ -484,16 +505,23 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wildthumper/meshes/bases/right_motor_asm.stl</uri>
+            <uri>model://wildthumper/meshes/bases/right_motor_asm.dae</uri>
           </mesh>
         </geometry>
         <material>
-          <script>
-            <name>Gazebo/Black</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script>
-          <diffuse>0 0 0 1</diffuse>
-          <ambient>0 0 0 1</ambient>
+          <ambient>1 1 1</ambient>
+          <diffuse>1 1 1</diffuse>
+          <specular>1 1 1</specular>
+          <pbr>
+            <metal>
+              <albedo_map>model://wildthumper/materials/textures/black_metal/black_metal_diffuse.jpg</albedo_map>
+              <metalness_map>model://wildthumper/materials/textures/black_metal/black_metal_metallic.jpg</metalness_map>
+              <normal_map>model://wildthumper/materials/textures/black_metal/black_metal_normal.jpg</normal_map>
+              <roughness_map>model://wildthumper/materials/textures/black_metal/black_metal_roughness.jpg</roughness_map>
+              <roughness>1.0</roughness>
+              <metalness>1.0</metalness> 
+            </metal>
+          </pbr>
         </material>
       </visual>
     </link>
@@ -1007,16 +1035,23 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wildthumper/meshes/bases/wheel_chassis_long.stl</uri>
+            <uri>model://wildthumper/meshes/bases/wheel_chassis_long.dae</uri>
           </mesh>
         </geometry>
         <material>
-          <script>
-            <name>Gazebo/DarkGray</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script>
-          <diffuse>0.625 0.625 0.625 1</diffuse>
-          <ambient>0.625 0.625 0.625 1</ambient>
+          <ambient>1 1 1</ambient>
+          <diffuse>1 1 1</diffuse>
+          <specular>1 1 1</specular>
+          <pbr>
+            <metal>
+              <albedo_map>model://wildthumper/materials/textures/black_metal/black_metal_diffuse.jpg</albedo_map>
+              <metalness_map>model://wildthumper/materials/textures/black_metal/black_metal_metallic.jpg</metalness_map>
+              <normal_map>model://wildthumper/materials/textures/black_metal/black_metal_normal.jpg</normal_map>
+              <roughness_map>model://wildthumper/materials/textures/black_metal/black_metal_roughness.jpg</roughness_map>
+              <roughness>1.0</roughness>
+              <metalness>1.0</metalness> 
+            </metal>
+          </pbr>
         </material>
       </visual>
     </link>
@@ -1077,16 +1112,23 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wildthumper/meshes/bases/left_motor_asm.stl</uri>
+            <uri>model://wildthumper/meshes/bases/left_motor_asm.dae</uri>
           </mesh>
         </geometry>
         <material>
-          <script>
-            <name>Gazebo/Black</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script>
-          <diffuse>0 0 0 1</diffuse>
-          <ambient>0 0 0 1</ambient>
+          <ambient>1 1 1</ambient>
+          <diffuse>1 1 1</diffuse>
+          <specular>1 1 1</specular>
+          <pbr>
+            <metal>
+              <albedo_map>model://wildthumper/materials/textures/black_metal/black_metal_diffuse.jpg</albedo_map>
+              <metalness_map>model://wildthumper/materials/textures/black_metal/black_metal_metallic.jpg</metalness_map>
+              <normal_map>model://wildthumper/materials/textures/black_metal/black_metal_normal.jpg</normal_map>
+              <roughness_map>model://wildthumper/materials/textures/black_metal/black_metal_roughness.jpg</roughness_map>
+              <roughness>1.0</roughness>
+              <metalness>1.0</metalness> 
+            </metal>
+          </pbr>
         </material>
       </visual>
     </link>
@@ -1286,16 +1328,23 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wildthumper/meshes/bases/right_motor_asm.stl</uri>
+            <uri>model://wildthumper/meshes/bases/right_motor_asm.dae</uri>
           </mesh>
         </geometry>
         <material>
-          <script>
-            <name>Gazebo/Black</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script>
-          <diffuse>0 0 0 1</diffuse>
-          <ambient>0 0 0 1</ambient>
+          <ambient>1 1 1</ambient>
+          <diffuse>1 1 1</diffuse>
+          <specular>1 1 1</specular>
+          <pbr>
+            <metal>
+              <albedo_map>model://wildthumper/materials/textures/black_metal/black_metal_diffuse.jpg</albedo_map>
+              <metalness_map>model://wildthumper/materials/textures/black_metal/black_metal_metallic.jpg</metalness_map>
+              <normal_map>model://wildthumper/materials/textures/black_metal/black_metal_normal.jpg</normal_map>
+              <roughness_map>model://wildthumper/materials/textures/black_metal/black_metal_roughness.jpg</roughness_map>
+              <roughness>1.0</roughness>
+              <metalness>1.0</metalness> 
+            </metal>
+          </pbr>
         </material>
       </visual>
     </link>
@@ -1480,16 +1529,23 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wildthumper/meshes/bases/small_chassis_with_frame_connector.stl</uri>
+            <uri>model://wildthumper/meshes/bases/small_chassis_with_frame_connector.dae</uri>
           </mesh>
         </geometry>
         <material>
-          <script>
-            <name>Gazebo/DarkGray</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script>
-          <diffuse>0.625 0.625 0.625 1</diffuse>
-          <ambient>0.625 0.625 0.625 1</ambient>
+          <ambient>1 1 1</ambient>
+          <diffuse>1 1 1</diffuse>
+          <specular>1 1 1</specular>
+          <pbr>
+            <metal>
+              <albedo_map>model://wildthumper/materials/textures/black_metal/black_metal_diffuse.jpg</albedo_map>
+              <metalness_map>model://wildthumper/materials/textures/black_metal/black_metal_metallic.jpg</metalness_map>
+              <normal_map>model://wildthumper/materials/textures/black_metal/black_metal_normal.jpg</normal_map>
+              <roughness_map>model://wildthumper/materials/textures/black_metal/black_metal_roughness.jpg</roughness_map>
+              <roughness>1.0</roughness>
+              <metalness>1.0</metalness> 
+            </metal>
+          </pbr>
         </material>
       </visual>
     </link>
@@ -1535,16 +1591,23 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wildthumper/meshes/bases/wheel_chassis_short.stl</uri>
+            <uri>model://wildthumper/meshes/bases/wheel_chassis_short.dae</uri>
           </mesh>
         </geometry>
         <material>
-          <script>
-            <name>Gazebo/DarkGray</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script>
-          <diffuse>0.625 0.625 0.625 1</diffuse>
-          <ambient>0.625 0.625 0.625 1</ambient>
+          <ambient>1 1 1</ambient>
+          <diffuse>1 1 1</diffuse>
+          <specular>1 1 1</specular>
+          <pbr>
+            <metal>
+              <albedo_map>model://wildthumper/materials/textures/black_metal/black_metal_diffuse.jpg</albedo_map>
+              <metalness_map>model://wildthumper/materials/textures/black_metal/black_metal_metallic.jpg</metalness_map>
+              <normal_map>model://wildthumper/materials/textures/black_metal/black_metal_normal.jpg</normal_map>
+              <roughness_map>model://wildthumper/materials/textures/black_metal/black_metal_roughness.jpg</roughness_map>
+              <roughness>1.0</roughness>
+              <metalness>1.0</metalness> 
+            </metal>
+          </pbr>
         </material>
       </visual>
     </link>
@@ -1605,16 +1668,23 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wildthumper/meshes/bases/left_motor_asm.stl</uri>
+            <uri>model://wildthumper/meshes/bases/left_motor_asm.dae</uri>
           </mesh>
         </geometry>
         <material>
-          <script>
-            <name>Gazebo/Black</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script>
-          <diffuse>0 0 0 1</diffuse>
-          <ambient>0 0 0 1</ambient>
+          <ambient>1 1 1</ambient>
+          <diffuse>1 1 1</diffuse>
+          <specular>1 1 1</specular>
+          <pbr>
+            <metal>
+              <albedo_map>model://wildthumper/materials/textures/black_metal/black_metal_diffuse.jpg</albedo_map>
+              <metalness_map>model://wildthumper/materials/textures/black_metal/black_metal_metallic.jpg</metalness_map>
+              <normal_map>model://wildthumper/materials/textures/black_metal/black_metal_normal.jpg</normal_map>
+              <roughness_map>model://wildthumper/materials/textures/black_metal/black_metal_roughness.jpg</roughness_map>
+              <roughness>1.0</roughness>
+              <metalness>1.0</metalness> 
+            </metal>
+          </pbr>
         </material>
       </visual>
     </link>
@@ -1814,16 +1884,23 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wildthumper/meshes/bases/right_motor_asm.stl</uri>
+            <uri>model://wildthumper/meshes/bases/right_motor_asm.dae</uri>
           </mesh>
         </geometry>
         <material>
-          <script>
-            <name>Gazebo/Black</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script>
-          <diffuse>0 0 0 1</diffuse>
-          <ambient>0 0 0 1</ambient>
+          <ambient>1 1 1</ambient>
+          <diffuse>1 1 1</diffuse>
+          <specular>1 1 1</specular>
+          <pbr>
+            <metal>
+              <albedo_map>model://wildthumper/materials/textures/black_metal/black_metal_diffuse.jpg</albedo_map>
+              <metalness_map>model://wildthumper/materials/textures/black_metal/black_metal_metallic.jpg</metalness_map>
+              <normal_map>model://wildthumper/materials/textures/black_metal/black_metal_normal.jpg</normal_map>
+              <roughness_map>model://wildthumper/materials/textures/black_metal/black_metal_roughness.jpg</roughness_map>
+              <roughness>1.0</roughness>
+              <metalness>1.0</metalness> 
+            </metal>
+          </pbr>
         </material>
       </visual>
     </link>
@@ -2536,16 +2613,23 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wildthumper/meshes/bases/top_chassis_with_standoffs.stl</uri>
+            <uri>model://wildthumper/meshes/bases/top_chassis_with_standoffs.dae</uri>
           </mesh>
         </geometry>
         <material>
-          <script>
-            <name>Gazebo/DarkGray</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script>
-          <diffuse>0.625 0.625 0.625 1</diffuse>
-          <ambient>0.625 0.625 0.625 1</ambient>
+          <ambient>1 1 1</ambient>
+          <diffuse>1 1 1</diffuse>
+          <specular>1 1 1</specular>
+          <pbr>
+            <metal>
+              <albedo_map>model://wildthumper/materials/textures/black_metal/black_metal_diffuse.jpg</albedo_map>
+              <metalness_map>model://wildthumper/materials/textures/black_metal/black_metal_metallic.jpg</metalness_map>
+              <normal_map>model://wildthumper/materials/textures/black_metal/black_metal_normal.jpg</normal_map>
+              <roughness_map>model://wildthumper/materials/textures/black_metal/black_metal_roughness.jpg</roughness_map>
+              <roughness>1.0</roughness>
+              <metalness>1.0</metalness> 
+            </metal>
+          </pbr>
         </material>
       </visual>
     </link>

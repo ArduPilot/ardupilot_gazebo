@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <sdf version="1.7">
-  <world name="zephyr_arduplane_runway">
+  <world name="wildthumper_runway">
     <plugin filename="libignition-gazebo-physics-system.so"
       name="ignition::gazebo::systems::Physics">
     </plugin>
@@ -38,8 +38,73 @@
       <uri>model://runway</uri>
     </include>
 
+    <!-- Stand (move to origin to support rover)) -->
+    <model name="stand">
+      <pose>0 5 0.05 0 0 0</pose>
+      <static>1</static>
+      <link name="base_link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.5 0.1 0.1</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>1 1 1</ambient>
+            <diffuse>1 1 1</diffuse>
+            <specular>1 1 1</specular>
+            <pbr>
+              <metal>
+                <albedo_map>model://wildthumper/materials/textures/silver_metal/silver_metal_diffuse.jpg</albedo_map>
+                <metalness_map>model://wildthumper/materials/textures/silver_metal/silver_metal_metallic.jpg</metalness_map>
+                <normal_map>model://wildthumper/materials/textures/silver_metal/silver_metal_normal.jpg</normal_map>
+                <roughness_map>model://wildthumper/materials/textures/silver_metal/silver_metal_roughness.jpg</roughness_map>
+                <roughness>1.0</roughness>
+                <metalness>1.0</metalness> 
+              </metal>
+            </pbr>
+          </material>
+        </visual>
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>0.5 0.1 0.1</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+
+    <!-- Rough terrain -->
     <include>
-      <pose>0 0 0.2 0 0 0</pose>
+      <pose>2 0 -0.12 0 0 0</pose>
+      <uri>https://fuel.ignitionrobotics.org/1.0/OpenRobotics/models/FRC 2016 Rough Terrain</uri>
+      <name>rough_terrain_1</name>
+    </include>
+    <include>
+      <pose>2 0.35 -0.12 0 0 0</pose>
+      <uri>https://fuel.ignitionrobotics.org/1.0/OpenRobotics/models/FRC 2016 Rough Terrain</uri>
+      <name>rough_terrain_2</name>
+    </include>
+    <include>
+      <pose>2 -0.35 -0.12 0 0 0</pose>
+      <uri>https://fuel.ignitionrobotics.org/1.0/OpenRobotics/models/FRC 2016 Rough Terrain</uri>
+      <name>rough_terrain_3</name>
+    </include>
+    <include>
+      <pose>2 0.7 -0.12 0 0 0</pose>
+      <uri>https://fuel.ignitionrobotics.org/1.0/OpenRobotics/models/FRC 2016 Rough Terrain</uri>
+      <name>rough_terrain_4</name>
+    </include>
+    <include>
+      <pose>2 -0.7 -0.12 0 0 0</pose>
+      <uri>https://fuel.ignitionrobotics.org/1.0/OpenRobotics/models/FRC 2016 Rough Terrain</uri>
+      <name>rough_terrain_5</name>
+    </include>
+
+    <!-- Wild Thumper rover -->
+    <include>
+      <pose>0 0 0.15 0 0 0</pose>
       <uri>model://wildthumper</uri>
     </include>
 
