@@ -377,30 +377,29 @@
             </metal>
           </pbr>
         </material>
-        <!-- <material>
-          <script>
-            <name>Gazebo/FlatBlack</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script>
-          <diffuse>0 0 0 1</diffuse>
-          <ambient>0 0 0 1</ambient>
-        </material> -->
       </visual>
       <visual name='front_left_wheel_link_fixed_joint_lump__front_left_wheel_adapter_link_visual_1'>
         <pose>0 0 0 0 0 0</pose>
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wildthumper/meshes/wheels/left_wheel_adapter.stl</uri>
+            <uri>model://wildthumper/meshes/wheels/left_wheel_adapter.dae</uri>
           </mesh>
         </geometry>
         <material>
-          <script>
-            <name>Gazebo/Gray</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script>
-          <diffuse>0.9412500262260437 0.9412500262260437 0.9412500262260437 1</diffuse>
-          <ambient>0.9412500262260437 0.9412500262260437 0.9412500262260437 1</ambient>
+          <ambient>1 1 1</ambient>
+          <diffuse>1 1 1</diffuse>
+          <specular>1 1 1</specular>
+          <pbr>
+            <metal>
+              <albedo_map>model://wildthumper/materials/textures/silver_metal/silver_metal_diffuse.jpg</albedo_map>
+              <metalness_map>model://wildthumper/materials/textures/silver_metal/silver_metal_metallic.jpg</metalness_map>
+              <normal_map>model://wildthumper/materials/textures/silver_metal/silver_metal_normal.jpg</normal_map>
+              <roughness_map>model://wildthumper/materials/textures/silver_metal/silver_metal_roughness.jpg</roughness_map>
+              <roughness>1.0</roughness>
+              <metalness>1.0</metalness> 
+            </metal>
+          </pbr>
         </material>
       </visual>
       <visual name='front_left_wheel_link_fixed_joint_lump__front_left_wheel_rim_link_visual_2'>
@@ -408,16 +407,23 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wildthumper/meshes/wheels/left_wheel_rim.stl</uri>
+            <uri>model://wildthumper/meshes/wheels/left_wheel_rim.dae</uri>
           </mesh>
         </geometry>
         <material>
-          <script>
-            <name>Gazebo/Red</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script>
-          <diffuse>1 0 0 1</diffuse>
-          <ambient>1 0 0 1</ambient>
+          <ambient>1 1 1</ambient>
+          <diffuse>1 1 1</diffuse>
+          <specular>1 1 1</specular>
+          <pbr>
+            <metal>
+              <albedo_map>model://wildthumper/materials/textures/red_metal/red_metal_diffuse.jpg</albedo_map>
+              <metalness_map>model://wildthumper/materials/textures/red_metal/red_metal_metallic.jpg</metalness_map>
+              <normal_map>model://wildthumper/materials/textures/red_metal/red_metal_normal.jpg</normal_map>
+              <roughness_map>model://wildthumper/materials/textures/red_metal/red_metal_roughness.jpg</roughness_map>
+              <roughness>1.0</roughness>
+              <metalness>1.0</metalness> 
+            </metal>
+          </pbr>
         </material>
       </visual>
     </link>
@@ -580,30 +586,29 @@
             </metal>
           </pbr>
         </material>
-        <!-- <material>
-          <script>
-            <name>Gazebo/FlatBlack</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script>
-          <diffuse>0 0 0 1</diffuse>
-          <ambient>0 0 0 1</ambient>
-        </material> -->
       </visual>
       <visual name='front_right_wheel_link_fixed_joint_lump__front_right_wheel_adapter_link_visual_1'>
         <pose>0 0 0 0 0 0</pose>
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wildthumper/meshes/wheels/right_wheel_adapter.stl</uri>
+            <uri>model://wildthumper/meshes/wheels/right_wheel_adapter.dae</uri>
           </mesh>
         </geometry>
         <material>
-          <script>
-            <name>Gazebo/Gray</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script>
-          <diffuse>0.9412500262260437 0.9412500262260437 0.9412500262260437 1</diffuse>
-          <ambient>0.9412500262260437 0.9412500262260437 0.9412500262260437 1</ambient>
+          <ambient>1 1 1</ambient>
+          <diffuse>1 1 1</diffuse>
+          <specular>1 1 1</specular>
+          <pbr>
+            <metal>
+              <albedo_map>model://wildthumper/materials/textures/silver_metal/silver_metal_diffuse.jpg</albedo_map>
+              <metalness_map>model://wildthumper/materials/textures/silver_metal/silver_metal_metallic.jpg</metalness_map>
+              <normal_map>model://wildthumper/materials/textures/silver_metal/silver_metal_normal.jpg</normal_map>
+              <roughness_map>model://wildthumper/materials/textures/silver_metal/silver_metal_roughness.jpg</roughness_map>
+              <roughness>1.0</roughness>
+              <metalness>1.0</metalness> 
+            </metal>
+          </pbr>
         </material>
       </visual>
       <visual name='front_right_wheel_link_fixed_joint_lump__front_right_wheel_rim_link_visual_2'>
@@ -611,16 +616,23 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wildthumper/meshes/wheels/right_wheel_rim.stl</uri>
+            <uri>model://wildthumper/meshes/wheels/right_wheel_rim.dae</uri>
           </mesh>
         </geometry>
         <material>
-          <script>
-            <name>Gazebo/Red</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script>
-          <diffuse>1 0 0 1</diffuse>
-          <ambient>1 0 0 1</ambient>
+          <ambient>1 1 1</ambient>
+          <diffuse>1 1 1</diffuse>
+          <specular>1 1 1</specular>
+          <pbr>
+            <metal>
+              <albedo_map>model://wildthumper/materials/textures/red_metal/red_metal_diffuse.jpg</albedo_map>
+              <metalness_map>model://wildthumper/materials/textures/red_metal/red_metal_metallic.jpg</metalness_map>
+              <normal_map>model://wildthumper/materials/textures/red_metal/red_metal_normal.jpg</normal_map>
+              <roughness_map>model://wildthumper/materials/textures/red_metal/red_metal_roughness.jpg</roughness_map>
+              <roughness>1.0</roughness>
+              <metalness>1.0</metalness> 
+            </metal>
+          </pbr>
         </material>
       </visual>
     </link>
@@ -1167,30 +1179,29 @@
             </metal>
           </pbr>
         </material>
-        <!-- <material>
-          <script>
-            <name>Gazebo/FlatBlack</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script>
-          <diffuse>0 0 0 1</diffuse>
-          <ambient>0 0 0 1</ambient>
-        </material> -->
       </visual>
       <visual name='mid_left_wheel_link_fixed_joint_lump__mid_left_wheel_adapter_link_visual_1'>
         <pose>0 0 0 0 0 0</pose>
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wildthumper/meshes/wheels/left_wheel_adapter.stl</uri>
+            <uri>model://wildthumper/meshes/wheels/left_wheel_adapter.dae</uri>
           </mesh>
         </geometry>
         <material>
-          <script>
-            <name>Gazebo/Gray</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script>
-          <diffuse>0.9412500262260437 0.9412500262260437 0.9412500262260437 1</diffuse>
-          <ambient>0.9412500262260437 0.9412500262260437 0.9412500262260437 1</ambient>
+          <ambient>1 1 1</ambient>
+          <diffuse>1 1 1</diffuse>
+          <specular>1 1 1</specular>
+          <pbr>
+            <metal>
+              <albedo_map>model://wildthumper/materials/textures/silver_metal/silver_metal_diffuse.jpg</albedo_map>
+              <metalness_map>model://wildthumper/materials/textures/silver_metal/silver_metal_metallic.jpg</metalness_map>
+              <normal_map>model://wildthumper/materials/textures/silver_metal/silver_metal_normal.jpg</normal_map>
+              <roughness_map>model://wildthumper/materials/textures/silver_metal/silver_metal_roughness.jpg</roughness_map>
+              <roughness>1.0</roughness>
+              <metalness>1.0</metalness> 
+            </metal>
+          </pbr>
         </material>
       </visual>
       <visual name='mid_left_wheel_link_fixed_joint_lump__mid_left_wheel_rim_link_visual_2'>
@@ -1198,16 +1209,23 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wildthumper/meshes/wheels/left_wheel_rim.stl</uri>
+            <uri>model://wildthumper/meshes/wheels/left_wheel_rim.dae</uri>
           </mesh>
         </geometry>
         <material>
-          <script>
-            <name>Gazebo/Red</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script>
-          <diffuse>1 0 0 1</diffuse>
-          <ambient>1 0 0 1</ambient>
+          <ambient>1 1 1</ambient>
+          <diffuse>1 1 1</diffuse>
+          <specular>1 1 1</specular>
+          <pbr>
+            <metal>
+              <albedo_map>model://wildthumper/materials/textures/red_metal/red_metal_diffuse.jpg</albedo_map>
+              <metalness_map>model://wildthumper/materials/textures/red_metal/red_metal_metallic.jpg</metalness_map>
+              <normal_map>model://wildthumper/materials/textures/red_metal/red_metal_normal.jpg</normal_map>
+              <roughness_map>model://wildthumper/materials/textures/red_metal/red_metal_roughness.jpg</roughness_map>
+              <roughness>1.0</roughness>
+              <metalness>1.0</metalness> 
+            </metal>
+          </pbr>
         </material>
       </visual>
     </link>
@@ -1370,30 +1388,29 @@
             </metal>
           </pbr>
         </material>
-        <!-- <material>
-          <script>
-            <name>Gazebo/FlatBlack</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script>
-          <diffuse>0 0 0 1</diffuse>
-          <ambient>0 0 0 1</ambient>
-        </material> -->
       </visual>
       <visual name='mid_right_wheel_link_fixed_joint_lump__mid_right_wheel_adapter_link_visual_1'>
         <pose>0 0 0 0 0 0</pose>
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wildthumper/meshes/wheels/right_wheel_adapter.stl</uri>
+            <uri>model://wildthumper/meshes/wheels/right_wheel_adapter.dae</uri>
           </mesh>
         </geometry>
         <material>
-          <script>
-            <name>Gazebo/Gray</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script>
-          <diffuse>0.9412500262260437 0.9412500262260437 0.9412500262260437 1</diffuse>
-          <ambient>0.9412500262260437 0.9412500262260437 0.9412500262260437 1</ambient>
+          <ambient>1 1 1</ambient>
+          <diffuse>1 1 1</diffuse>
+          <specular>1 1 1</specular>
+          <pbr>
+            <metal>
+              <albedo_map>model://wildthumper/materials/textures/silver_metal/silver_metal_diffuse.jpg</albedo_map>
+              <metalness_map>model://wildthumper/materials/textures/silver_metal/silver_metal_metallic.jpg</metalness_map>
+              <normal_map>model://wildthumper/materials/textures/silver_metal/silver_metal_normal.jpg</normal_map>
+              <roughness_map>model://wildthumper/materials/textures/silver_metal/silver_metal_roughness.jpg</roughness_map>
+              <roughness>1.0</roughness>
+              <metalness>1.0</metalness> 
+            </metal>
+          </pbr>
         </material>
       </visual>
       <visual name='mid_right_wheel_link_fixed_joint_lump__mid_right_wheel_rim_link_visual_2'>
@@ -1401,16 +1418,23 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wildthumper/meshes/wheels/right_wheel_rim.stl</uri>
+            <uri>model://wildthumper/meshes/wheels/right_wheel_rim.dae</uri>
           </mesh>
         </geometry>
         <material>
-          <script>
-            <name>Gazebo/Red</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script>
-          <diffuse>1 0 0 1</diffuse>
-          <ambient>1 0 0 1</ambient>
+          <ambient>1 1 1</ambient>
+          <diffuse>1 1 1</diffuse>
+          <specular>1 1 1</specular>
+          <pbr>
+            <metal>
+              <albedo_map>model://wildthumper/materials/textures/red_metal/red_metal_diffuse.jpg</albedo_map>
+              <metalness_map>model://wildthumper/materials/textures/red_metal/red_metal_metallic.jpg</metalness_map>
+              <normal_map>model://wildthumper/materials/textures/red_metal/red_metal_normal.jpg</normal_map>
+              <roughness_map>model://wildthumper/materials/textures/red_metal/red_metal_roughness.jpg</roughness_map>
+              <roughness>1.0</roughness>
+              <metalness>1.0</metalness> 
+            </metal>
+          </pbr>
         </material>
       </visual>
     </link>
@@ -1683,30 +1707,29 @@
             </metal>
           </pbr>
         </material>
-        <!-- <material>
-          <script>
-            <name>Gazebo/FlatBlack</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script>
-          <diffuse>0 0 0 1</diffuse>
-          <ambient>0 0 0 1</ambient>
-        </material> -->
       </visual>
       <visual name='rear_left_wheel_link_fixed_joint_lump__rear_left_wheel_adapter_link_visual_1'>
         <pose>0 0 0 0 0 0</pose>
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wildthumper/meshes/wheels/left_wheel_adapter.stl</uri>
+            <uri>model://wildthumper/meshes/wheels/left_wheel_adapter.dae</uri>
           </mesh>
         </geometry>
         <material>
-          <script>
-            <name>Gazebo/Gray</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script>
-          <diffuse>0.9412500262260437 0.9412500262260437 0.9412500262260437 1</diffuse>
-          <ambient>0.9412500262260437 0.9412500262260437 0.9412500262260437 1</ambient>
+          <ambient>1 1 1</ambient>
+          <diffuse>1 1 1</diffuse>
+          <specular>1 1 1</specular>
+          <pbr>
+            <metal>
+              <albedo_map>model://wildthumper/materials/textures/silver_metal/silver_metal_diffuse.jpg</albedo_map>
+              <metalness_map>model://wildthumper/materials/textures/silver_metal/silver_metal_metallic.jpg</metalness_map>
+              <normal_map>model://wildthumper/materials/textures/silver_metal/silver_metal_normal.jpg</normal_map>
+              <roughness_map>model://wildthumper/materials/textures/silver_metal/silver_metal_roughness.jpg</roughness_map>
+              <roughness>1.0</roughness>
+              <metalness>1.0</metalness> 
+            </metal>
+          </pbr>
         </material>
       </visual>
       <visual name='rear_left_wheel_link_fixed_joint_lump__rear_left_wheel_rim_link_visual_2'>
@@ -1714,16 +1737,23 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wildthumper/meshes/wheels/left_wheel_rim.stl</uri>
+            <uri>model://wildthumper/meshes/wheels/left_wheel_rim.dae</uri>
           </mesh>
         </geometry>
         <material>
-          <script>
-            <name>Gazebo/Red</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script>
-          <diffuse>1 0 0 1</diffuse>
-          <ambient>1 0 0 1</ambient>
+          <ambient>1 1 1</ambient>
+          <diffuse>1 1 1</diffuse>
+          <specular>1 1 1</specular>
+          <pbr>
+            <metal>
+              <albedo_map>model://wildthumper/materials/textures/red_metal/red_metal_diffuse.jpg</albedo_map>
+              <metalness_map>model://wildthumper/materials/textures/red_metal/red_metal_metallic.jpg</metalness_map>
+              <normal_map>model://wildthumper/materials/textures/red_metal/red_metal_normal.jpg</normal_map>
+              <roughness_map>model://wildthumper/materials/textures/red_metal/red_metal_roughness.jpg</roughness_map>
+              <roughness>1.0</roughness>
+              <metalness>1.0</metalness> 
+            </metal>
+          </pbr>
         </material>
       </visual>
     </link>
@@ -1886,30 +1916,29 @@
             </metal>
           </pbr>
         </material>
-        <!-- <material>
-          <script>
-            <name>Gazebo/FlatBlack</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script>
-          <diffuse>0 0 0 1</diffuse>
-          <ambient>0 0 0 1</ambient>
-        </material> -->
       </visual>
       <visual name='rear_right_wheel_link_fixed_joint_lump__rear_right_wheel_adapter_link_visual_1'>
         <pose>0 0 0 0 0 0</pose>
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wildthumper/meshes/wheels/right_wheel_adapter.stl</uri>
+            <uri>model://wildthumper/meshes/wheels/right_wheel_adapter.dae</uri>
           </mesh>
         </geometry>
         <material>
-          <script>
-            <name>Gazebo/Gray</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script>
-          <diffuse>0.9412500262260437 0.9412500262260437 0.9412500262260437 1</diffuse>
-          <ambient>0.9412500262260437 0.9412500262260437 0.9412500262260437 1</ambient>
+          <ambient>1 1 1</ambient>
+          <diffuse>1 1 1</diffuse>
+          <specular>1 1 1</specular>
+          <pbr>
+            <metal>
+              <albedo_map>model://wildthumper/materials/textures/silver_metal/silver_metal_diffuse.jpg</albedo_map>
+              <metalness_map>model://wildthumper/materials/textures/silver_metal/silver_metal_metallic.jpg</metalness_map>
+              <normal_map>model://wildthumper/materials/textures/silver_metal/silver_metal_normal.jpg</normal_map>
+              <roughness_map>model://wildthumper/materials/textures/silver_metal/silver_metal_roughness.jpg</roughness_map>
+              <roughness>1.0</roughness>
+              <metalness>1.0</metalness> 
+            </metal>
+          </pbr>
         </material>
       </visual>
       <visual name='rear_right_wheel_link_fixed_joint_lump__rear_right_wheel_rim_link_visual_2'>
@@ -1917,16 +1946,23 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://wildthumper/meshes/wheels/right_wheel_rim.stl</uri>
+            <uri>model://wildthumper/meshes/wheels/right_wheel_rim.dae</uri>
           </mesh>
         </geometry>
         <material>
-          <script>
-            <name>Gazebo/Red</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script>
-          <diffuse>1 0 0 1</diffuse>
-          <ambient>1 0 0 1</ambient>
+          <ambient>1 1 1</ambient>
+          <diffuse>1 1 1</diffuse>
+          <specular>1 1 1</specular>
+          <pbr>
+            <metal>
+              <albedo_map>model://wildthumper/materials/textures/red_metal/red_metal_diffuse.jpg</albedo_map>
+              <metalness_map>model://wildthumper/materials/textures/red_metal/red_metal_metallic.jpg</metalness_map>
+              <normal_map>model://wildthumper/materials/textures/red_metal/red_metal_normal.jpg</normal_map>
+              <roughness_map>model://wildthumper/materials/textures/red_metal/red_metal_roughness.jpg</roughness_map>
+              <roughness>1.0</roughness>
+              <metalness>1.0</metalness> 
+            </metal>
+          </pbr>
         </material>
       </visual>
     </link>

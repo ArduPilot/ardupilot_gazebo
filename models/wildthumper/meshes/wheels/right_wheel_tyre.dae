@@ -5,50 +5,12 @@
       <author>Blender User</author>
       <authoring_tool>Blender 2.93.6 commit date:2021-11-16, commit time:14:54, hash:c842a90e2fa1</authoring_tool>
     </contributor>
-    <created>2021-11-24T10:33:55</created>
-    <modified>2021-11-24T10:33:55</modified>
+    <created>2021-11-24T13:04:11</created>
+    <modified>2021-11-24T13:04:11</modified>
     <unit name="meter" meter="1"/>
     <up_axis>Z_UP</up_axis>
   </asset>
-  <library_effects>
-    <effect id="Rubber_01-effect">
-      <profile_COMMON>
-        <newparam sid="Rubber_01_diffuse_jpg-surface">
-          <surface type="2D">
-            <init_from>Rubber_01_diffuse_jpg</init_from>
-          </surface>
-        </newparam>
-        <newparam sid="Rubber_01_diffuse_jpg-sampler">
-          <sampler2D>
-            <source>Rubber_01_diffuse_jpg-surface</source>
-          </sampler2D>
-        </newparam>
-        <technique sid="common">
-          <lambert>
-            <emission>
-              <color sid="emission">0 0 0 1</color>
-            </emission>
-            <diffuse>
-              <texture texture="Rubber_01_diffuse_jpg-sampler" texcoord="UVMap"/>
-            </diffuse>
-            <index_of_refraction>
-              <float sid="ior">1.45</float>
-            </index_of_refraction>
-          </lambert>
-        </technique>
-      </profile_COMMON>
-    </effect>
-  </library_effects>
-  <library_images>
-    <image id="Rubber_01_diffuse_jpg" name="Rubber_01_diffuse_jpg">
-      <init_from>../../materials/textures/rubber_01/rubber_01_diffuse.jpg</init_from>
-    </image>
-  </library_images>
-  <library_materials>
-    <material id="Rubber_01-material" name="Rubber 01">
-      <instance_effect url="#Rubber_01-effect"/>
-    </material>
-  </library_materials>
+  <library_images/>
   <library_geometries>
     <geometry id="right_wheel_tyre-mesh" name="right_wheel_tyre">
       <mesh>
@@ -84,7 +46,7 @@
         <vertices id="right_wheel_tyre-mesh-vertices">
           <input semantic="POSITION" source="#right_wheel_tyre-mesh-positions"/>
         </vertices>
-        <triangles material="Rubber_01-material" count="18712">
+        <triangles count="18712">
           <input semantic="VERTEX" source="#right_wheel_tyre-mesh-vertices" offset="0"/>
           <input semantic="NORMAL" source="#right_wheel_tyre-mesh-normals" offset="1"/>
           <input semantic="TEXCOORD" source="#right_wheel_tyre-mesh-map" offset="2" set="0"/>
@@ -97,15 +59,7 @@
     <visual_scene id="Scene" name="Scene">
       <node id="right_wheel_tyre" name="right_wheel_tyre" type="NODE">
         <matrix sid="transform">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</matrix>
-        <instance_geometry url="#right_wheel_tyre-mesh" name="right_wheel_tyre">
-          <bind_material>
-            <technique_common>
-              <instance_material symbol="Rubber_01-material" target="#Rubber_01-material">
-                <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
-              </instance_material>
-            </technique_common>
-          </bind_material>
-        </instance_geometry>
+        <instance_geometry url="#right_wheel_tyre-mesh" name="right_wheel_tyre"/>
       </node>
     </visual_scene>
   </library_visual_scenes>
