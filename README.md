@@ -25,7 +25,7 @@ sudo apt-get install libgazeboX-dev
 ````
 
 ````
-git clone https://github.com/khancyr/ardupilot_gazebo
+git clone https://github.com/ArduPilot/ardupilot_gazebo
 cd ardupilot_gazebo
 mkdir build
 cd build
