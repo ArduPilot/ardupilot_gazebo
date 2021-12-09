@@ -109,7 +109,7 @@ namespace systems
         ignition::gazebo::EntityComponentManager &_ecm);
 
     /// \brief Load Range sensors
-    private: void LoadRangeSensors(
+    private: void LoadSonarSensors(
         sdf::ElementPtr _sdf,
         ignition::gazebo::EntityComponentManager &_ecm);
 
