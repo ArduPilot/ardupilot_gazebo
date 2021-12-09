@@ -119,7 +119,7 @@ class GZ_SIM_VISIBLE ArduPilotPlugin:
       sdf::ElementPtr _sdf,
       gz::sim::EntityComponentManager &_ecm);
 
-  /// \brief Load Range sensors
+  /// \brief Load range sensors
   private: void LoadRangeSensors(
       sdf::ElementPtr _sdf,
       gz::sim::EntityComponentManager &_ecm);
