@@ -365,7 +365,7 @@
         <update_rate>1000.0</update_rate>
       </sensor>
     </link>
-    <joint name='zephyr/imu_joint' type='revolute'>
+    <joint name='imu_joint' type='revolute'>
       <child>imu_link</child>
       <parent>wing</parent>
       <axis>
@@ -552,7 +552,7 @@
       <gazeboXYZToNED>0 0 0 3.141593 0 0</gazeboXYZToNED>
 
       <!-- Sensors -->
-      <imuName>imu_sensor</imuName>
+      <imuName>imu_link::imu_sensor</imuName>
 
       <!--
           incoming control command [0, 1]
@@ -580,10 +580,10 @@
         <p_gain>0.20</p_gain>
         <i_gain>0</i_gain>
         <d_gain>0</d_gain>
-        <i_max>0</i_max>
+        <i_max>-1</i_max>
         <i_min>0</i_min>
-        <cmd_max>2.5</cmd_max>
-        <cmd_min>0.0</cmd_min>
+        <cmd_max>5.0</cmd_max>
+        <cmd_min>-5.0</cmd_min>
       </control>
 
       <!-- 
@@ -610,10 +610,10 @@
         <p_gain>10.0</p_gain>
         <i_gain>0</i_gain>
         <d_gain>0</d_gain>
-        <i_max>0</i_max>
+        <i_max>-1</i_max>
         <i_min>0</i_min>
-        <cmd_max>2.5</cmd_max>
-        <cmd_min>-2.5</cmd_min>
+        <cmd_max>5.0</cmd_max>
+        <cmd_min>-5.0</cmd_min>
       </control>
 
       <!-- 
@@ -634,10 +634,10 @@
         <p_gain>10.0</p_gain>
         <i_gain>0</i_gain>
         <d_gain>0</d_gain>
-        <i_max>0</i_max>
+        <i_max>-1</i_max>
         <i_min>0</i_min>
-        <cmd_max>2.5</cmd_max>
-        <cmd_min>-2.5</cmd_min>
+        <cmd_max>5.0</cmd_max>
+        <cmd_min>-5.0</cmd_min>
       </control>
 
     </plugin>

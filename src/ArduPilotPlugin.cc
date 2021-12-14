@@ -21,13 +21,17 @@
 #include <ignition/common/SignalHandler.hh>
 #include <ignition/gazebo/components/AngularVelocity.hh>
 #include <ignition/gazebo/components/Imu.hh>
+#include <ignition/gazebo/components/Joint.hh>
 #include <ignition/gazebo/components/JointForceCmd.hh>
 #include <ignition/gazebo/components/JointPosition.hh>
 #include <ignition/gazebo/components/JointVelocity.hh>
 #include <ignition/gazebo/components/JointVelocityCmd.hh>
 #include <ignition/gazebo/components/LinearVelocity.hh>
+#include <ignition/gazebo/components/Link.hh>
 #include <ignition/gazebo/components/Name.hh>
+#include <ignition/gazebo/components/ParentEntity.hh>
 #include <ignition/gazebo/components/Pose.hh>
+#include <ignition/gazebo/components/Sensor.hh>
 #include <ignition/gazebo/Model.hh>
 #include <ignition/gazebo/Util.hh>
 #include <ignition/math/Filter.hh>
@@ -353,6 +357,54 @@ void ignition::gazebo::systems::ArduPilotPlugin::LoadControlChannels(
     sdf::ElementPtr _sdf,
     ignition::gazebo::EntityComponentManager &_ecm)
 {
+  // Override for ignition::gazebo::Model::JointByName which
+  // does not deal with nested models.
+  auto JointByName = [&](ignition::gazebo::EntityComponentManager &_ecm,
+      const std::string &_name) -> ignition::gazebo::Entity
+  {
+    // Search relative to the top level model entity
+    ignition::gazebo::Entity id{this->dataPtr->model.Entity()};
+
+    // Retrieve entities from a scoped name.
+    // See for example:
+    //  https://github.com/ignitionrobotics/ign-gazebo/pull/955
+    // which applies to the LiftDrag plugin
+    auto entities = entitiesFromScopedName(
+        _name, _ecm, id);
+
+    if (entities.empty())
+    {
+      ignerr << "Joint with name [" << _name << "] not found. "
+          << "The joint will not respond to ArduPilot commands\n";
+      return kNullEntity;
+    }
+    else if (entities.size() > 1)
+    {
+      ignwarn << "Multiple joint entities with name[" << _name << "] found. "
+        << "Using the first one.\n";
+    }
+
+    ignition::gazebo::Entity joint = *entities.begin();
+
+    // Validate
+    if (!_ecm.EntityHasComponentType(joint,
+        ignition::gazebo::components::Joint::typeId))
+    {
+      ignerr << "Entity with name[" << _name << "] is not a joint\n";
+      return kNullEntity;
+    }
+
+    // Ensure the joint has a velocity component
+    if (!_ecm.EntityHasComponentType(joint,
+        ignition::gazebo::components::JointVelocity::typeId))
+    {
+      _ecm.CreateComponent(joint,
+          ignition::gazebo::components::JointVelocity());
+    }
+
+    return joint;
+  };
+
   // per control channel
   sdf::ElementPtr controlSDF;
   if (_sdf->HasElement("control"))
@@ -430,7 +482,7 @@ void ignition::gazebo::systems::ArduPilotPlugin::LoadControlChannels(
     }
 
     // Get the pointer to the joint.
-    control.joint = this->dataPtr->model.JointByName(_ecm, control.jointName);
+    control.joint = JointByName(_ecm, control.jointName);
     if (control.joint == ignition::gazebo::kNullEntity)
     {
       ignerr << "[" << this->dataPtr->modelName << "] "
@@ -749,39 +801,60 @@ void ignition::gazebo::systems::ArduPilotPlugin::PreUpdate(
     const ignition::gazebo::UpdateInfo &_info,
     ignition::gazebo::EntityComponentManager &_ecm)
 {
-    // This lookup is done in PreUpdate() because in Configure() it's not possible to get the fully qualified topic name we want
+    // This lookup is done in PreUpdate() because in Configure() it's
+    // not possible to get the fully qualified topic name we want
     if (!this->dataPtr->imuInitialized)
     {
         // Set unconditionally because we're only going to try this once.
         this->dataPtr->imuInitialized = true;
         std::string imuTopicName;
-        _ecm.Each<ignition::gazebo::components::Imu, ignition::gazebo::components::Name>(
-                [&](const ignition::gazebo::Entity &_imu_entity,
-                    const ignition::gazebo::components::Imu * /*_imu*/,
-                    const ignition::gazebo::components::Name *_name)->bool
+
+        // The model must contain an IMU sensor element
+        //  <sensor name="..." type="imu">
+        //
+        // Extract the following:
+        //  - Sensor topic name: to subscribe to the Imu data
+        //  - Link containing the sensor: to get the pose to transform to
+        //    the correct frame for ArduPilot
+        auto entities = entitiesFromScopedName(
+            this->dataPtr->imuName, _ecm, this->dataPtr->model.Entity());
+
+        if (!entities.empty())
         {
-            if (_name->Data() == this->dataPtr->imuName)
+          if (entities.size() > 1)
+          {
+            ignwarn << "Multiple IMU sensors with name ["
+              << this->dataPtr->imuName << "] found. "
+              << "Using the first one.\n";
+          }
+
+          ignition::gazebo::Entity imuEntity = *entities.begin();
+
+          // Validate
+          if (!_ecm.EntityHasComponentType(imuEntity,
+              ignition::gazebo::components::Imu::typeId))
+          {
+            ignerr << "Entity with name["
+                << this->dataPtr->imuName << "] is not an Imu sensor\n";
+          }
+          else
+          {
+            ignition::gazebo::Entity parent = _ecm.ParentEntity(imuEntity);
+            this->dataPtr->modelLink = parent;
+            if (_ecm.EntityHasComponentType(parent,
+                ignition::gazebo::components::Link::typeId))
             {
-                // The parent of the imu is imu_link
-                ignition::gazebo::Entity parent = _ecm.ParentEntity(_imu_entity);
-                this->dataPtr->modelLink = parent;
-                if (parent != ignition::gazebo::kNullEntity)
-                {
-                    // The grandparent of the imu is the quad itself, which is where this plugin is attached
-                    ignition::gazebo::Entity gparent = _ecm.ParentEntity(parent);
-                    if (gparent != ignition::gazebo::kNullEntity)
-                    {
-                        ignition::gazebo::Model gparent_model(gparent);
-                        if (gparent_model.Name(_ecm) == this->dataPtr->modelName)
-                        {
-                            imuTopicName = ignition::gazebo::scopedName(_imu_entity, _ecm) + "/imu";
-                            igndbg << "Computed IMU topic to be: " << imuTopicName << std::endl;
-                        }
-                    }
-                }
+              // Get the topic name
+              imuTopicName = ignition::gazebo::scopedName(imuEntity, _ecm) + "/imu";
+              igndbg << "Determined IMU topic to be: " << imuTopicName << std::endl;
             }
-            return true;
-        });
+            else
+            {
+              ignerr << "Parent of IMU sensor ["
+                  << this->dataPtr->imuName << "] is not a link\n";
+            }
+          }
+        }
 
         if(imuTopicName.empty())
         {
@@ -945,11 +1018,14 @@ void ignition::gazebo::systems::ArduPilotPlugin::ApplyMotorForces(
         ignition::gazebo::components::JointVelocity* vComp =
           _ecm.Component<ignition::gazebo::components::JointVelocity>(
               this->dataPtr->controls[i].joint);
-        const double vel = vComp->Data()[0];
-        const double error = vel - velTarget;
-        const double force = this->dataPtr->controls[i].pid.Update(
-            error, std::chrono::duration<double>(_dt));
-        jfcComp->Data()[0] = force;
+        if (vComp && !vComp->Data().empty())
+        {
+            const double vel = vComp->Data()[0];
+            const double error = vel - velTarget;
+            const double force = this->dataPtr->controls[i].pid.Update(
+                error, std::chrono::duration<double>(_dt));
+            jfcComp->Data()[0] = force;
+        }    
       }
       else if (this->dataPtr->controls[i].type == "POSITION")
       {
@@ -957,11 +1033,14 @@ void ignition::gazebo::systems::ArduPilotPlugin::ApplyMotorForces(
         ignition::gazebo::components::JointPosition* pComp =
           _ecm.Component<ignition::gazebo::components::JointPosition>(
               this->dataPtr->controls[i].joint);
-        const double pos = pComp->Data()[0];
-        const double error = pos - posTarget;
-        const double force = this->dataPtr->controls[i].pid.Update(
-            error, std::chrono::duration<double>(_dt));
-        jfcComp->Data()[0] = force;
+        if (pComp && !pComp->Data().empty())
+        {
+            const double pos = pComp->Data()[0];
+            const double error = pos - posTarget;
+            const double force = this->dataPtr->controls[i].pid.Update(
+                error, std::chrono::duration<double>(_dt));
+            jfcComp->Data()[0] = force;
+        }
       }
       else if (this->dataPtr->controls[i].type == "EFFORT")
       {

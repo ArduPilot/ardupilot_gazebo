@@ -186,7 +186,7 @@
         <update_rate>1000.0</update_rate>
       </sensor>
     </link>
-    <joint name='iris/imu_joint' type='revolute'>
+    <joint name='imu_joint' type='revolute'>
       <child>imu_link</child>
       <parent>base_link</parent>
       <axis>
@@ -712,7 +712,7 @@
       <gazeboXYZToNED>0 0 0 3.141593 0 0</gazeboXYZToNED>
 
       <!-- Sensors -->
-      <imuName>imu_sensor</imuName>
+      <imuName>imu_link::imu_sensor</imuName>
 
       <!--
           incoming control command [0, 1]
