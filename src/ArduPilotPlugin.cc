@@ -764,7 +764,6 @@ void ignition::gazebo::systems::ArduPilotPlugin::PreUpdate(
             {
                 // The parent of the imu is imu_link
                 ignition::gazebo::Entity parent = _ecm.ParentEntity(_imu_entity);
-                this->dataPtr->modelLink = parent;
                 if (parent != ignition::gazebo::kNullEntity)
                 {
                     // The grandparent of the imu is the quad itself, which is where this plugin is attached
@@ -774,6 +773,7 @@ void ignition::gazebo::systems::ArduPilotPlugin::PreUpdate(
                         ignition::gazebo::Model gparent_model(gparent);
                         if (gparent_model.Name(_ecm) == this->dataPtr->modelName)
                         {
+                            this->dataPtr->modelLink = parent;
                             imuTopicName = ignition::gazebo::scopedName(_imu_entity, _ecm) + "/imu";
                             igndbg << "Computed IMU topic to be: " << imuTopicName << std::endl;
                         }
