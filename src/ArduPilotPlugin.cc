@@ -17,7 +17,6 @@
 #include "ArduPilotPlugin.hh"
 #include "Socket.h"
 
-#include <ignition/common/Time.hh>
 #include <ignition/common/SignalHandler.hh>
 #include <ignition/gazebo/components/AngularVelocity.hh>
 #include <ignition/gazebo/components/Imu.hh>
