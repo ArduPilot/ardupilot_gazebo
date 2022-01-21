@@ -13,18 +13,18 @@ The project is composed of an Ignition plugin to connect to ArduPilot SITL (Soft
 The plugin is currently working, but we are working into bringing support for more feature and refine the API.
 
 ## Prerequisites :
-Ignition Edifice is supported on Ubuntu Bionic and Focal. If you are running Ubuntu as a virtual machine you will need at least Ubuntu 20.04 (Focal) in order to have the OpenGL support required for the `ogre2` render engine.
+Ignition Fortress is supported on Ubuntu Bionic, Focal and Jammy. If you are running Ubuntu as a virtual machine you will need at least Ubuntu 20.04 (Focal) in order to have the OpenGL support required for the `ogre2` render engine.
 
-Follow the instructions for a [binary install of ignition edifice](https://ignitionrobotics.org/docs/edifice/install) and verify that ignition gazebo is running correctly.
+Follow the instructions for a [binary install of ignition fortress](https://ignitionrobotics.org/docs/fortress/install) and verify that ignition gazebo is running correctly.
 
 Set up an [ArduPilot development environment](https://ardupilot.org/dev/index.html). In the following it is assumed that you are able to
 run ArduPilot SITL using the [MAVProxy GCS](https://ardupilot.org/mavproxy/index.html).
 
 ## Installation :
 
-Install Ignition Gazebo Edifice development libs and rapidjson:
+Install Ignition Gazebo Fortress development libs and rapidjson:
 ````
-sudo apt install rapidjson-dev libignition-gazebo5-dev
+sudo apt install rapidjson-dev libignition-gazebo6-dev
 ````
 
 Clone the repo and build with:
