@@ -23,8 +23,8 @@ set(IGN_CMAKE_VER ${ignition-cmake2_VERSION_MAJOR})
 
 #--------------------------------------
 # Find ignition-gazebo
-ign_find_package(ignition-gazebo7 REQUIRED)
-set(IGN_GAZEBO_VER ${ignition-gazebo7_VERSION_MAJOR})
+ign_find_package(ignition-gazebo6 REQUIRED)
+set(IGN_GAZEBO_VER ${ignition-gazebo6_VERSION_MAJOR})
 
 #--------------------------------------
 # Find RapidJSON
