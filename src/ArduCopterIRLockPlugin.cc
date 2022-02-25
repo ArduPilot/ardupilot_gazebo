@@ -169,7 +169,7 @@ void ArduCopterIRLockPlugin::Load(sensors::SensorPtr _sensor,
   }
   this->dataPtr->irlock_addr =
           _sdf->Get("irlock_addr", static_cast<std::string>("127.0.0.1")).first;
-  this->dataPtr->irlock_addr =
+  this->dataPtr->irlock_port =
           _sdf->Get("irlock_port", 9005).first;
 
   this->dataPtr->parentSensor->SetActive(true);
