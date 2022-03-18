@@ -1252,10 +1252,12 @@ void ignition::gazebo::systems::ArduPilotPlugin::CreateStateJSON(
         ArduPilot world frame is: x-north, y-east, z-down (NED)
         ArduPilot body frame is:  x-forward, y-right, z-down
 
-      2. The Gazebo frame convention is:
+      2. The Ignition Gazebo frame convention is:
 
-        Gazebo world frame is:    x-north, y-west, z-up
+        Gazebo world frame is:    x-east, y-north, z-up (ENU)
         Gazebo body frame is:     x-forward, y-left, z-up
+
+        Reference: https://ignitionrobotics.org/api/gazebo/6.0/spherical_coordinates.html
 
         In some cases the Gazebo body frame may use a non-standard convention,
         for example the Zephyr delta wing model has x-left, y-back, z-up. 
