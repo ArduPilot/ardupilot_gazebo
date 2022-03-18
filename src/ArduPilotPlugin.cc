@@ -1231,16 +1231,16 @@ void ignition::gazebo::systems::ArduPilotPlugin::CreateStateJSON(
 
     // get linear acceleration
     ignition::math::Vector3d linearAccel{
-        this->dataPtr->imuMsg.linear_acceleration().x(),
-        this->dataPtr->imuMsg.linear_acceleration().y(),
-        this->dataPtr->imuMsg.linear_acceleration().z()
+        imuMsg.linear_acceleration().x(),
+        imuMsg.linear_acceleration().y(),
+        imuMsg.linear_acceleration().z()
     };
 
     // get angular velocity
     ignition::math::Vector3d angularVel{
-        this->dataPtr->imuMsg.angular_velocity().x(),
-        this->dataPtr->imuMsg.angular_velocity().y(),
-        this->dataPtr->imuMsg.angular_velocity().z(),
+        imuMsg.angular_velocity().x(),
+        imuMsg.angular_velocity().y(),
+        imuMsg.angular_velocity().z(),
     };
 
     /*
