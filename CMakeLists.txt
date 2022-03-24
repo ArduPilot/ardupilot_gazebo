@@ -12,19 +12,29 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 #============================================================================
-# Find ignition-cmake
-#============================================================================
-find_package(ignition-cmake2 2.8.0 REQUIRED)
-set(IGN_CMAKE_VER ${ignition-cmake2_VERSION_MAJOR})
+# Find Ignition dependencies
 
-#============================================================================
-# Search for project-specific dependencies
-#============================================================================
+# Default version to Ignition Fortress
+set(IGN_CMAKE_VER 2)
+set(IGN_GAZEBO_VER 6)
 
-#--------------------------------------
-# Find ignition-gazebo
-ign_find_package(ignition-gazebo6 REQUIRED)
-set(IGN_GAZEBO_VER ${ignition-gazebo6_VERSION_MAJOR})
+if("$ENV{IGNITION_VERSION}" STREQUAL "edifice")
+  # Edifice
+  set(IGN_CMAKE_VER 2)
+  set(IGN_GAZEBO_VER 5)
+  message(STATUS "Compiling against Ignition Edifice")
+elseif("$ENV{IGNITION_VERSION}" STREQUAL "garden")
+  # Garden
+  set(IGN_CMAKE_VER 2)
+  set(IGN_GAZEBO_VER 7)
+  message(STATUS "Compiling against Ignition Garden")
+else() 
+  # Default to Fortess
+  message(STATUS "Compiling against Ignition Fortress")
+endif()
+
+find_package(ignition-cmake${IGN_CMAKE_VER} REQUIRED)
+find_package(ignition-gazebo${IGN_GAZEBO_VER} REQUIRED)
 
 #--------------------------------------
 # Find RapidJSON
