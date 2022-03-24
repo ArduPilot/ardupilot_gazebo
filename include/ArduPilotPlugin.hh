@@ -17,12 +17,21 @@
 #ifndef GAZEBO_PLUGINS_ARDUPILOTPLUGIN_HH_
 #define GAZEBO_PLUGINS_ARDUPILOTPLUGIN_HH_
 
+#include <ignition/gazebo/System.hh>
 #include <sdf/sdf.hh>
-#include <gazebo/common/common.hh>
-#include <gazebo/physics/physics.hh>
 
-namespace gazebo
+namespace ignition {
+namespace gazebo {
+namespace systems 
 {
+  // The servo packet received from ArduPilot SITL. Defined in SIM_JSON.h.
+  struct servo_packet {
+      uint16_t magic;         // 18458 expected magic value
+      uint16_t frame_rate;
+      uint32_t frame_count;
+      uint16_t pwm[16];
+  };
+
   // Forward declare private data class
   class ArduPilotSocketPrivate;
   class ArduPilotPluginPrivate;
@@ -52,16 +61,51 @@ namespace gazebo
   /// <imuName>     scoped name for the imu sensor
   /// <connectionTimeoutMaxCount> timeout before giving up on
   ///                             controller synchronization
-  class GAZEBO_VISIBLE ArduPilotPlugin : public ModelPlugin
-  {
+  class IGNITION_GAZEBO_VISIBLE ArduPilotPlugin:
+    public ignition::gazebo::System,
+    public ignition::gazebo::ISystemConfigure,
+    public ignition::gazebo::ISystemPostUpdate,
+    public ignition::gazebo::ISystemPreUpdate
+{
     /// \brief Constructor.
     public: ArduPilotPlugin();
 
     /// \brief Destructor.
     public: ~ArduPilotPlugin();
 
-    // Documentation Inherited.
-    public: virtual void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
+    /// \brief Load configuration from SDF on startup.
+    public: void Configure(const ignition::gazebo::Entity &_entity,
+                          const std::shared_ptr<const sdf::Element> &_sdf,
+                          ignition::gazebo::EntityComponentManager &_ecm,
+                          ignition::gazebo::EventManager &_eventMgr) final;
+
+    /// \brief Do the part of one update loop that involves making changes to simulation.
+    public: void PreUpdate(const ignition::gazebo::UpdateInfo &_info,
+                           ignition::gazebo::EntityComponentManager &_ecm) final;
+
+    /// \brief Do the part of one update loop that involves reading results from simulation.
+    public: void PostUpdate(const ignition::gazebo::UpdateInfo &_info,
+                            const ignition::gazebo::EntityComponentManager &_ecm) final;
+
+    /// \brief Load control channels
+    private: void LoadControlChannels(
+        sdf::ElementPtr _sdf,
+        ignition::gazebo::EntityComponentManager &_ecm);
+
+    /// \brief Load IMU sensors
+    private: void LoadImuSensors(
+        sdf::ElementPtr _sdf,
+        ignition::gazebo::EntityComponentManager &_ecm);
+
+    /// \brief Load GPS sensors
+    private: void LoadGpsSensors(
+        sdf::ElementPtr _sdf,
+        ignition::gazebo::EntityComponentManager &_ecm);
+
+    /// \brief Load Range sensors
+    private: void LoadRangeSensors(
+        sdf::ElementPtr _sdf,
+        ignition::gazebo::EntityComponentManager &_ecm);
 
     /// \brief Update the control surfaces controllers.
     /// \param[in] _info Update information provided by the server.
@@ -69,28 +113,38 @@ namespace gazebo
 
     /// \brief Update PID Joint controllers.
     /// \param[in] _dt time step size since last update.
-    private: void ApplyMotorForces(const double _dt);
+    private: void ApplyMotorForces(
+        const double _dt,
+        ignition::gazebo::EntityComponentManager &_ecm);
 
     /// \brief Reset PID Joint controllers.
     private: void ResetPIDs();
 
-    /// \brief Receive motor commands from ArduPilot
-    private: void ReceiveMotorCommand();
+    /// \brief Receive a servo packet from ArduPilot
+    ///
+    /// Returns true if a servo packet was received, otherwise false.
+    private: bool ReceiveServoPacket();
+
+    /// \brief Update the motor commands given servo PWM values
+    private: void UpdateMotorCommands(const servo_packet &_pkt);
+
+    /// \brief Create the state JSON
+    private: void CreateStateJSON(
+        double _simTime,
+        const ignition::gazebo::EntityComponentManager &_ecm) const;
 
     /// \brief Send state to ArduPilot
     private: void SendState() const;
 
-    /// \brief Init ardupilot socket
-    private: bool InitArduPilotSockets(sdf::ElementPtr _sdf) const;
+    /// \brief Initialise flight dynamics model socket
+    private: bool InitSockets(sdf::ElementPtr _sdf) const;
 
     /// \brief Private data pointer.
     private: std::unique_ptr<ArduPilotPluginPrivate> dataPtr;
-
-    /// \brief transform from model orientation to x-forward and z-up
-    private: ignition::math::Pose3d modelXYZToAirplaneXForwardZDown;
-
-    /// \brief transform from world frame to NED frame
-    private: ignition::math::Pose3d gazeboXYZToNED;
   };
-}
-#endif
+
+} // namespace systems
+} // namespace gazebo
+} // namespace ignition
+
+#endif // GAZEBO_PLUGINS_ARDUPILOTPLUGIN_HH_

@@ -1,5 +1,5 @@
 <?xml version='1.0'?>
-<sdf version="1.6" xmlns:xacro='http://ros.org/wiki/xacro'>
+<sdf version="1.6">
   <model name="iris_demo">
     <include>
       <uri>model://iris_with_standoffs</uri>
