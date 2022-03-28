@@ -97,6 +97,7 @@ class Control
   ///   VELOCITY control velocity of joint
   ///   POSITION control position of joint
   ///   EFFORT control effort of joint
+  ///   RELAY publish commands to a topic; subscriber should control joint
   public: std::string type;
 
   /// \brief Use force controller
@@ -123,6 +124,9 @@ class Control
   ///
   /// The upper limit of PWM input should match SERVOX_MAX for this channel.
   public: double servo_max = 2000.0;
+
+  /// \brief If type == "RELAY", the topic publisher
+  public: ignition::transport::Node::Publisher pub;
 
   /// \brief unused coefficients
   public: double rotorVelocitySlowdownSim;
@@ -402,11 +406,12 @@ void ignition::gazebo::systems::ArduPilotPlugin::LoadControlChannels(
 
     if (control.type != "VELOCITY" &&
         control.type != "POSITION" &&
-        control.type != "EFFORT")
+        control.type != "EFFORT" &&
+        control.type != "RELAY")
     {
       ignwarn << "[" << this->dataPtr->modelName << "] "
              << "Control type [" << control.type
-             << "] not recognized, must be one of VELOCITY, POSITION, EFFORT."
+             << "] not recognized, must be one of VELOCITY, POSITION, EFFORT, RELAY."
              << " default to VELOCITY.\n";
       control.type = "VELOCITY";
     }
@@ -425,6 +430,26 @@ void ignition::gazebo::systems::ArduPilotPlugin::LoadControlChannels(
       ignerr << "[" << this->dataPtr->modelName << "] "
             << "Please specify a jointName,"
             << " where the control channel is attached.\n";
+    }
+
+    if (control.type == "RELAY")
+    {
+      std::string topic;
+      if (controlSDF->HasElement("topic"))
+      {
+        topic = controlSDF->Get<std::string>("topic");
+        ignmsg << "[" << this->dataPtr->modelName << "] "
+               << "Relay motor commands to " << topic << ".\n";
+      }
+      else
+      {
+        topic = "/model/" + this->dataPtr->modelName +
+                "/joint/" + control.jointName + "/cmd_thrust";
+        ignwarn << "[" << this->dataPtr->modelName << "] "
+                << "No topic specified for RELAY control type,"
+                << " default to " << topic << ".\n";
+      }
+      control.pub = this->dataPtr->node.Advertise<msgs::Double>(topic);
     }
 
     // Get the pointer to the joint.
@@ -909,6 +934,14 @@ void ignition::gazebo::systems::ArduPilotPlugin::ApplyMotorForces(
   // update velocity PID for controls and apply force to joint
   for (size_t i = 0; i < this->dataPtr->controls.size(); ++i)
   {
+    if (this->dataPtr->controls[i].type == "RELAY")
+    {
+      msgs::Double cmd;
+      cmd.set_data(this->dataPtr->controls[i].cmd);
+      this->dataPtr->controls[i].pub.Publish(cmd);
+      continue;
+    }
+
     ignition::gazebo::components::JointForceCmd* jfcComp = nullptr;
     ignition::gazebo::components::JointVelocityCmd* jvcComp = nullptr;
     if (this->dataPtr->controls[i].useForce || this->dataPtr->controls[i].type == "EFFORT")
@@ -1171,6 +1204,13 @@ void ignition::gazebo::systems::ArduPilotPlugin::UpdateMotorCommands(const servo
                 const double pwm_max = this->dataPtr->controls[i].servo_max;
                 const double multiplier = this->dataPtr->controls[i].multiplier;
                 const double offset = this->dataPtr->controls[i].offset;
+
+                // ArduSub sends pwm values of the form [1000, ...] for ~500 frames, then switches
+                // to the expected values [1500, ...]. This sends the sub flying for a few seconds.
+                // Ignore out of range pwm values.
+                if (pwm < pwm_min || pwm > pwm_max) {
+                  continue;
+                }
 
                 // bound incoming cmd between 0 and 1
                 double raw_cmd = (pwm - pwm_min)/(pwm_max - pwm_min);

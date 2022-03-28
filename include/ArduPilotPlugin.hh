@@ -45,7 +45,8 @@ namespace systems
   ///    channel            attribute, ardupilot control channel
   ///    multiplier         command multiplier
   ///    <!-- output to Gazebo -->
-  ///    type               type of control, VELOCITY, POSITION or EFFORT
+  ///    type               type of control, VELOCITY, POSITION, EFFORT or RELAY
+  ///    topic              if type == RELAY, publish commands to topic instead
   ///    <p_gain>           velocity pid p gain
   ///    <i_gain>           velocity pid i gain
   ///    <d_gain>           velocity pid d gain
