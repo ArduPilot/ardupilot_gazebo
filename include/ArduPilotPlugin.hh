@@ -42,11 +42,14 @@ namespace systems
   /// The plugin requires the following parameters:
   /// <control>             control description block
   ///    <!-- inputs from Ardupilot -->
-  ///    channel            attribute, ardupilot control channel
-  ///    multiplier         command multiplier
+  ///    "channel"          attribute, ardupilot control channel
+  ///    <multiplier>       command multiplier
+  ///    <offset>           command offset
+  ///    <servo_max>        upper limit for PWM input
+  ///    <servo_min>        lower limit for PWM input
   ///    <!-- output to Gazebo -->
-  ///    type               type of control, VELOCITY, POSITION, EFFORT or RELAY
-  ///    topic              if type == RELAY, publish commands to topic instead
+  ///    <type>             type of control, VELOCITY, POSITION, EFFORT or COMMAND
+  ///    <useForce>         1 if joint forces are applied, 0 to set joint directly
   ///    <p_gain>           velocity pid p gain
   ///    <i_gain>           velocity pid i gain
   ///    <d_gain>           velocity pid d gain
@@ -55,9 +58,11 @@ namespace systems
   ///    <cmd_max>          velocity pid max command torque
   ///    <cmd_min>          velocity pid min command torque
   ///    <jointName>        motor joint, torque applied here
+  ///    <cmd_topic>        topic to publish commands that are processed by other plugins 
+  ///
   ///    <turningDirection> rotor turning direction, 'cw' or 'ccw'
-  ///    frequencyCutoff    filter incoming joint state
-  ///    samplingRate       sampling rate for filtering incoming joint state
+  ///    <frequencyCutoff>  filter incoming joint state
+  ///    <samplingRate>     sampling rate for filtering incoming joint state
   ///    <rotorVelocitySlowdownSim> for rotor aliasing problem, experimental
   /// <imuName>     scoped name for the imu sensor
   /// <connectionTimeoutMaxCount> timeout before giving up on

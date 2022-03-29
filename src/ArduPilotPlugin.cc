@@ -26,7 +26,9 @@
 #include <ignition/gazebo/components/LinearVelocity.hh>
 #include <ignition/gazebo/components/Name.hh>
 #include <ignition/gazebo/components/Pose.hh>
+#include <ignition/gazebo/components/World.hh>
 #include <ignition/gazebo/Model.hh>
+#include <ignition/gazebo/World.hh>
 #include <ignition/gazebo/Util.hh>
 #include <ignition/math/Filter.hh>
 #include <ignition/math/Helpers.hh>
@@ -97,7 +99,7 @@ class Control
   ///   VELOCITY control velocity of joint
   ///   POSITION control position of joint
   ///   EFFORT control effort of joint
-  ///   RELAY publish commands to a topic; subscriber should control joint
+  ///   COMMAND control sends command to topic
   public: std::string type;
 
   /// \brief Use force controller
@@ -105,6 +107,9 @@ class Control
 
   /// \brief The name of the joint being controlled
   public: std::string jointName;
+
+  /// \brief The name of the topic to forward this command
+  public: std::string cmdTopic;
 
   /// \brief The joint being controlled
   public: ignition::gazebo::Entity joint;
@@ -125,7 +130,7 @@ class Control
   /// The upper limit of PWM input should match SERVOX_MAX for this channel.
   public: double servo_max = 2000.0;
 
-  /// \brief If type == "RELAY", the topic publisher
+  /// \brief Publisher for sending commands
   public: ignition::transport::Node::Publisher pub;
 
   /// \brief unused coefficients
@@ -146,17 +151,20 @@ double Control::kDefaultSamplingRate = 0.2;
 // Private data class
 class ignition::gazebo::systems::ArduPilotPluginPrivate
 {
-  /// \brief The entity representing the model
-  public: ignition::gazebo::Entity entity{ignition::gazebo::kNullEntity};
-
   /// \brief The model
   public: ignition::gazebo::Model model{ignition::gazebo::kNullEntity};
 
-  /// \brief The entity representing one link of the model
+  /// \brief The entity representing the base or root link of the model
   public: ignition::gazebo::Entity modelLink{ignition::gazebo::kNullEntity};
 
-  /// \brief String of the model name;
+  /// \brief The model name;
   public: std::string modelName;
+
+  /// \brief The world
+  public: ignition::gazebo::World world{ignition::gazebo::kNullEntity};
+
+  /// \brief The world name;
+  public: std::string worldName;
 
   /// \brief Array of controllers
   public: std::vector<Control> controls;
@@ -283,20 +291,29 @@ void ignition::gazebo::systems::ArduPilotPlugin::Configure(
     ignition::gazebo::EntityComponentManager &_ecm,
     ignition::gazebo::EventManager &/*&_eventMgr*/)
 {
-  this->dataPtr->entity = _entity;
-  this->dataPtr->model = ignition::gazebo::Model(_entity);
-
   // Make a clone so that we can call non-const methods
   sdf::ElementPtr sdfClone = _sdf->Clone();
 
+  this->dataPtr->model = ignition::gazebo::Model(_entity);
   if (!this->dataPtr->model.Valid(_ecm))
   {
     ignerr << "ArduPilotPlugin should be attached to a model "
       << "entity. Failed to initialize." << "\n";
     return;
   }
-
   this->dataPtr->modelName = this->dataPtr->model.Name(_ecm);
+
+  this->dataPtr->world = ignition::gazebo::World(
+      _ecm.EntityByComponents(components::World()));
+  if (!this->dataPtr->world.Valid(_ecm))
+  {
+    ignerr << "World entity not found" <<std::endl;
+    return;
+  }
+  if (this->dataPtr->world.Name(_ecm).has_value())
+  {
+    this->dataPtr->worldName = this->dataPtr->world.Name(_ecm).value();
+  }
 
   // modelXYZToAirplaneXForwardZDown brings us from gazebo model frame:
   // x-forward, y-right, z-down
@@ -407,11 +424,11 @@ void ignition::gazebo::systems::ArduPilotPlugin::LoadControlChannels(
     if (control.type != "VELOCITY" &&
         control.type != "POSITION" &&
         control.type != "EFFORT" &&
-        control.type != "RELAY")
+        control.type != "COMMAND")
     {
       ignwarn << "[" << this->dataPtr->modelName << "] "
              << "Control type [" << control.type
-             << "] not recognized, must be one of VELOCITY, POSITION, EFFORT, RELAY."
+             << "] not recognized, must be one of VELOCITY, POSITION, EFFORT, COMMAND."
              << " default to VELOCITY.\n";
       control.type = "VELOCITY";
     }
@@ -432,26 +449,6 @@ void ignition::gazebo::systems::ArduPilotPlugin::LoadControlChannels(
             << " where the control channel is attached.\n";
     }
 
-    if (control.type == "RELAY")
-    {
-      std::string topic;
-      if (controlSDF->HasElement("topic"))
-      {
-        topic = controlSDF->Get<std::string>("topic");
-        ignmsg << "[" << this->dataPtr->modelName << "] "
-               << "Relay motor commands to " << topic << ".\n";
-      }
-      else
-      {
-        topic = "/model/" + this->dataPtr->modelName +
-                "/joint/" + control.jointName + "/cmd_thrust";
-        ignwarn << "[" << this->dataPtr->modelName << "] "
-                << "No topic specified for RELAY control type,"
-                << " default to " << topic << ".\n";
-      }
-      control.pub = this->dataPtr->node.Advertise<msgs::Double>(topic);
-    }
-
     // Get the pointer to the joint.
     control.joint = this->dataPtr->model.JointByName(_ecm, control.jointName);
     if (control.joint == ignition::gazebo::kNullEntity)
@@ -460,6 +457,29 @@ void ignition::gazebo::systems::ArduPilotPlugin::LoadControlChannels(
             << "Couldn't find specified joint ["
             << control.jointName << "]. This plugin will not run.\n";
       return;
+    }
+
+    // set up publisher if relaying the command
+    if (control.type == "COMMAND")
+    {
+      if (controlSDF->HasElement("cmd_topic"))
+      {
+        control.cmdTopic = controlSDF->Get<std::string>("cmd_topic");
+      }
+      else
+      {
+        control.cmdTopic =
+            "/world/" + this->dataPtr->worldName
+          + "/model/" + this->dataPtr->modelName
+          + "/joint/" + control.jointName + "/cmd";
+        ignwarn << "[" << this->dataPtr->modelName << "] "
+            << "Control type [" << control.type
+            << "] requires a valid <cmd_topic>. Using default\n";
+      }
+
+      ignmsg << "[" << this->dataPtr->modelName << "] "
+        << "Advertising on " << control.cmdTopic << ".\n";
+      control.pub = this->dataPtr->node.Advertise<msgs::Double>(control.cmdTopic);
     }
 
     if (controlSDF->HasElement("multiplier"))
@@ -934,7 +954,8 @@ void ignition::gazebo::systems::ArduPilotPlugin::ApplyMotorForces(
   // update velocity PID for controls and apply force to joint
   for (size_t i = 0; i < this->dataPtr->controls.size(); ++i)
   {
-    if (this->dataPtr->controls[i].type == "RELAY")
+    // Publish commands to be relayed to other plugins
+    if (this->dataPtr->controls[i].type == "COMMAND")
     {
       msgs::Double cmd;
       cmd.set_data(this->dataPtr->controls[i].cmd);
@@ -1205,13 +1226,6 @@ void ignition::gazebo::systems::ArduPilotPlugin::UpdateMotorCommands(const servo
                 const double multiplier = this->dataPtr->controls[i].multiplier;
                 const double offset = this->dataPtr->controls[i].offset;
 
-                // ArduSub sends pwm values of the form [1000, ...] for ~500 frames, then switches
-                // to the expected values [1500, ...]. This sends the sub flying for a few seconds.
-                // Ignore out of range pwm values.
-                if (pwm < pwm_min || pwm > pwm_max) {
-                  continue;
-                }
-
                 // bound incoming cmd between 0 and 1
                 double raw_cmd = (pwm - pwm_min)/(pwm_max - pwm_min);
                 raw_cmd = ignition::math::clamp(raw_cmd, 0.0, 1.0);
@@ -1382,7 +1396,7 @@ void ignition::gazebo::systems::ArduPilotPlugin::CreateStateJSON(
 
     // build JSON document
     StringBuffer s;
-    Writer<StringBuffer> writer(s);            
+    Writer<StringBuffer> writer(s);
 
     writer.StartObject();
 
