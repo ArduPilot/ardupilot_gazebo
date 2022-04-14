@@ -148,6 +148,37 @@ double Control::kDefaultRotorVelocitySlowdownSim = 10.0;
 double Control::kDefaultFrequencyCutoff = 5.0;
 double Control::kDefaultSamplingRate = 0.2;
 
+/////////////////////////////////////////////////
+// Wrapper class to store callback functions
+template <typename M>
+class OnMessageWrapper
+{
+  /// \brief Callback function type definition
+  public: typedef std::function<void(const M &)> callback_t;
+
+  /// \brief Callback function
+  public: callback_t callback;
+
+  /// \brief Constructor
+  public: OnMessageWrapper(const callback_t &_callback)
+    : callback(_callback)
+  {
+  }
+
+  /// \brief Callback function
+  public: void OnMessage(const M &_msg)
+  {
+    if (callback)
+    {
+      callback(_msg);
+    }
+  }
+};
+
+typedef std::shared_ptr<OnMessageWrapper<
+    ignition::msgs::LaserScan>> SonarOnMessageWrapperPtr;
+
+/////////////////////////////////////////////////
 // Private data class
 class ignition::gazebo::systems::ArduPilotPluginPrivate
 {
@@ -193,20 +224,19 @@ class ignition::gazebo::systems::ArduPilotPluginPrivate
   /// \brief The port for the SITL flight controller - auto detected
   public: uint16_t fcu_port_out;
 
-  /// \brief The name of the IMU sensor
-  public: std::string imuName;
-
   /// \brief Set true to enforce lock-step simulation
   public: bool isLockStep{false};
 
-  /// \brief Have we initialized subscription to the IMU data yet?
-  public: bool imuInitialized{false};
-
-  /// \brief We need an ign-transport Node to subscribe to IMU data
+  /// \brief We need an ign-transport Node to subscribe to sensor data
   public: ignition::transport::Node node;
 
-  /// \brief A copy of the most recently received IMU data message
-  public: ignition::msgs::IMU imuMsg;
+  // IMU sensors
+
+  /// \brief The name of the IMU sensor
+  public: std::string imuName;
+
+  /// \brief Have we initialized subscription to the IMU data yet?
+  public: bool imuInitialized{false};
 
   /// \brief Have we received at least one IMU data message?
   public: bool imuMsgValid{false};
@@ -214,16 +244,52 @@ class ignition::gazebo::systems::ArduPilotPluginPrivate
   /// \brief This mutex should be used when accessing imuMsg or imuMsgValid
   public: std::mutex imuMsgMutex;
 
-  /// \brief This subscriber callback latches the most recently received IMU data message for later use.
-  public: void imuCb(const ignition::msgs::IMU &_msg)
+  /// \brief A copy of the most recently received IMU data message
+  public: ignition::msgs::IMU imuMsg;
+
+  /// \brief This subscriber callback latches the most recently received
+  /// IMU data message for later use.
+  public: void ImuCb(const ignition::msgs::IMU &_msg)
   {
     std::lock_guard<std::mutex> lock(this->imuMsgMutex);
-    imuMsg = _msg;
-    imuMsgValid = true;
+    this->imuMsg = _msg;
+    this->imuMsgValid = true;
   }
 
-  /// \brief Pointer to an IMU sensor [required]
-//   public: sensors::ImuSensorPtr imuSensor;
+  // Sonar sensors
+
+  /// \brief This mutex must be used when accessing sonarRanges
+  public: std::mutex sonarMsgMutex;
+
+  /// \brief A copy of the most recently received sonar data
+  public: std::vector<double> sonarRanges;
+
+  /// \brief Callbacks for each sonar sensor
+  public: std::vector<SonarOnMessageWrapperPtr> sonarCbs;
+
+  /// \brief This subscriber callback latches the most recently received
+  /// data message for later use.
+  //
+  // TODO: Using msgs::LaserScan as a proxy for msgs::SonarStamped
+  public: void SonarCb(const ignition::msgs::LaserScan &_msg, int _sensorIndex)
+  {
+    // Extract data
+    double range_max = _msg.range_max();
+    auto&& ranges = _msg.ranges();
+    auto&& intensities = _msg.intensities();
+
+    // If there is no return, the range should be greater than range_max
+    double sample_min = 2.0 * range_max;
+    for (auto&& range : ranges)
+    {      
+      sample_min = std::min(
+          sample_min, std::isinf(range) ? 2.0 * range_max : range);
+    }
+
+    // Aquire lock and update the sonar ranges data
+    std::lock_guard<std::mutex> lock(this->sonarMsgMutex);
+    this->sonarRanges[_sensorIndex] = sample_min;
+  }
 
   /// \brief Pointer to an GPS sensor [optional]
 //   public: sensors::GpsSensorPtr gpsSensor;
@@ -340,7 +406,7 @@ void ignition::gazebo::systems::ArduPilotPlugin::Configure(
   // Load sensor params
   this->LoadImuSensors(sdfClone, _ecm);
   this->LoadGpsSensors(sdfClone, _ecm);
-  this->LoadRangeSensors(sdfClone, _ecm);
+  this->LoadSonarSensors(sdfClone, _ecm);
 
   // Initialise sockets
   if (!InitSockets(sdfClone))
@@ -715,76 +781,118 @@ void ignition::gazebo::systems::ArduPilotPlugin::LoadGpsSensors(
 }
 
 /////////////////////////////////////////////////
-void ignition::gazebo::systems::ArduPilotPlugin::LoadRangeSensors(
-    sdf::ElementPtr /*_sdf*/,
+void ignition::gazebo::systems::ArduPilotPlugin::LoadSonarSensors(
+    sdf::ElementPtr _sdf,
     ignition::gazebo::EntityComponentManager &/*_ecm*/)
 {
-  /*
-  // Get Rangefinder
-  // TODO add sonar
-  std::string rangefinderName = _sdf->Get("rangefinderName",
-    static_cast<std::string>("rangefinder_sensor")).first;
-  std::vector<std::string> rangefinderScopedName = SensorScopedName(this->dataPtr->model, rangefinderName);
-  if (rangefinderScopedName.size() > 1)
-  {
-    ignwarn << "[" << this->dataPtr->modelName << "] "
-           << "multiple names match [" << rangefinderName << "] using first found"
-           << " name.\n";
-    for (unsigned k = 0; k < rangefinderScopedName.size(); ++k)
+    struct SensorIdentifier
     {
-      ignwarn << "  sensor " << k << " [" << rangefinderScopedName[k] << "].\n";
+        std::string type;
+        int index;
+        std::string topic;
+    };
+    std::vector<SensorIdentifier> sensorIds;
+
+    // read sensor elements
+    sdf::ElementPtr sensorSdf;
+    if (_sdf->HasElement("sensor"))
+    {
+        sensorSdf = _sdf->GetElement("sensor");
     }
-  }
 
-  if (rangefinderScopedName.size() > 0)
-  {
-    this->dataPtr->rangefinderSensor = std::dynamic_pointer_cast<sensors::RaySensor>
-      (sensors::SensorManager::Instance()->GetSensor(rangefinderScopedName[0]));
-  }
-
-  if (!this->dataPtr->rangefinderSensor)
-  {
-    if (rangefinderScopedName.size() > 1)
+    while (sensorSdf)
     {
-      ignwarn << "[" << this->dataPtr->modelName << "] "
-             << "first rangefinder_sensor scoped name [" << rangefinderScopedName[0]
-             << "] not found, trying the rest of the sensor names.\n";
-      for (unsigned k = 1; k < rangefinderScopedName.size(); ++k)
-      {
-        this->dataPtr->rangefinderSensor = std::dynamic_pointer_cast<sensors::RaySensor>
-          (sensors::SensorManager::Instance()->GetSensor(rangefinderScopedName[k]));
-        if (this->dataPtr->rangefinderSensor)
+        SensorIdentifier sensorId;
+
+        // <type> is required
+        if (sensorSdf->HasElement("type"))
         {
-          ignwarn << "found [" << rangefinderScopedName[k] << "]\n";
-          break;
+            sensorId.type = sensorSdf->Get<std::string>("type");
         }
-      }
+        else
+        {
+            ignwarn << "[" << this->dataPtr->modelName << "] "
+                << "sensor element 'type' not specified, skipping.\n";
+        }
+
+        // <index> is required
+        if (sensorSdf->HasElement("index"))
+        {
+            sensorId.index = sensorSdf->Get<int>("index");
+        }
+        else
+        {
+            ignwarn << "[" << this->dataPtr->modelName << "] "
+                << "sensor element 'index' not specified, skipping.\n";
+        }
+
+        // <topic> is required
+        if (sensorSdf->HasElement("topic"))
+        {
+            sensorId.topic = sensorSdf->Get<std::string>("topic");
+        }
+        else
+        {
+            ignwarn << "[" << this->dataPtr->modelName << "] "
+                << "sensor element 'topic' not specified, skipping.\n";
+        }
+
+        sensorIds.push_back(sensorId);
+
+        sensorSdf = sensorSdf->GetNextElement("sensor");
+
+        ignmsg << "[" << this->dataPtr->modelName << "] sonar "
+            << "type: " << sensorId.type
+            << ", index: " << sensorId.index
+            << ", topic: " << sensorId.topic
+            << "\n";
     }
 
-    if (!this->dataPtr->rangefinderSensor)
+    // TODO: gazebo classic has different rules for generating topic names,
+    //    ignition would benefit from similar rules when providing
+    //    topics names in sdf sensors elements.
+
+    // get the topic prefix
+    // std::string topicPrefix = "~/";
+    // topicPrefix += this->dataPtr->modelName;
+    // boost::replace_all(topicPrefix, "::", "/");
+
+    // subscriptions
+    for (auto &&sensorId : sensorIds)
     {
-      ignwarn << "[" << this->dataPtr->modelName << "] "
-             << "rangefinder_sensor scoped name [" << rangefinderName
-             << "] not found, trying unscoped name.\n" << "\n";
-      /// TODO: this fails for multi-nested models.
-      /// TODO: and transforms fail for rotated nested model,
-      ///       joints point the wrong way.
-      this->dataPtr->rangefinderSensor = std::dynamic_pointer_cast<sensors::RaySensor>
-        (sensors::SensorManager::Instance()->GetSensor(rangefinderName));
+        // TODO: see comment above re. topics
+        // fully qualified topic name
+        // std::string topicName = topicPrefix;
+        // topicName.append("/").append(sensorId.topic);
+        std::string topicName = sensorId.topic;
+
+        // Bind the sensor index to the callback function
+        // (adjust from unit to zero offset)
+        OnMessageWrapper<ignition::msgs::LaserScan>::callback_t fn =
+            std::bind(
+                &ignition::gazebo::systems::ArduPilotPluginPrivate::SonarCb,
+                this->dataPtr.get(),
+                std::placeholders::_1,
+                sensorId.index - 1);
+
+        // Wrap the std::function so we can register the callback
+        auto callbackWrapper = SonarOnMessageWrapperPtr(
+            new OnMessageWrapper<ignition::msgs::LaserScan>(fn));
+
+        auto callback = &OnMessageWrapper<ignition::msgs::LaserScan>::OnMessage;
+
+        // Subscribe to sonar sensor topic
+        this->dataPtr->node.Subscribe(
+            topicName, callback, callbackWrapper.get());
+
+        this->dataPtr->sonarCbs.push_back(callbackWrapper);
+
+        // TODO: initalise ranges properly (AP convention for ignored value?)
+        this->dataPtr->sonarRanges.push_back(-1.0);
+
+        ignmsg << "[" << this->dataPtr->modelName << "] subscribing to "
+              << topicName << "\n";
     }
-    if (!this->dataPtr->rangefinderSensor)
-    {
-      ignwarn << "[" << this->dataPtr->modelName << "] "
-             << "ranfinder [" << rangefinderName
-             << "] not found, skipping rangefinder support.\n" << "\n";
-    }
-    else
-    {
-      ignwarn << "[" << this->dataPtr->modelName << "] "
-             << "  found "  << " [" << rangefinderName << "].\n";
-    }
-  }
-  */
 }
 
 /////////////////////////////////////////////////
@@ -834,7 +942,10 @@ void ignition::gazebo::systems::ArduPilotPlugin::PreUpdate(
             return;
         }
 
-        this->dataPtr->node.Subscribe(imuTopicName, &ignition::gazebo::systems::ArduPilotPluginPrivate::imuCb, this->dataPtr.get());
+        this->dataPtr->node.Subscribe(
+            imuTopicName,
+            &ignition::gazebo::systems::ArduPilotPluginPrivate::ImuCb,
+            this->dataPtr.get());
 
         // Make sure that the "imu_link" entity has WorldPose and WorldLinearVelocity
         // components, which we'll need later.
@@ -847,7 +958,8 @@ void ignition::gazebo::systems::ArduPilotPlugin::PreUpdate(
             _ecm.CreateComponent(this->dataPtr->modelLink, ignition::gazebo::components::WorldLinearVelocity());
         }
     }
-    else
+
+    if (this->dataPtr->imuInitialized)
     {
         // Update the control surfaces.
         if (!_info.paused && _info.simTime > this->dataPtr->lastControllerUpdateTime)
@@ -995,11 +1107,14 @@ void ignition::gazebo::systems::ArduPilotPlugin::ApplyMotorForces(
         ignition::gazebo::components::JointVelocity* vComp =
           _ecm.Component<ignition::gazebo::components::JointVelocity>(
               this->dataPtr->controls[i].joint);
-        const double vel = vComp->Data()[0];
-        const double error = vel - velTarget;
-        const double force = this->dataPtr->controls[i].pid.Update(
-            error, std::chrono::duration<double>(_dt));
-        jfcComp->Data()[0] = force;
+        if (!vComp->Data().empty())
+        {
+            const double vel = vComp->Data()[0];
+            const double error = vel - velTarget;
+            const double force = this->dataPtr->controls[i].pid.Update(
+                error, std::chrono::duration<double>(_dt));
+            jfcComp->Data()[0] = force;
+        }    
       }
       else if (this->dataPtr->controls[i].type == "POSITION")
       {
@@ -1007,11 +1122,14 @@ void ignition::gazebo::systems::ArduPilotPlugin::ApplyMotorForces(
         ignition::gazebo::components::JointPosition* pComp =
           _ecm.Component<ignition::gazebo::components::JointPosition>(
               this->dataPtr->controls[i].joint);
-        const double pos = pComp->Data()[0];
-        const double error = pos - posTarget;
-        const double force = this->dataPtr->controls[i].pid.Update(
-            error, std::chrono::duration<double>(_dt));
-        jfcComp->Data()[0] = force;
+        if (!pComp->Data().empty())
+        {
+            const double pos = pComp->Data()[0];
+            const double error = pos - posTarget;
+            const double force = this->dataPtr->controls[i].pid.Update(
+                error, std::chrono::duration<double>(_dt));
+            jfcComp->Data()[0] = force;
+        }
       }
       else if (this->dataPtr->controls[i].type == "EFFORT")
       {
@@ -1278,10 +1396,10 @@ void ignition::gazebo::systems::ArduPilotPlugin::CreateStateJSON(
         imuMsg = this->dataPtr->imuMsg;
     }
 
-    // it is assumed that the imu orientation conforms to the aircraft convention:
-    //   x-forward
-    //   y-right
-    //   z-down
+    // it is assumed that the imu orientation is:
+    //   x forward
+    //   y right
+    //   z down
 
     // get linear acceleration
     ignition::math::Vector3d linearAccel{
@@ -1442,17 +1560,41 @@ void ignition::gazebo::systems::ArduPilotPlugin::CreateStateJSON(
     writer.Double(velWldA.Z());
     writer.EndArray();
 
-    // SITL/SIM_JSON supports these additional sensor fields
-    //      rng_1 : 0 
-    //      rng_2 : 0
-    //      rng_3 : 0
-    //      rng_4 : 0
-    //      rng_5 : 0
-    //      rng_6 : 0
-    //      windvane : { direction: 0, speed: 0 }
+    // Sonar
+    {
+      // Aquire lock on this->dataPtr->sonarRanges
+      std::lock_guard<std::mutex> lock(this->dataPtr->sonarMsgMutex);
 
-    // writer.Key("rng_1");
-    // writer.Double(0.0);
+      // Assume that all range sensors with index less than
+      // sonarRanges.size() provide data.
+      // Use switch-case fall-through to set each range sensor
+      switch (std::min<size_t>(6, this->dataPtr->sonarRanges.size()))
+      {
+      case 6:
+          writer.Key("rng_6");
+          writer.Double(this->dataPtr->sonarRanges[5]);
+      case 5:
+          writer.Key("rng_5");
+          writer.Double(this->dataPtr->sonarRanges[4]);
+      case 4:
+          writer.Key("rng_4");
+          writer.Double(this->dataPtr->sonarRanges[3]);
+      case 3:
+          writer.Key("rng_3");
+          writer.Double(this->dataPtr->sonarRanges[2]);
+      case 2:
+          writer.Key("rng_2");
+          writer.Double(this->dataPtr->sonarRanges[1]);
+      case 1:
+          writer.Key("rng_1");
+          writer.Double(this->dataPtr->sonarRanges[0]);
+      default:
+          break;
+      }
+    }
+
+    // SITL/SIM_JSON supports these additional sensor fields
+    //      windvane : { direction: 0, speed: 0 }
 
     // writer.Key("windvane");
     // writer.StartObject();
@@ -1461,6 +1603,8 @@ void ignition::gazebo::systems::ArduPilotPlugin::CreateStateJSON(
     // writer.Key("speed");
     // writer.Double(5.5);
     // writer.EndObject();
+
+    writer.EndObject();
 
     // get JSON
     this->dataPtr->json_str = "\n" + std::string(s.GetString()) + "\n";
