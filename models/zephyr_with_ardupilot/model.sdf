@@ -262,6 +262,21 @@
         <cmd_min>-2.5</cmd_min>
       </control>
 
+      <control channel="4">
+        <multiplier>1.048</multiplier>
+        <useForce>0</useForce>
+        <type>PARACHUTE</type>
+        <offset>-0.5</offset>
+        <servo_min>1100</servo_min>
+        <servo_max>1900</servo_max>
+        <p_gain>10.0</p_gain>
+        <i_gain>0</i_gain>
+        <d_gain>0</d_gain>
+        <i_max>0</i_max>
+        <i_min>0</i_min>
+        <parachute>1</parachute>
+      </control>
+
     </plugin>
 
   </model>

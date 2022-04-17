@@ -140,6 +140,11 @@ class Control
   /// \brief Publisher for sending commands
   public: gz::transport::Node::Publisher pub;
 
+  /// \brief whether the channel is reversed. -1 - reversed, 1 - not reversed. Default (1)
+  public: int servo_reverse = 1;
+
+  public: bool parachute = false;
+
   /// \brief unused coefficients
   public: double rotorVelocitySlowdownSim;
   public: double frequencyCutoff;
@@ -465,6 +470,11 @@ void gz::sim::systems::ArduPilotPlugin::LoadControlChannels(
              << control.channel << "].\n";
     }
 
+    if (controlSDF->HasElement("parachute"))
+    {
+      control.parachute = controlSDF->Get<bool>("parachute");
+    }
+
     if (controlSDF->HasElement("type"))
     {
       control.type = controlSDF->Get<std::string>("type");
@@ -481,6 +491,7 @@ void gz::sim::systems::ArduPilotPlugin::LoadControlChannels(
         control.type != "POSITION" &&
         control.type != "EFFORT" &&
         control.type != "COMMAND")
+        control.type != "PARACHUTE")
     {
       gzwarn << "[" << this->dataPtr->modelName << "] "
              << "Control type [" << control.type
@@ -1263,7 +1274,6 @@ bool gz::sim::systems::ArduPilotPlugin::ReceiveServoPacket()
         }
         return false;
     }
-
 #if DEBUG_JSON_IO
     // debug: inspect sitl packet
     std::ostringstream oss;
@@ -1365,6 +1375,17 @@ void gz::sim::systems::ArduPilotPlugin::UpdateMotorCommands(
                 const double pwm_max = this->dataPtr->controls[i].servo_max;
                 const double multiplier = this->dataPtr->controls[i].multiplier;
                 const double offset = this->dataPtr->controls[i].offset;
+
+                if (this->dataPtr->controls[i].parachute) {
+                  if (pwm == pwm_max) {
+                    ignition::transport::AdvertiseMessageOptions opts;
+                    std::string topic = "/parachute/attach";
+                    opts.SetMsgsPerSec(1);
+                    auto pub = this->dataPtr->node.Advertise<ignition::msgs::Empty>(topic, opts);
+                    pub.Publish(ignition::msgs::Empty());
+                  }
+                  continue;
+                }
 
                 // bound incoming cmd between 0 and 1
                 double raw_cmd = (pwm - pwm_min)/(pwm_max - pwm_min);

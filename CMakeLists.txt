@@ -11,6 +11,19 @@ project(ardupilot_sitl_gazebo)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+add_compile_options(
+  -Wall
+  -Wextra
+  -Wconversion
+  -Wsign-conversion
+  $<$<CONFIG:DEBUG>:-g>
+  $<$<CONFIG:DEBUG>:-O0>
+  $<$<CONFIG:RELEASE>:-O3>
+)
+
+add_compile_definitions(
+  $<$<CONFIG:DEBUG>:DEBUG>
+)
 #============================================================================
 # Find gz-cmake
 #============================================================================
@@ -47,4 +60,17 @@ target_include_directories(ArduPilotPlugin PUBLIC
 
 target_link_libraries(ArduPilotPlugin PUBLIC
   ${GZ-SIM_LIBRARIES}
+)
+
+add_library(ParachutePlugin
+  SHARED
+  src/ParachutePlugin.cc
+)
+target_include_directories(ParachutePlugin PUBLIC
+  include
+	${IGNITION-GAZEBO_INCLUDE_DIRS}
+)
+
+target_link_libraries(ParachutePlugin PUBLIC
+  ${IGNITION-GAZEBO_LIBRARIES}
 )

@@ -18,6 +18,15 @@
     <plugin filename="gz-sim-imu-system"
       name="gz::sim::systems::Imu">
     </plugin>
+    <plugin filename="libParachutePlugin.so" name="ParachutePlugin">
+      <parent_model>zephyr_with_ardupilot</parent_model>
+      <parent_link>wing</parent_link>
+      <child_model>parachute_small</child_model>
+      <child_link>chute</child_link>
+      <attach_topic>/parachute/attach</attach_topic>
+      <detach_topic>/parachute/detach</detach_topic>
+      <release_pose>0 -0.12 0 0 2 0</release_pose>
+    </plugin>
 
     <scene>
       <ambient>1.0 1.0 1.0</ambient>
@@ -46,7 +55,15 @@
     <include>
       <pose>0 0 0.422 -1.5707963 0 1.5707963</pose>
       <uri>model://zephyr_with_ardupilot</uri>
+
     </include>
+
+    <!--
+    <include>
+      <pose> 1000 0 0  0 0 0 </pose>
+      <uri>model://parachute_small</uri>
+    </include>
+    -->
 
   </world>
 </sdf>

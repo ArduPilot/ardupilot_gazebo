@@ -26,6 +26,10 @@ msg/_*.py
 .project
 .cproject
 
+# vscode
+.vscode
+.devcontainer
+
 # qcreator stuff
 CMakeLists.txt.user
 
