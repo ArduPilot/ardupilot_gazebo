@@ -17,12 +17,12 @@
 #ifndef GAZEBO_PLUGINS_ARDUPILOTPLUGIN_HH_
 #define GAZEBO_PLUGINS_ARDUPILOTPLUGIN_HH_
 
-#include <ignition/gazebo/System.hh>
+#include <gz/sim/System.hh>
 #include <sdf/sdf.hh>
 
-namespace ignition {
-namespace gazebo {
-namespace systems 
+namespace gz {
+namespace sim {
+namespace systems
 {
   // The servo packet received from ArduPilot SITL. Defined in SIM_JSON.h.
   struct servo_packet {
@@ -58,7 +58,7 @@ namespace systems
   ///    <cmd_max>          velocity pid max command torque
   ///    <cmd_min>          velocity pid min command torque
   ///    <jointName>        motor joint, torque applied here
-  ///    <cmd_topic>        topic to publish commands that are processed by other plugins 
+  ///    <cmd_topic>        topic to publish commands that are processed by other plugins
   ///
   ///    <turningDirection> rotor turning direction, 'cw' or 'ccw'
   ///    <frequencyCutoff>  filter incoming joint state
@@ -68,10 +68,10 @@ namespace systems
   /// <connectionTimeoutMaxCount> timeout before giving up on
   ///                             controller synchronization
   class IGNITION_GAZEBO_VISIBLE ArduPilotPlugin:
-    public ignition::gazebo::System,
-    public ignition::gazebo::ISystemConfigure,
-    public ignition::gazebo::ISystemPostUpdate,
-    public ignition::gazebo::ISystemPreUpdate
+    public gz::sim::System,
+    public gz::sim::ISystemConfigure,
+    public gz::sim::ISystemPostUpdate,
+    public gz::sim::ISystemPreUpdate
 {
     /// \brief Constructor.
     public: ArduPilotPlugin();
@@ -80,38 +80,38 @@ namespace systems
     public: ~ArduPilotPlugin();
 
     /// \brief Load configuration from SDF on startup.
-    public: void Configure(const ignition::gazebo::Entity &_entity,
+    public: void Configure(const gz::sim::Entity &_entity,
                           const std::shared_ptr<const sdf::Element> &_sdf,
-                          ignition::gazebo::EntityComponentManager &_ecm,
-                          ignition::gazebo::EventManager &_eventMgr) final;
+                          gz::sim::EntityComponentManager &_ecm,
+                          gz::sim::EventManager &_eventMgr) final;
 
     /// \brief Do the part of one update loop that involves making changes to simulation.
-    public: void PreUpdate(const ignition::gazebo::UpdateInfo &_info,
-                           ignition::gazebo::EntityComponentManager &_ecm) final;
+    public: void PreUpdate(const gz::sim::UpdateInfo &_info,
+                           gz::sim::EntityComponentManager &_ecm) final;
 
     /// \brief Do the part of one update loop that involves reading results from simulation.
-    public: void PostUpdate(const ignition::gazebo::UpdateInfo &_info,
-                            const ignition::gazebo::EntityComponentManager &_ecm) final;
+    public: void PostUpdate(const gz::sim::UpdateInfo &_info,
+                            const gz::sim::EntityComponentManager &_ecm) final;
 
     /// \brief Load control channels
     private: void LoadControlChannels(
         sdf::ElementPtr _sdf,
-        ignition::gazebo::EntityComponentManager &_ecm);
+        gz::sim::EntityComponentManager &_ecm);
 
     /// \brief Load IMU sensors
     private: void LoadImuSensors(
         sdf::ElementPtr _sdf,
-        ignition::gazebo::EntityComponentManager &_ecm);
+        gz::sim::EntityComponentManager &_ecm);
 
     /// \brief Load GPS sensors
     private: void LoadGpsSensors(
         sdf::ElementPtr _sdf,
-        ignition::gazebo::EntityComponentManager &_ecm);
+        gz::sim::EntityComponentManager &_ecm);
 
     /// \brief Load Range sensors
     private: void LoadRangeSensors(
         sdf::ElementPtr _sdf,
-        ignition::gazebo::EntityComponentManager &_ecm);
+        gz::sim::EntityComponentManager &_ecm);
 
     /// \brief Update the control surfaces controllers.
     /// \param[in] _info Update information provided by the server.
@@ -121,7 +121,7 @@ namespace systems
     /// \param[in] _dt time step size since last update.
     private: void ApplyMotorForces(
         const double _dt,
-        ignition::gazebo::EntityComponentManager &_ecm);
+        gz::sim::EntityComponentManager &_ecm);
 
     /// \brief Reset PID Joint controllers.
     private: void ResetPIDs();
@@ -137,7 +137,7 @@ namespace systems
     /// \brief Create the state JSON
     private: void CreateStateJSON(
         double _simTime,
-        const ignition::gazebo::EntityComponentManager &_ecm) const;
+        const gz::sim::EntityComponentManager &_ecm) const;
 
     /// \brief Send state to ArduPilot
     private: void SendState() const;
