@@ -539,10 +539,10 @@
 
     <!-- plugins -->
     <plugin filename="libignition-gazebo-joint-state-publisher-system.so"
-      name="ignition::gazebo::systems::JointStatePublisher">
+      name="gz::sim::systems::JointStatePublisher">
     </plugin>
     <plugin filename="libignition-gazebo-lift-drag-system.so"
-        name="ignition::gazebo::systems::LiftDrag">
+        name="gz::sim::systems::LiftDrag">
       <a0>0.3</a0>
       <alpha_stall>1.4</alpha_stall>
       <cla>4.2500</cla>
@@ -559,7 +559,7 @@
       <link_name>rotor_0</link_name>
     </plugin>
     <plugin filename="libignition-gazebo-lift-drag-system.so"
-        name="ignition::gazebo::systems::LiftDrag">
+        name="gz::sim::systems::LiftDrag">
       <a0>0.3</a0>
       <alpha_stall>1.4</alpha_stall>
       <cla>4.2500</cla>
@@ -577,7 +577,7 @@
     </plugin>
 
     <plugin filename="libignition-gazebo-lift-drag-system.so"
-        name="ignition::gazebo::systems::LiftDrag">
+        name="gz::sim::systems::LiftDrag">
       <a0>0.3</a0>
       <alpha_stall>1.4</alpha_stall>
       <cla>4.2500</cla>
@@ -594,7 +594,7 @@
       <link_name>rotor_1</link_name>
     </plugin>
     <plugin filename="libignition-gazebo-lift-drag-system.so"
-        name="ignition::gazebo::systems::LiftDrag">
+        name="gz::sim::systems::LiftDrag">
       <a0>0.3</a0>
       <alpha_stall>1.4</alpha_stall>
       <cla>4.2500</cla>
@@ -612,7 +612,7 @@
     </plugin>
 
     <plugin filename="libignition-gazebo-lift-drag-system.so"
-        name="ignition::gazebo::systems::LiftDrag">
+        name="gz::sim::systems::LiftDrag">
       <a0>0.3</a0>
       <alpha_stall>1.4</alpha_stall>
       <cla>4.2500</cla>
@@ -629,7 +629,7 @@
       <link_name>rotor_2</link_name>
     </plugin>
     <plugin filename="libignition-gazebo-lift-drag-system.so"
-        name="ignition::gazebo::systems::LiftDrag">
+        name="gz::sim::systems::LiftDrag">
       <a0>0.3</a0>
       <alpha_stall>1.4</alpha_stall>
       <cla>4.2500</cla>
@@ -647,7 +647,7 @@
     </plugin>
 
     <plugin filename="libignition-gazebo-lift-drag-system.so"
-        name="ignition::gazebo::systems::LiftDrag">
+        name="gz::sim::systems::LiftDrag">
       <a0>0.3</a0>
       <alpha_stall>1.4</alpha_stall>
       <cla>4.2500</cla>
@@ -664,7 +664,7 @@
       <link_name>rotor_3</link_name>
     </plugin>
     <plugin filename="libignition-gazebo-lift-drag-system.so"
-        name="ignition::gazebo::systems::LiftDrag">
+        name="gz::sim::systems::LiftDrag">
       <a0>0.3</a0>
       <alpha_stall>1.4</alpha_stall>
       <cla>4.2500</cla>
@@ -682,19 +682,19 @@
     </plugin>
 
     <plugin filename="libignition-gazebo-apply-joint-force-system.so"
-      name="ignition::gazebo::systems::ApplyJointForce">
+      name="gz::sim::systems::ApplyJointForce">
       <joint_name>rotor_0_joint</joint_name>
     </plugin>
     <plugin filename="libignition-gazebo-apply-joint-force-system.so"
-      name="ignition::gazebo::systems::ApplyJointForce">
+      name="gz::sim::systems::ApplyJointForce">
       <joint_name>rotor_1_joint</joint_name>
     </plugin>
     <plugin filename="libignition-gazebo-apply-joint-force-system.so"
-      name="ignition::gazebo::systems::ApplyJointForce">
+      name="gz::sim::systems::ApplyJointForce">
       <joint_name>rotor_2_joint</joint_name>
     </plugin>
     <plugin filename="libignition-gazebo-apply-joint-force-system.so"
-      name="ignition::gazebo::systems::ApplyJointForce">
+      name="gz::sim::systems::ApplyJointForce">
       <joint_name>rotor_3_joint</joint_name>
     </plugin>
 

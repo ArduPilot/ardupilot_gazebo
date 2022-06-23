@@ -61,14 +61,14 @@
 #define MAX_SERVO_CHANNELS 16
 
 // Register plugin
-IGNITION_ADD_PLUGIN(gz::sim::systems::ArduPilotPlugin,
+GZ_ADD_PLUGIN(gz::sim::systems::ArduPilotPlugin,
                     gz::sim::System,
                     gz::sim::systems::ArduPilotPlugin::ISystemConfigure,
                     gz::sim::systems::ArduPilotPlugin::ISystemPostUpdate,
                     gz::sim::systems::ArduPilotPlugin::ISystemPreUpdate)
 // Add plugin alias so that we can refer to the plugin without the version
 // namespace
-IGNITION_ADD_PLUGIN_ALIAS(gz::sim::systems::ArduPilotPlugin, "ArduPilotPlugin")
+GZ_ADD_PLUGIN_ALIAS(gz::sim::systems::ArduPilotPlugin, "ArduPilotPlugin")
 
 /// \brief class Control is responsible for controlling a joint
 class Control
@@ -83,6 +83,8 @@ class Control
 
     this->pid.Init(0.1, 0, 0, 0, 0, 1.0, -1.0);
   }
+
+  public: ~Control() {}
 
   /// \brief The PWM channel used to command this control
   public: int channel = 0;
@@ -319,7 +321,7 @@ void gz::sim::systems::ArduPilotPlugin::Configure(
   // x-forward, y-right, z-down
   // to the aerospace convention: x-forward, y-left, z-up
   this->dataPtr->modelXYZToAirplaneXForwardZDown =
-    gz::math::Pose3d(0, 0, 0, IGN_PI, 0, 0);
+    gz::math::Pose3d(0, 0, 0, GZ_PI, 0, 0);
   if (sdfClone->HasElement("modelXYZToAirplaneXForwardZDown"))
   {
     this->dataPtr->modelXYZToAirplaneXForwardZDown =
@@ -328,7 +330,7 @@ void gz::sim::systems::ArduPilotPlugin::Configure(
 
   // gazeboXYZToNED: from gazebo model frame: x-forward, y-right, z-down
   // to the aerospace convention: x-forward, y-left, z-up
-  this->dataPtr->gazeboXYZToNED = gz::math::Pose3d(0, 0, 0, IGN_PI, 0, 0);
+  this->dataPtr->gazeboXYZToNED = gz::math::Pose3d(0, 0, 0, GZ_PI, 0, 0);
   if (sdfClone->HasElement("gazeboXYZToNED"))
   {
     this->dataPtr->gazeboXYZToNED = sdfClone->Get<gz::math::Pose3d>("gazeboXYZToNED");
@@ -1341,7 +1343,7 @@ void gz::sim::systems::ArduPilotPlugin::CreateStateJSON(
       2. The transform from the Aircraft world frame to the Gazebo world frame
       is fixed (provided Gazebo does not modify its convention)
 
-        wldAToWldG = ^{wldA}\xi_{wldG} = Pose3d(0, 0, 0, -IGN_PI, 0, 0)
+        wldAToWldG = ^{wldA}\xi_{wldG} = Pose3d(0, 0, 0, -GZ_PI, 0, 0)
 
       Note that this is the inverse of the plugin parameter <gazeboXYZToNED>
       which tells us how to rotate a Gazebo world frame into an Aircraft world frame.
@@ -1350,8 +1352,8 @@ void gz::sim::systems::ArduPilotPlugin::CreateStateJSON(
 
         bdyAToBdyG = ^{bdyA}\xi_{bdyG}
 
-      This will typically be Pose3d(0, 0, 0, -IGN_PI, 0, 0) but in some cases will vary.
-      For instance the Zephyr uses the transform Pose3d(0, 0, 0, -IGN_PI, 0, IGN_PI/2)
+      This will typically be Pose3d(0, 0, 0, -GZ_PI, 0, 0) but in some cases will vary.
+      For instance the Zephyr uses the transform Pose3d(0, 0, 0, -GZ_PI, 0, GZ_PI/2)
 
       Note this is also the inverse of the plugin parameter <modelXYZToAirplaneXForwardZDown>
       which tells us how to rotate a Gazebo model frame into an Aircraft body frame

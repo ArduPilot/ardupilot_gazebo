@@ -14,8 +14,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #============================================================================
 # Find ignition-cmake
 #============================================================================
-find_package(ignition-cmake2 2.8.0 REQUIRED)
-set(IGN_CMAKE_VER ${ignition-cmake2_VERSION_MAJOR})
+find_package(ignition-cmake3 3.0.0 REQUIRED)
+set(GZ_CMAKE_VER ${ignition-cmake3_VERSION_MAJOR})
 
 #============================================================================
 # Search for project-specific dependencies
@@ -23,8 +23,8 @@ set(IGN_CMAKE_VER ${ignition-cmake2_VERSION_MAJOR})
 
 #--------------------------------------
 # Find ignition-gazebo
-ign_find_package(ignition-gazebo7 REQUIRED)
-set(IGN_GAZEBO_VER ${ignition-gazebo7_VERSION_MAJOR})
+gz_find_package(ignition-gazebo7 REQUIRED)
+set(GZ_SIM_VER ${ignition-gazebo7_VERSION_MAJOR})
 
 #--------------------------------------
 # Find RapidJSON
