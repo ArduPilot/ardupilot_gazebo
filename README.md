@@ -1,5 +1,5 @@
-# ArduPilot Ignition Gazebo plugin
-This is ArduPilot official plugin for Ignition Gazebo.
+# ArduPilot Gazebo Simulator plugin
+This is ArduPilot official plugin for Gazebo Simulator plugin
 It replaces the old Gazebo plugin to bring support of the next gen Gazebo simulator.
 It also brings support for more features :
 - more flexible data exchange between SITL and Ignition with JSON data sharing.
@@ -7,29 +7,29 @@ It also brings support for more features :
 - true Simulation lockstepping. It is now possible to use GDB to stop the Ignition time for debugging.
 - Better 3D rendering
 
-The project is composed of an Ignition plugin to connect to ArduPilot SITL (Software In The Loop) and some example models and worlds.
+The project is composed of an Gazebo plugin to connect to ArduPilot SITL (Software In The Loop) and some example models and worlds.
 
 ## Disclaimer :
 The plugin is currently working, but we are working into bringing support for more feature and refine the API.
 
 ## Prerequisites :
-Ignition Fortress is supported on Ubuntu Bionic, Focal and Jammy. If you are running Ubuntu as a virtual machine you will need at least Ubuntu 20.04 (Focal) in order to have the OpenGL support required for the `ogre2` render engine.
+Gazebo Sim Garden is supported on Ubuntu Focal and Jammy. If you are running Ubuntu as a virtual machine you will need at least Ubuntu 20.04 (Focal) in order to have the OpenGL support required for the `ogre2` render engine.
 
-Follow the instructions for a [binary install of ignition fortress](https://ignitionrobotics.org/docs/fortress/install) and verify that ignition gazebo is running correctly.
+Follow the instructions for a [binary install of ignition fortress](https://ignitionrobotics.org/docs/garden/install) and verify that ignition gazebo is running correctly.
 
 Set up an [ArduPilot development environment](https://ardupilot.org/dev/index.html). In the following it is assumed that you are able to
 run ArduPilot SITL using the [MAVProxy GCS](https://ardupilot.org/mavproxy/index.html).
 
 ## Installation :
 
-Install Ignition Gazebo Fortress development libs and rapidjson:
+Install Gazebo Sim Gazebo development libs and rapidjson:
 ````
-sudo apt install rapidjson-dev libignition-gazebo6-dev
+sudo apt install rapidjson-dev libignition-gazebo7-dev
 ````
 
 Clone the repo and build with:
 ````bash
-git clone https://github.com/ArduPilot/ardupilot_gazebo -b ignition-fortress
+git clone https://github.com/ArduPilot/ardupilot_gazebo -b ignition-garden
 cd ardupilot_gazebo
 mkdir build && cd build
 cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo
@@ -43,15 +43,15 @@ Set the ignition environment variables in your `.bashrc` or `.zshrc` or in  the 
 ### In terminal
 Assuming that you have clone the repository in `$HOME/ardupilot_gazebo`:
 ```bash
-export IGN_GAZEBO_SYSTEM_PLUGIN_PATH=$HOME/ardupilot_gazebo/build:$IGN_GAZEBO_SYSTEM_PLUGIN_PATH
-export IGN_GAZEBO_RESOURCE_PATH=$HOME/ardupilot_gazebo/models:$HOME/ardupilot_gazebo/worlds:IGN_GAZEBO_RESOURCE_PATH
+export GZ_SIM_SYSTEM_PLUGIN_PATH=$HOME/ardupilot_gazebo/build:$GZ_SIM_SYSTEM_PLUGIN_PATH
+export GZ_SIM_RESOURCE_PATH=$HOME/ardupilot_gazebo/models:$HOME/ardupilot_gazebo/worlds:GZ_SIM_RESOURCE_PATH
 ```
 
 ### In .bashrc
 Assuming that you have clone the repository in `$HOME/ardupilot_gazebo`:
 ```bash
-echo 'export IGN_GAZEBO_SYSTEM_PLUGIN_PATH=$HOME/ardupilot_gazebo/build:${IGN_GAZEBO_SYSTEM_PLUGIN_PATH}' >> ~/.bashrc
-echo 'export IGN_GAZEBO_RESOURCE_PATH=$HOME/ardupilot_gazebo/models:$HOME/ardupilot_gazebo/worlds:${IGN_GAZEBO_RESOURCE_PATH}' >> ~/.bashrc
+echo 'export GZ_SIM_SYSTEM_PLUGIN_PATH=$HOME/ardupilot_gazebo/build:${GZ_SIM_SYSTEM_PLUGIN_PATH}' >> ~/.bashrc
+echo 'export GZ_SIM_RESOURCE_PATH=$HOME/ardupilot_gazebo/models:$HOME/ardupilot_gazebo/worlds:${GZ_SIM_RESOURCE_PATH}' >> ~/.bashrc
 ```
 
 Reload your terminal with source ~/.bashrc
@@ -59,7 +59,7 @@ Reload your terminal with source ~/.bashrc
 ### Run Gazebo
 
 ```bash
-ign gazebo -v 4 -r iris_arducopter_runway.world
+gz sim -v 4 -r iris_arducopter_runway.world
 ```
 
 The `-v 4` parameter is not mandatory, it shows the debug informations.
