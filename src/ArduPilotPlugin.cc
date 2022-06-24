@@ -62,10 +62,11 @@
 
 // Register plugin
 GZ_ADD_PLUGIN(gz::sim::systems::ArduPilotPlugin,
-                    gz::sim::System,
-                    gz::sim::systems::ArduPilotPlugin::ISystemConfigure,
-                    gz::sim::systems::ArduPilotPlugin::ISystemPostUpdate,
-                    gz::sim::systems::ArduPilotPlugin::ISystemPreUpdate)
+              gz::sim::System,
+              gz::sim::systems::ArduPilotPlugin::ISystemConfigure,
+              gz::sim::systems::ArduPilotPlugin::ISystemPostUpdate,
+              gz::sim::systems::ArduPilotPlugin::ISystemReset,
+              gz::sim::systems::ArduPilotPlugin::ISystemPreUpdate)
 // Add plugin alias so that we can refer to the plugin without the version
 // namespace
 GZ_ADD_PLUGIN_ALIAS(gz::sim::systems::ArduPilotPlugin, "ArduPilotPlugin")
@@ -284,6 +285,47 @@ gz::sim::systems::ArduPilotPlugin::ArduPilotPlugin()
 /////////////////////////////////////////////////
 gz::sim::systems::ArduPilotPlugin::~ArduPilotPlugin()
 {
+}
+
+/////////////////////////////////////////////////
+void gz::sim::systems::ArduPilotPlugin::Reset(const UpdateInfo &_info,
+                                              EntityComponentManager &_ecm)
+{
+  if (!_ecm.EntityHasComponentType(this->dataPtr->modelLink, components::WorldPose::typeId))
+  {
+      _ecm.CreateComponent(this->dataPtr->modelLink, gz::sim::components::WorldPose());
+  }
+  if(!_ecm.EntityHasComponentType(this->dataPtr->modelLink, components::WorldLinearVelocity::typeId))
+  {
+      _ecm.CreateComponent(this->dataPtr->modelLink, gz::sim::components::WorldLinearVelocity());
+  }
+
+  // update velocity PID for controls and apply force to joint
+  for (size_t i = 0; i < this->dataPtr->controls.size(); ++i)
+  {
+    gz::sim::components::JointForceCmd* jfcComp = nullptr;
+    gz::sim::components::JointVelocityCmd* jvcComp = nullptr;
+    if (this->dataPtr->controls[i].useForce || this->dataPtr->controls[i].type == "EFFORT")
+    {
+      jfcComp = _ecm.Component<gz::sim::components::JointForceCmd>(
+          this->dataPtr->controls[i].joint);
+      if (jfcComp == nullptr)
+      {
+        jfcComp = _ecm.CreateComponent(this->dataPtr->controls[i].joint,
+            gz::sim::components::JointForceCmd({0}));
+      }
+    }
+    else if (this->dataPtr->controls[i].type == "VELOCITY")
+    {
+      jvcComp = _ecm.Component<gz::sim::components::JointVelocityCmd>(
+          this->dataPtr->controls[i].joint);
+      if (jvcComp == nullptr)
+      {
+        jvcComp = _ecm.CreateComponent(this->dataPtr->controls[i].joint,
+            gz::sim::components::JointVelocityCmd({0}));
+      }
+    }
+  }
 }
 
 /////////////////////////////////////////////////

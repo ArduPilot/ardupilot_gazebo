@@ -71,13 +71,17 @@ namespace systems
     public gz::sim::System,
     public gz::sim::ISystemConfigure,
     public gz::sim::ISystemPostUpdate,
-    public gz::sim::ISystemPreUpdate
+    public gz::sim::ISystemPreUpdate,
+    public gz::sim::ISystemReset
 {
     /// \brief Constructor.
     public: ArduPilotPlugin();
 
     /// \brief Destructor.
     public: ~ArduPilotPlugin();
+
+    public: void Reset(const UpdateInfo &_info,
+                       EntityComponentManager &_ecm) final;
 
     /// \brief Load configuration from SDF on startup.
     public: void Configure(const gz::sim::Entity &_entity,
