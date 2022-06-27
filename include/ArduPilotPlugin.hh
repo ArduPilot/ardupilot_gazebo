@@ -67,7 +67,7 @@ namespace systems
   /// <imuName>     scoped name for the imu sensor
   /// <connectionTimeoutMaxCount> timeout before giving up on
   ///                             controller synchronization
-  class IGNITION_GAZEBO_VISIBLE ArduPilotPlugin:
+  class GZ_SIM_VISIBLE ArduPilotPlugin:
     public gz::sim::System,
     public gz::sim::ISystemConfigure,
     public gz::sim::ISystemPostUpdate,

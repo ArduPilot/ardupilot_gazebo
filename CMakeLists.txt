@@ -12,19 +12,19 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 #============================================================================
-# Find ignition-cmake
+# Find gz-cmake
 #============================================================================
-find_package(ignition-cmake3 3.0.0 REQUIRED)
-set(GZ_CMAKE_VER ${ignition-cmake3_VERSION_MAJOR})
+find_package(gz-cmake3 3.0.0 REQUIRED)
+set(GZ_CMAKE_VER ${gz-cmake3_VERSION_MAJOR})
 
 #============================================================================
 # Search for project-specific dependencies
 #============================================================================
 
 #--------------------------------------
-# Find ignition-gazebo
-gz_find_package(ignition-gazebo7 REQUIRED)
-set(GZ_SIM_VER ${ignition-gazebo7_VERSION_MAJOR})
+# Find gz-sim
+gz_find_package(gz-sim7 REQUIRED)
+set(GZ_SIM_VER ${gz-sim7_VERSION_MAJOR})
 
 #--------------------------------------
 # Find RapidJSON
@@ -41,9 +41,9 @@ add_library(ArduPilotPlugin
 
 target_include_directories(ArduPilotPlugin PUBLIC
   include
-	${IGNITION-GAZEBO_INCLUDE_DIRS}
+	${GZ-SIM_INCLUDE_DIRS}
 )
 
 target_link_libraries(ArduPilotPlugin PUBLIC
-  ${IGNITION-GAZEBO_LIBRARIES}
+  ${GZ-SIM_LIBRARIES}
 )
