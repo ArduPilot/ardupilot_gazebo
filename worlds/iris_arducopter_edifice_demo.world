@@ -26,7 +26,7 @@
         name="gz::sim::systems::SceneBroadcaster">
     </plugin>
     <plugin
-        filename="libignition-gazebo-imu-system.so"
+        filename="libgz-sim-imu-system.so"
         name="gz::sim::systems::Imu">
     </plugin>
 
@@ -303,7 +303,7 @@
     <!-- Mecanum drive teleop -->
 
     <!-- Moving Forward: w -->
-    <plugin filename="libignition-gazebo-triggered-publisher-system.so" name="gz::sim::systems::TriggeredPublisher">
+    <plugin filename="libgz-sim-triggered-publisher-system.so" name="gz::sim::systems::TriggeredPublisher">
         <input type="ignition.msgs.Int32" topic="/keyboard/keypress">
             <match field="data">87</match>
         </input>
@@ -313,7 +313,7 @@
     </plugin>
 
     <!-- Moving Backward: x -->
-    <plugin filename="libignition-gazebo-triggered-publisher-system.so" name="gz::sim::systems::TriggeredPublisher">
+    <plugin filename="libgz-sim-triggered-publisher-system.so" name="gz::sim::systems::TriggeredPublisher">
         <input type="ignition.msgs.Int32" topic="/keyboard/keypress">
             <match field="data">88</match>
         </input>
@@ -323,7 +323,7 @@
     </plugin>
 
     <!-- Moving right: d -->
-    <plugin filename="libignition-gazebo-triggered-publisher-system.so" name="gz::sim::systems::TriggeredPublisher">
+    <plugin filename="libgz-sim-triggered-publisher-system.so" name="gz::sim::systems::TriggeredPublisher">
         <input type="ignition.msgs.Int32" topic="/keyboard/keypress">
             <match field="data">68</match>
         </input>
@@ -333,7 +333,7 @@
     </plugin>
 
     <!--Moving left: a -->
-    <plugin filename="libignition-gazebo-triggered-publisher-system.so" name="gz::sim::systems::TriggeredPublisher">
+    <plugin filename="libgz-sim-triggered-publisher-system.so" name="gz::sim::systems::TriggeredPublisher">
         <input type="ignition.msgs.Int32" topic="/keyboard/keypress">
             <match field="data">65</match>
         </input>
@@ -343,7 +343,7 @@
     </plugin>
 
     <!-- Rotating right: e -->
-    <plugin filename="libignition-gazebo-triggered-publisher-system.so" name="gz::sim::systems::TriggeredPublisher">
+    <plugin filename="libgz-sim-triggered-publisher-system.so" name="gz::sim::systems::TriggeredPublisher">
         <input type="ignition.msgs.Int32" topic="/keyboard/keypress">
             <match field="data">69</match>
         </input>
@@ -353,7 +353,7 @@
     </plugin>
 
     <!--Rotating left: q -->
-    <plugin filename="libignition-gazebo-triggered-publisher-system.so" name="gz::sim::systems::TriggeredPublisher">
+    <plugin filename="libgz-sim-triggered-publisher-system.so" name="gz::sim::systems::TriggeredPublisher">
         <input type="ignition.msgs.Int32" topic="/keyboard/keypress">
             <match field="data">81</match>
         </input>
@@ -363,7 +363,7 @@
     </plugin>
 
     <!--Stop: s -->
-    <plugin filename="libignition-gazebo-triggered-publisher-system.so" name="gz::sim::systems::TriggeredPublisher">
+    <plugin filename="libgz-sim-triggered-publisher-system.so" name="gz::sim::systems::TriggeredPublisher">
         <input type="ignition.msgs.Int32" topic="/keyboard/keypress">
             <match field="data">83</match>
         </input>

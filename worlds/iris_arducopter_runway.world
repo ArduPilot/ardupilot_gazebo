@@ -1,16 +1,16 @@
 <?xml version="1.0" ?>
 <sdf version="1.7">
   <world name="iris_arducopter_runway">
-    <plugin filename="libignition-gazebo-physics-system.so"
+    <plugin filename="libgz-sim-physics-system.so"
       name="gz::sim::systems::Physics">
     </plugin>
-    <plugin filename="libignition-gazebo-user-commands-system.so"
+    <plugin filename="libgz-sim-user-commands-system.so"
       name="gz::sim::systems::UserCommands">
     </plugin>
-    <plugin filename="libignition-gazebo-scene-broadcaster-system.so"
+    <plugin filename="libgz-sim-scene-broadcaster-system.so"
       name="gz::sim::systems::SceneBroadcaster">
     </plugin>
-    <plugin filename="libignition-gazebo-imu-system.so"
+    <plugin filename="libgz-sim-imu-system.so"
       name="gz::sim::systems::Imu">
     </plugin>
 

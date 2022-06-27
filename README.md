@@ -24,7 +24,7 @@ run ArduPilot SITL using the [MAVProxy GCS](https://ardupilot.org/mavproxy/index
 
 Install Gazebo Sim Gazebo development libs and rapidjson:
 ````
-sudo apt install rapidjson-dev libignition-gazebo7-dev
+sudo apt install rapidjson-dev libgz-sim7-dev
 ````
 
 Clone the repo and build with:
