@@ -1,16 +1,16 @@
 <?xml version="1.0" ?>
 <sdf version="1.7">
   <world name="zephyr_arduplane_runway">
-    <plugin filename="libgz-sim-physics-system.so"
+    <plugin filename="gz-sim-physics-system"
       name="gz::sim::systems::Physics">
     </plugin>
-    <plugin filename="libgz-sim-user-commands-system.so"
+    <plugin filename="gz-sim-user-commands-system"
       name="gz::sim::systems::UserCommands">
     </plugin>
-    <plugin filename="libgz-sim-scene-broadcaster-system.so"
+    <plugin filename="gz-sim-scene-broadcaster-system"
       name="gz::sim::systems::SceneBroadcaster">
     </plugin>
-    <plugin filename="libgz-sim-imu-system.so"
+    <plugin filename="gz-sim-imu-system"
       name="gz::sim::systems::Imu">
     </plugin>
 
