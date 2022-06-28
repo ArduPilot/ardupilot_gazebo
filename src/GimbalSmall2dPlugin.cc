@@ -50,7 +50,7 @@ class gazebo::GimbalSmall2dPluginPrivate
   public: physics::JointPtr tiltJoint;
 
   /// \brief Command that updates the gimbal tilt angle
-  public: double command = IGN_PI_2;
+  public: double command = GZ_PI_2;
 
   /// \brief Pointer to the transport node
   public: transport::NodePtr node;

@@ -89,7 +89,7 @@ namespace gazebo
 }
 
 /////////////////////////////////////////////////
-ignition::math::Vector2i GetScreenSpaceCoords(ignition::math::Vector3d _pt,
+gz::math::Vector2i GetScreenSpaceCoords(gz::math::Vector3d _pt,
     gazebo::rendering::CameraPtr _cam)
 {
   // Convert from 3D world pos to 2D screen pos
@@ -97,7 +97,7 @@ ignition::math::Vector2i GetScreenSpaceCoords(ignition::math::Vector3d _pt,
       _cam->OgreCamera()->getViewMatrix() *
       gazebo::rendering::Conversions::Convert(_pt);
 
-  ignition::math::Vector2i screenPos;
+  gz::math::Vector2i screenPos;
   screenPos.X() = ((pos.x / 2.0) + 0.5) * _cam->ViewportWidth();
   screenPos.Y() = (1 - ((pos.y / 2.0) + 0.5)) * _cam->ViewportHeight();
 
@@ -207,7 +207,7 @@ void ArduCopterIRLockPlugin::OnNewFrame(const unsigned char * /*_image*/,
     if (!camera->IsVisible(vis))
       continue;
 
-    ignition::math::Vector2i pt = GetScreenSpaceCoords(
+    gz::math::Vector2i pt = GetScreenSpaceCoords(
         vis->WorldPose().Pos(), camera);
 
     // use selection buffer to check if visual is occluded by other entities

@@ -1,17 +1,17 @@
 <?xml version="1.0" ?>
 <sdf version="1.7">
   <world name="zephyr_arduplane_runway">
-    <plugin filename="libignition-gazebo-physics-system.so"
-      name="ignition::gazebo::systems::Physics">
+    <plugin filename="gz-sim-physics-system"
+      name="gz::sim::systems::Physics">
     </plugin>
-    <plugin filename="libignition-gazebo-user-commands-system.so"
-      name="ignition::gazebo::systems::UserCommands">
+    <plugin filename="gz-sim-user-commands-system"
+      name="gz::sim::systems::UserCommands">
     </plugin>
-    <plugin filename="libignition-gazebo-scene-broadcaster-system.so"
-      name="ignition::gazebo::systems::SceneBroadcaster">
+    <plugin filename="gz-sim-scene-broadcaster-system"
+      name="gz::sim::systems::SceneBroadcaster">
     </plugin>
-    <plugin filename="libignition-gazebo-imu-system.so"
-      name="ignition::gazebo::systems::Imu">
+    <plugin filename="gz-sim-imu-system"
+      name="gz::sim::systems::Imu">
     </plugin>
 
     <scene>
