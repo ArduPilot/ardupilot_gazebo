@@ -33,7 +33,7 @@
     </include>
 
 
-    <plugin name="map" filename="libStaticMapPlugin.so">
+    <plugin name="map" filename="libStaticMapPlugin">
       <center>-35.363261 149.165230</center>
       <world_size>300</world_size>
       <map_type>satellite</map_type>

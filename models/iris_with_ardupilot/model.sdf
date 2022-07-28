@@ -381,7 +381,7 @@
     -->
 
     <!-- plugins -->
-    <plugin name="rotor_0_blade_1" filename="libLiftDragPlugin.so">
+    <plugin name="rotor_0_blade_1" filename="libLiftDragPlugin">
       <a0>0.3</a0>
       <alpha_stall>1.4</alpha_stall>
       <cla>4.2500</cla>
@@ -397,7 +397,7 @@
       <upward>0 0 1</upward>
       <link_name>iris::rotor_0</link_name>
     </plugin>
-    <plugin name="rotor_0_blade_2" filename="libLiftDragPlugin.so">
+    <plugin name="rotor_0_blade_2" filename="libLiftDragPlugin">
       <a0>0.3</a0>
       <alpha_stall>1.4</alpha_stall>
       <cla>4.2500</cla>
@@ -414,7 +414,7 @@
       <link_name>iris::rotor_0</link_name>
     </plugin>
 
-    <plugin name="rotor_1_blade_1" filename="libLiftDragPlugin.so">
+    <plugin name="rotor_1_blade_1" filename="libLiftDragPlugin">
       <a0>0.3</a0>
       <alpha_stall>1.4</alpha_stall>
       <cla>4.2500</cla>
@@ -430,7 +430,7 @@
       <upward>0 0 1</upward>
       <link_name>iris::rotor_1</link_name>
     </plugin>
-    <plugin name="rotor_1_blade_2" filename="libLiftDragPlugin.so">
+    <plugin name="rotor_1_blade_2" filename="libLiftDragPlugin">
       <a0>0.3</a0>
       <alpha_stall>1.4</alpha_stall>
       <cla>4.2500</cla>
@@ -447,7 +447,7 @@
       <link_name>iris::rotor_1</link_name>
     </plugin>
 
-    <plugin name="rotor_2_blade_1" filename="libLiftDragPlugin.so">
+    <plugin name="rotor_2_blade_1" filename="libLiftDragPlugin">
       <a0>0.3</a0>
       <alpha_stall>1.4</alpha_stall>
       <cla>4.2500</cla>
@@ -463,7 +463,7 @@
       <upward>0 0 1</upward>
       <link_name>iris::rotor_2</link_name>
     </plugin>
-    <plugin name="rotor_2_blade_2" filename="libLiftDragPlugin.so">
+    <plugin name="rotor_2_blade_2" filename="libLiftDragPlugin">
       <a0>0.3</a0>
       <alpha_stall>1.4</alpha_stall>
       <cla>4.2500</cla>
@@ -480,7 +480,7 @@
       <link_name>iris::rotor_2</link_name>
     </plugin>
 
-    <plugin name="rotor_3_blade_1" filename="libLiftDragPlugin.so">
+    <plugin name="rotor_3_blade_1" filename="libLiftDragPlugin">
       <a0>0.3</a0>
       <alpha_stall>1.4</alpha_stall>
       <cla>4.2500</cla>
@@ -496,7 +496,7 @@
       <upward>0 0 1</upward>
       <link_name>iris::rotor_3</link_name>
     </plugin>
-    <plugin name="rotor_3_blade_2" filename="libLiftDragPlugin.so">
+    <plugin name="rotor_3_blade_2" filename="libLiftDragPlugin">
       <a0>0.3</a0>
       <alpha_stall>1.4</alpha_stall>
       <cla>4.2500</cla>
@@ -512,7 +512,7 @@
       <upward>0 0 1</upward>
       <link_name>iris::rotor_3</link_name>
     </plugin>
-    <plugin name="arducopter_plugin" filename="libArduPilotPlugin.so">
+    <plugin name="arducopter_plugin" filename="libArduPilotPlugin">
       <fdm_addr>127.0.0.1</fdm_addr>
       <fdm_port_in>9002</fdm_port_in>
       <fdm_port_out>9003</fdm_port_out>

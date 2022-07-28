@@ -205,7 +205,7 @@ class gz::sim::systems::ArduPilotPluginPrivate
   /// \brief Have we initialized subscription to the IMU data yet?
   public: bool imuInitialized{false};
 
-  /// \brief We need an ign-transport Node to subscribe to IMU data
+  /// \brief We need an gz-transport Node to subscribe to IMU data
   public: gz::transport::Node node;
 
   /// \brief A copy of the most recently received IMU data message
@@ -271,7 +271,7 @@ class gz::sim::systems::ArduPilotPluginPrivate
   /// \brief Signal handler callback.
   public: void OnSignal(int _sig)
   {
-      igndbg << "Plugin received signal[" << _sig  << "]\n";
+      gzdbg << "Plugin received signal[" << _sig  << "]\n";
       this->signal = _sig;
   }
 };
@@ -341,7 +341,7 @@ void gz::sim::systems::ArduPilotPlugin::Configure(
   this->dataPtr->model = gz::sim::Model(_entity);
   if (!this->dataPtr->model.Valid(_ecm))
   {
-    ignerr << "ArduPilotPlugin should be attached to a model "
+    gzerr << "ArduPilotPlugin should be attached to a model "
       << "entity. Failed to initialize." << "\n";
     return;
   }
@@ -351,7 +351,7 @@ void gz::sim::systems::ArduPilotPlugin::Configure(
       _ecm.EntityByComponents(components::World()));
   if (!this->dataPtr->world.Valid(_ecm))
   {
-    ignerr << "World entity not found" <<std::endl;
+    gzerr << "World entity not found" <<std::endl;
     return;
   }
   if (this->dataPtr->world.Name(_ecm).has_value())
@@ -407,7 +407,7 @@ void gz::sim::systems::ArduPilotPlugin::Configure(
         this->dataPtr.get(),
         std::placeholders::_1));
 
-  ignlog << "[" << this->dataPtr->modelName << "] "
+  gzlog << "[" << this->dataPtr->modelName << "] "
         << "ArduPilot ready to fly. The force will be with you" << "\n";
 }
 
@@ -424,7 +424,7 @@ void gz::sim::systems::ArduPilotPlugin::LoadControlChannels(
   }
   else if (_sdf->HasElement("rotor"))
   {
-    ignwarn << "[" << this->dataPtr->modelName << "] "
+    gzwarn << "[" << this->dataPtr->modelName << "] "
            << "please deprecate <rotor> block, use <control> block instead.\n";
     controlSDF = _sdf->GetElement("rotor");
   }
@@ -440,7 +440,7 @@ void gz::sim::systems::ArduPilotPlugin::LoadControlChannels(
     }
     else if (controlSDF->HasAttribute("id"))
     {
-      ignwarn << "[" << this->dataPtr->modelName << "] "
+      gzwarn << "[" << this->dataPtr->modelName << "] "
              <<  "please deprecate attribute id, use channel instead.\n";
       control.channel =
         atoi(controlSDF->GetAttribute("id")->GetAsString().c_str());
@@ -448,7 +448,7 @@ void gz::sim::systems::ArduPilotPlugin::LoadControlChannels(
     else
     {
       control.channel = this->dataPtr->controls.size();
-      ignwarn << "[" << this->dataPtr->modelName << "] "
+      gzwarn << "[" << this->dataPtr->modelName << "] "
              <<  "id/channel attribute not specified, use order parsed ["
              << control.channel << "].\n";
     }
@@ -459,7 +459,7 @@ void gz::sim::systems::ArduPilotPlugin::LoadControlChannels(
     }
     else
     {
-      ignerr << "[" << this->dataPtr->modelName << "] "
+      gzerr << "[" << this->dataPtr->modelName << "] "
             <<  "Control type not specified,"
             << " using velocity control by default.\n";
       control.type = "VELOCITY";
@@ -470,7 +470,7 @@ void gz::sim::systems::ArduPilotPlugin::LoadControlChannels(
         control.type != "EFFORT" &&
         control.type != "COMMAND")
     {
-      ignwarn << "[" << this->dataPtr->modelName << "] "
+      gzwarn << "[" << this->dataPtr->modelName << "] "
              << "Control type [" << control.type
              << "] not recognized, must be one of VELOCITY, POSITION, EFFORT, COMMAND."
              << " default to VELOCITY.\n";
@@ -488,7 +488,7 @@ void gz::sim::systems::ArduPilotPlugin::LoadControlChannels(
     }
     else
     {
-      ignerr << "[" << this->dataPtr->modelName << "] "
+      gzerr << "[" << this->dataPtr->modelName << "] "
             << "Please specify a jointName,"
             << " where the control channel is attached.\n";
     }
@@ -497,7 +497,7 @@ void gz::sim::systems::ArduPilotPlugin::LoadControlChannels(
     control.joint = this->dataPtr->model.JointByName(_ecm, control.jointName);
     if (control.joint == gz::sim::kNullEntity)
     {
-      ignerr << "[" << this->dataPtr->modelName << "] "
+      gzerr << "[" << this->dataPtr->modelName << "] "
             << "Couldn't find specified joint ["
             << control.jointName << "]. This plugin will not run.\n";
       return;
@@ -516,12 +516,12 @@ void gz::sim::systems::ArduPilotPlugin::LoadControlChannels(
             "/world/" + this->dataPtr->worldName
           + "/model/" + this->dataPtr->modelName
           + "/joint/" + control.jointName + "/cmd";
-        ignwarn << "[" << this->dataPtr->modelName << "] "
+        gzwarn << "[" << this->dataPtr->modelName << "] "
             << "Control type [" << control.type
             << "] requires a valid <cmd_topic>. Using default\n";
       }
 
-      ignmsg << "[" << this->dataPtr->modelName << "] "
+      gzmsg << "[" << this->dataPtr->modelName << "] "
         << "Advertising on " << control.cmdTopic << ".\n";
       control.pub = this->dataPtr->node.Advertise<msgs::Double>(control.cmdTopic);
     }
@@ -533,7 +533,7 @@ void gz::sim::systems::ArduPilotPlugin::LoadControlChannels(
     }
     else if (controlSDF->HasElement("turningDirection"))
     {
-      ignwarn << "[" << this->dataPtr->modelName << "] "
+      gzwarn << "[" << this->dataPtr->modelName << "] "
              << "<turningDirection> is deprecated. Please use"
              << " <multiplier>. Map 'cw' to '-1' and 'ccw' to '1'.\n";
       std::string turningDirection = controlSDF->Get<std::string>(
@@ -549,14 +549,14 @@ void gz::sim::systems::ArduPilotPlugin::LoadControlChannels(
       }
       else
       {
-        igndbg << "[" << this->dataPtr->modelName << "] "
+        gzdbg << "[" << this->dataPtr->modelName << "] "
               << "not string, check turningDirection as float\n";
         control.multiplier = controlSDF->Get<double>("turningDirection");
       }
     }
     else
     {
-      igndbg << "[" << this->dataPtr->modelName << "] "
+      gzdbg << "[" << this->dataPtr->modelName << "] "
             << "channel[" << control.channel
             << "]: <multiplier> (or deprecated <turningDirection>) not specified, "
             << " default to " << control.multiplier
@@ -569,7 +569,7 @@ void gz::sim::systems::ArduPilotPlugin::LoadControlChannels(
     }
     else
     {
-      igndbg << "[" << this->dataPtr->modelName << "] "
+      gzdbg << "[" << this->dataPtr->modelName << "] "
             << "channel[" << control.channel
             << "]: <offset> not specified, default to "
             << control.offset << "\n";
@@ -581,7 +581,7 @@ void gz::sim::systems::ArduPilotPlugin::LoadControlChannels(
     }
     else
     {
-      igndbg << "[" << this->dataPtr->modelName << "] "
+      gzdbg << "[" << this->dataPtr->modelName << "] "
             << "channel[" << control.channel
             << "]: <servo_min> not specified, default to "
             << control.servo_min << "\n";
@@ -593,7 +593,7 @@ void gz::sim::systems::ArduPilotPlugin::LoadControlChannels(
     }
     else
     {
-      igndbg << "[" << this->dataPtr->modelName << "] "
+      gzdbg << "[" << this->dataPtr->modelName << "] "
             << "channel[" << control.channel
             << "]: <servo_max> not specified, default to "
             << control.servo_max << "\n";
@@ -604,7 +604,7 @@ void gz::sim::systems::ArduPilotPlugin::LoadControlChannels(
 
     if (gz::math::equal(control.rotorVelocitySlowdownSim, 0.0))
     {
-      ignwarn << "[" << this->dataPtr->modelName << "] "
+      gzwarn << "[" << this->dataPtr->modelName << "] "
              << "control for joint [" << control.jointName
              << "] rotorVelocitySlowdownSim is zero,"
              << " assume no slowdown.\n";
@@ -700,12 +700,12 @@ void gz::sim::systems::ArduPilotPlugin::LoadGpsSensors(
   std::vector<std::string> gpsScopedName = SensorScopedName(this->dataPtr->model, gpsName);
   if (gpsScopedName.size() > 1)
   {
-    ignwarn << "[" << this->dataPtr->modelName << "] "
+    gzwarn << "[" << this->dataPtr->modelName << "] "
            << "multiple names match [" << gpsName << "] using first found"
            << " name.\n";
     for (unsigned k = 0; k < gpsScopedName.size(); ++k)
     {
-      ignwarn << "  sensor " << k << " [" << gpsScopedName[k] << "].\n";
+      gzwarn << "  sensor " << k << " [" << gpsScopedName[k] << "].\n";
     }
   }
 
@@ -719,7 +719,7 @@ void gz::sim::systems::ArduPilotPlugin::LoadGpsSensors(
   {
     if (gpsScopedName.size() > 1)
     {
-      ignwarn << "[" << this->dataPtr->modelName << "] "
+      gzwarn << "[" << this->dataPtr->modelName << "] "
              << "first gps_sensor scoped name [" << gpsScopedName[0]
              << "] not found, trying the rest of the sensor names.\n";
       for (unsigned k = 1; k < gpsScopedName.size(); ++k)
@@ -728,7 +728,7 @@ void gz::sim::systems::ArduPilotPlugin::LoadGpsSensors(
           (sensors::SensorManager::Instance()->GetSensor(gpsScopedName[k]));
         if (this->dataPtr->gpsSensor)
         {
-          ignwarn << "found [" << gpsScopedName[k] << "]\n";
+          gzwarn << "found [" << gpsScopedName[k] << "]\n";
           break;
         }
       }
@@ -736,7 +736,7 @@ void gz::sim::systems::ArduPilotPlugin::LoadGpsSensors(
 
     if (!this->dataPtr->gpsSensor)
     {
-      ignwarn << "[" << this->dataPtr->modelName << "] "
+      gzwarn << "[" << this->dataPtr->modelName << "] "
              << "gps_sensor scoped name [" << gpsName
              << "] not found, trying unscoped name.\n" << "\n";
       this->dataPtr->gpsSensor = std::dynamic_pointer_cast<sensors::GpsSensor>
@@ -745,13 +745,13 @@ void gz::sim::systems::ArduPilotPlugin::LoadGpsSensors(
 
     if (!this->dataPtr->gpsSensor)
     {
-      ignwarn << "[" << this->dataPtr->modelName << "] "
+      gzwarn << "[" << this->dataPtr->modelName << "] "
              << "gps [" << gpsName
              << "] not found, skipping gps support.\n" << "\n";
     }
     else
     {
-      ignwarn << "[" << this->dataPtr->modelName << "] "
+      gzwarn << "[" << this->dataPtr->modelName << "] "
              << "  found "  << " [" << gpsName << "].\n";
     }
   }
@@ -771,12 +771,12 @@ void gz::sim::systems::ArduPilotPlugin::LoadRangeSensors(
   std::vector<std::string> rangefinderScopedName = SensorScopedName(this->dataPtr->model, rangefinderName);
   if (rangefinderScopedName.size() > 1)
   {
-    ignwarn << "[" << this->dataPtr->modelName << "] "
+    gzwarn << "[" << this->dataPtr->modelName << "] "
            << "multiple names match [" << rangefinderName << "] using first found"
            << " name.\n";
     for (unsigned k = 0; k < rangefinderScopedName.size(); ++k)
     {
-      ignwarn << "  sensor " << k << " [" << rangefinderScopedName[k] << "].\n";
+      gzwarn << "  sensor " << k << " [" << rangefinderScopedName[k] << "].\n";
     }
   }
 
@@ -790,7 +790,7 @@ void gz::sim::systems::ArduPilotPlugin::LoadRangeSensors(
   {
     if (rangefinderScopedName.size() > 1)
     {
-      ignwarn << "[" << this->dataPtr->modelName << "] "
+      gzwarn << "[" << this->dataPtr->modelName << "] "
              << "first rangefinder_sensor scoped name [" << rangefinderScopedName[0]
              << "] not found, trying the rest of the sensor names.\n";
       for (unsigned k = 1; k < rangefinderScopedName.size(); ++k)
@@ -799,7 +799,7 @@ void gz::sim::systems::ArduPilotPlugin::LoadRangeSensors(
           (sensors::SensorManager::Instance()->GetSensor(rangefinderScopedName[k]));
         if (this->dataPtr->rangefinderSensor)
         {
-          ignwarn << "found [" << rangefinderScopedName[k] << "]\n";
+          gzwarn << "found [" << rangefinderScopedName[k] << "]\n";
           break;
         }
       }
@@ -807,7 +807,7 @@ void gz::sim::systems::ArduPilotPlugin::LoadRangeSensors(
 
     if (!this->dataPtr->rangefinderSensor)
     {
-      ignwarn << "[" << this->dataPtr->modelName << "] "
+      gzwarn << "[" << this->dataPtr->modelName << "] "
              << "rangefinder_sensor scoped name [" << rangefinderName
              << "] not found, trying unscoped name.\n" << "\n";
       /// TODO: this fails for multi-nested models.
@@ -818,13 +818,13 @@ void gz::sim::systems::ArduPilotPlugin::LoadRangeSensors(
     }
     if (!this->dataPtr->rangefinderSensor)
     {
-      ignwarn << "[" << this->dataPtr->modelName << "] "
+      gzwarn << "[" << this->dataPtr->modelName << "] "
              << "ranfinder [" << rangefinderName
              << "] not found, skipping rangefinder support.\n" << "\n";
     }
     else
     {
-      ignwarn << "[" << this->dataPtr->modelName << "] "
+      gzwarn << "[" << this->dataPtr->modelName << "] "
              << "  found "  << " [" << rangefinderName << "].\n";
     }
   }
@@ -862,7 +862,7 @@ void gz::sim::systems::ArduPilotPlugin::PreUpdate(
                         {
                             this->dataPtr->modelLink = parent;
                             imuTopicName = gz::sim::scopedName(_imu_entity, _ecm) + "/imu";
-                            igndbg << "Computed IMU topic to be: " << imuTopicName << std::endl;
+                            gzdbg << "Computed IMU topic to be: " << imuTopicName << std::endl;
                         }
                     }
                 }
@@ -872,7 +872,7 @@ void gz::sim::systems::ArduPilotPlugin::PreUpdate(
 
         if(imuTopicName.empty())
         {
-            ignerr << "[" << this->dataPtr->modelName << "] "
+            gzerr << "[" << this->dataPtr->modelName << "] "
                 << "imu_sensor [" << this->dataPtr->imuName
                 << "] not found, abort ArduPilot plugin." << "\n";
             return;
@@ -968,22 +968,22 @@ bool gz::sim::systems::ArduPilotPlugin::InitSockets(sdf::ElementPtr _sdf) const
 
     // output port configuration is automatic
     if (_sdf->HasElement("listen_addr")) {
-        ignwarn << "Param <listen_addr> is deprecated, connection is auto detected\n";
+        gzwarn << "Param <listen_addr> is deprecated, connection is auto detected\n";
     }
     if (_sdf->HasElement("fdm_port_out")) {
-        ignwarn << "Param <fdm_port_out> is deprecated, connection is auto detected\n";
+        gzwarn << "Param <fdm_port_out> is deprecated, connection is auto detected\n";
     }
 
     // bind the socket
     if (!this->dataPtr->sock.bind(this->dataPtr->fdm_address.c_str(), this->dataPtr->fdm_port_in))
     {
-        ignerr << "[" << this->dataPtr->modelName << "] "
+        gzerr << "[" << this->dataPtr->modelName << "] "
             << "failed to bind with "
             << this->dataPtr->fdm_address << ":" << this->dataPtr->fdm_port_in
             << " aborting plugin.\n";
         return false;
     }
-    ignlog << "[" << this->dataPtr->modelName << "] "
+    gzlog << "[" << this->dataPtr->modelName << "] "
         << "flight dynamics model @ "
         << this->dataPtr->fdm_address << ":" << this->dataPtr->fdm_port_in
         << "\n";
@@ -1076,7 +1076,7 @@ void gz::sim::systems::ArduPilotPlugin::ApplyMotorForces(
       else if (this->dataPtr->controls[i].type == "POSITION")
       {
         //TODO: figure out whether position control matters, and if so, how to use it.
-        ignwarn << "Failed to do position control on joint " << i <<
+        gzwarn << "Failed to do position control on joint " << i <<
             " because there's no JointPositionCmd component (yet?)" << "/n";
       }
       else if (this->dataPtr->controls[i].type == "EFFORT")
@@ -1139,7 +1139,7 @@ bool gz::sim::systems::ArduPilotPlugin::ReceiveServoPacket()
     }
     if (counter > 0)
     {
-        ignwarn << "[" << this->dataPtr->modelName << "] "
+        gzwarn << "[" << this->dataPtr->modelName << "] "
             << "Drained n packets: " << counter << "\n";
     }
 
@@ -1161,7 +1161,7 @@ bool gz::sim::systems::ArduPilotPlugin::ReceiveServoPacket()
                 else
                 {
                     this->dataPtr->arduPilotOnline = false;
-                    ignwarn << "[" << this->dataPtr->modelName << "] "
+                    gzwarn << "[" << this->dataPtr->modelName << "] "
                         << "Broken ArduPilot connection, resetting motor control.\n";
                     this->ResetPIDs();
                 }
@@ -1183,14 +1183,14 @@ bool gz::sim::systems::ArduPilotPlugin::ReceiveServoPacket()
     //     oss << pkt.pwm[i] << ", ";
     // }
     // oss << pkt.pwm[MAX_SERVO_CHANNELS - 1] << "]\n";
-    igndbg << "\n" << oss.str();
+    gzdbg << "\n" << oss.str();
 #endif
 
     // check magic, return if invalid
     const uint16_t magic = 18458;
     if (magic != pkt.magic)
     {
-        ignwarn << "Incorrect protocol magic "
+        gzwarn << "Incorrect protocol magic "
             << pkt.magic << " should be "
             << magic << "\n";
         return false;
@@ -1201,7 +1201,7 @@ bool gz::sim::systems::ArduPilotPlugin::ReceiveServoPacket()
     {
         this->dataPtr->arduPilotOnline = true;
 
-        ignlog << "[" << this->dataPtr->modelName << "] "
+        gzlog << "[" << this->dataPtr->modelName << "] "
             << "Connected to ArduPilot controller @ "
             << this->dataPtr->fcu_address << ":" << this->dataPtr->fcu_port_out
             << "\n";
@@ -1214,13 +1214,13 @@ bool gz::sim::systems::ArduPilotPlugin::ReceiveServoPacket()
     if (pkt.frame_count < this->dataPtr->fcu_frame_count)
     {
         // @TODO - implement re-initialisation
-        ignwarn << "ArduPilot controller has reset\n";
+        gzwarn << "ArduPilot controller has reset\n";
     }
 
     // check for duplicate frame
     else if (pkt.frame_count == this->dataPtr->fcu_frame_count)
     {
-        ignwarn << "Duplicate input frame\n";
+        gzwarn << "Duplicate input frame\n";
 
         // for lock-step resend last state rather than ignore
         if (this->dataPtr->isLockStep)
@@ -1235,7 +1235,7 @@ bool gz::sim::systems::ArduPilotPlugin::ReceiveServoPacket()
     else if (pkt.frame_count != this->dataPtr->fcu_frame_count + 1
         && this->dataPtr->arduPilotOnline)
     {
-        ignwarn << "Missed "
+        gzwarn << "Missed "
             << pkt.frame_count - this->dataPtr->fcu_frame_count
             << " input frames\n";
     }
@@ -1276,7 +1276,7 @@ void gz::sim::systems::ArduPilotPlugin::UpdateMotorCommands(const servo_packet &
                 this->dataPtr->controls[i].cmd = multiplier * (raw_cmd + offset);
 
 #if 0
-                igndbg << "apply input chan[" << this->dataPtr->controls[i].channel
+                gzdbg << "apply input chan[" << this->dataPtr->controls[i].channel
                     << "] to control chan[" << i
                     << "] with joint name ["
                     << this->dataPtr->controls[i].jointName
@@ -1288,7 +1288,7 @@ void gz::sim::systems::ArduPilotPlugin::UpdateMotorCommands(const servo_packet &
             }
             else
             {
-                ignerr << "[" << this->dataPtr->modelName << "] "
+                gzerr << "[" << this->dataPtr->modelName << "] "
                     << "control[" << i << "] channel ["
                     << this->dataPtr->controls[i].channel
                     << "] is greater than the number of servo channels ["
@@ -1298,7 +1298,7 @@ void gz::sim::systems::ArduPilotPlugin::UpdateMotorCommands(const servo_packet &
         }
         else
         {
-            ignerr << "[" << this->dataPtr->modelName << "] "
+            gzerr << "[" << this->dataPtr->modelName << "] "
                 << "too many motors, skipping [" << i
                 << " > " << MAX_MOTORS << "].\n";
         }
@@ -1350,12 +1350,12 @@ void gz::sim::systems::ArduPilotPlugin::CreateStateJSON(
         ArduPilot world frame is: x-north, y-east, z-down (NED)
         ArduPilot body frame is:  x-forward, y-right, z-down
 
-      2. The Ignition Gazebo frame convention is:
+      2. The Gazebo frame convention is:
 
         Gazebo world frame is:    x-east, y-north, z-up (ENU)
         Gazebo body frame is:     x-forward, y-left, z-up
 
-        Reference: https://ignitionrobotics.org/api/gazebo/6.0/spherical_coordinates.html
+        Reference: https://gazebosim.org/api/gazebo/7.0/spherical_coordinates.html
 
         In some cases the Gazebo body frame may use a non-standard convention,
         for example the Zephyr delta wing model has x-left, y-back, z-up.
@@ -1508,7 +1508,7 @@ void gz::sim::systems::ArduPilotPlugin::CreateStateJSON(
 
     // get JSON
     this->dataPtr->json_str = "\n" + std::string(s.GetString()) + "\n";
-    // igndbg << this->dataPtr->json_str << "\n";
+    // gzdbg << this->dataPtr->json_str << "\n";
 }
 
 /////////////////////////////////////////////////
@@ -1524,7 +1524,7 @@ void gz::sim::systems::ArduPilotPlugin::SendState() const
         this->dataPtr->fcu_port_out);
 
 #if DEBUG_JSON_IO
-    igndbg << "sent " << bytes_sent <<  " bytes to "
+    gzdbg << "sent " << bytes_sent <<  " bytes to "
         << this->dataPtr->fcu_address << ":" << this->dataPtr->fcu_port_out << "\n"
         << "frame_count: " << this->dataPtr->fcu_frame_count << "\n";
 #endif

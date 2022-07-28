@@ -37,9 +37,9 @@
   typedef SSIZE_T ssize_t;
 #endif
 
-#include <ignition/math/Angle.hh>
-#include <ignition/math/Vector3.hh>
-#include <ignition/math/Vector2.hh>
+#include <gz/math/Angle.hh>
+#include <gz/math/Vector3.hh>
+#include <gz/math/Vector2.hh>
 
 #include <gazebo/sensors/CameraSensor.hh>
 #include <gazebo/rendering/Camera.hh>

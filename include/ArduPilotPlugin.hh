@@ -155,6 +155,6 @@ namespace systems
 
 } // namespace systems
 } // namespace gazebo
-} // namespace ignition
+} // namespace gz
 
 #endif // GAZEBO_PLUGINS_ARDUPILOTPLUGIN_HH_
