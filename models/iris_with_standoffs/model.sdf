@@ -538,11 +538,11 @@
     <static>0</static>
 
     <!-- plugins -->
-    <plugin filename="libignition-gazebo-joint-state-publisher-system.so"
-      name="ignition::gazebo::systems::JointStatePublisher">
+    <plugin filename="gz-sim-joint-state-publisher-system"
+      name="gz::sim::systems::JointStatePublisher">
     </plugin>
-    <plugin filename="libignition-gazebo-lift-drag-system.so"
-        name="ignition::gazebo::systems::LiftDrag">
+    <plugin filename="gz-sim-lift-drag-system"
+        name="gz::sim::systems::LiftDrag">
       <a0>0.3</a0>
       <alpha_stall>1.4</alpha_stall>
       <cla>4.2500</cla>
@@ -558,8 +558,8 @@
       <upward>0 0 1</upward>
       <link_name>rotor_0</link_name>
     </plugin>
-    <plugin filename="libignition-gazebo-lift-drag-system.so"
-        name="ignition::gazebo::systems::LiftDrag">
+    <plugin filename="gz-sim-lift-drag-system"
+        name="gz::sim::systems::LiftDrag">
       <a0>0.3</a0>
       <alpha_stall>1.4</alpha_stall>
       <cla>4.2500</cla>
@@ -576,8 +576,8 @@
       <link_name>rotor_0</link_name>
     </plugin>
 
-    <plugin filename="libignition-gazebo-lift-drag-system.so"
-        name="ignition::gazebo::systems::LiftDrag">
+    <plugin filename="gz-sim-lift-drag-system"
+        name="gz::sim::systems::LiftDrag">
       <a0>0.3</a0>
       <alpha_stall>1.4</alpha_stall>
       <cla>4.2500</cla>
@@ -593,8 +593,8 @@
       <upward>0 0 1</upward>
       <link_name>rotor_1</link_name>
     </plugin>
-    <plugin filename="libignition-gazebo-lift-drag-system.so"
-        name="ignition::gazebo::systems::LiftDrag">
+    <plugin filename="gz-sim-lift-drag-system"
+        name="gz::sim::systems::LiftDrag">
       <a0>0.3</a0>
       <alpha_stall>1.4</alpha_stall>
       <cla>4.2500</cla>
@@ -611,8 +611,8 @@
       <link_name>rotor_1</link_name>
     </plugin>
 
-    <plugin filename="libignition-gazebo-lift-drag-system.so"
-        name="ignition::gazebo::systems::LiftDrag">
+    <plugin filename="gz-sim-lift-drag-system"
+        name="gz::sim::systems::LiftDrag">
       <a0>0.3</a0>
       <alpha_stall>1.4</alpha_stall>
       <cla>4.2500</cla>
@@ -628,8 +628,8 @@
       <upward>0 0 1</upward>
       <link_name>rotor_2</link_name>
     </plugin>
-    <plugin filename="libignition-gazebo-lift-drag-system.so"
-        name="ignition::gazebo::systems::LiftDrag">
+    <plugin filename="gz-sim-lift-drag-system"
+        name="gz::sim::systems::LiftDrag">
       <a0>0.3</a0>
       <alpha_stall>1.4</alpha_stall>
       <cla>4.2500</cla>
@@ -646,8 +646,8 @@
       <link_name>rotor_2</link_name>
     </plugin>
 
-    <plugin filename="libignition-gazebo-lift-drag-system.so"
-        name="ignition::gazebo::systems::LiftDrag">
+    <plugin filename="gz-sim-lift-drag-system"
+        name="gz::sim::systems::LiftDrag">
       <a0>0.3</a0>
       <alpha_stall>1.4</alpha_stall>
       <cla>4.2500</cla>
@@ -663,8 +663,8 @@
       <upward>0 0 1</upward>
       <link_name>rotor_3</link_name>
     </plugin>
-    <plugin filename="libignition-gazebo-lift-drag-system.so"
-        name="ignition::gazebo::systems::LiftDrag">
+    <plugin filename="gz-sim-lift-drag-system"
+        name="gz::sim::systems::LiftDrag">
       <a0>0.3</a0>
       <alpha_stall>1.4</alpha_stall>
       <cla>4.2500</cla>
@@ -681,24 +681,24 @@
       <link_name>rotor_3</link_name>
     </plugin>
 
-    <plugin filename="libignition-gazebo-apply-joint-force-system.so"
-      name="ignition::gazebo::systems::ApplyJointForce">
+    <plugin filename="gz-sim-apply-joint-force-system"
+      name="gz::sim::systems::ApplyJointForce">
       <joint_name>rotor_0_joint</joint_name>
     </plugin>
-    <plugin filename="libignition-gazebo-apply-joint-force-system.so"
-      name="ignition::gazebo::systems::ApplyJointForce">
+    <plugin filename="gz-sim-apply-joint-force-system"
+      name="gz::sim::systems::ApplyJointForce">
       <joint_name>rotor_1_joint</joint_name>
     </plugin>
-    <plugin filename="libignition-gazebo-apply-joint-force-system.so"
-      name="ignition::gazebo::systems::ApplyJointForce">
+    <plugin filename="gz-sim-apply-joint-force-system"
+      name="gz::sim::systems::ApplyJointForce">
       <joint_name>rotor_2_joint</joint_name>
     </plugin>
-    <plugin filename="libignition-gazebo-apply-joint-force-system.so"
-      name="ignition::gazebo::systems::ApplyJointForce">
+    <plugin filename="gz-sim-apply-joint-force-system"
+      name="gz::sim::systems::ApplyJointForce">
       <joint_name>rotor_3_joint</joint_name>
     </plugin>
 
-    <plugin name="ArduPilotPlugin" filename="libArduPilotPlugin.so">
+    <plugin name="ArduPilotPlugin" filename="libArduPilotPlugin">
       <!-- Port settings -->
       <fdm_addr>127.0.0.1</fdm_addr>
       <fdm_port_in>9002</fdm_port_in>
@@ -738,7 +738,7 @@
         <cmd_min>-2.5</cmd_min>
         <controlVelocitySlowdownSim>1</controlVelocitySlowdownSim>
       </control>
-      
+
       <control channel="1">
         <jointName>rotor_1_joint</jointName>
         <useForce>1</useForce>
