@@ -1,6 +1,8 @@
 # ArduPilot Gazebo Plugin
 
-[![ubuntu-build](https://github.com/srmainwaring/ardupilot_gazebo-1/actions/workflows/ubuntu-build.yml/badge.svg)](https://github.com/srmainwaring/ardupilot_gazebo-1/actions/workflows/ubuntu-build.yml)
+[![ubuntu-build](https://github.com/ArduPilot/ardupilot_gazebo/actions/workflows/ubuntu-build.yml/badge.svg)](https://github.com/ArduPilot/ardupilot_gazebo/actions/workflows/ubuntu-build.yml)
+[![ccplint](https://github.com/ArduPilot/ardupilot_gazebo/actions/workflows/ccplint.yml/badge.svg)](https://github.com/ArduPilot/ardupilot_gazebo/actions/workflows/ccplint.yml)
+[![cppcheck](https://github.com/ArduPilot/ardupilot_gazebo/actions/workflows/ccpcheck.yml/badge.svg)](https://github.com/ArduPilot/ardupilot_gazebo/actions/workflows/ccpcheck.yml)
 
 This is the official ArduPilot plugin for [Gazebo Sim](https://gazebosim.org/home).
 It replaces the previous
