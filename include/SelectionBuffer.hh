@@ -14,65 +14,68 @@
  * limitations under the License.
  *
 */
-#ifndef _GAZEBO_RENDERING_SELECTION_BUFFER_SELECTIONBUFFER_HH_
-#define _GAZEBO_RENDERING_SELECTION_BUFFER_SELECTIONBUFFER_HH_
+#ifndef SELECTIONBUFFER_HH_
+#define SELECTIONBUFFER_HH_
 
 #include <memory>
 #include <string>
-#include "gazebo/util/system.hh"
+
+#include <gazebo/util/system.hh>
 
 namespace Ogre
 {
-  class Entity;
-  class RenderTarget;
-  class SceneManager;
-}
+class Entity;
+class RenderTarget;
+class SceneManager;
+}  // Ogre
 
 namespace gazebo
 {
-  namespace rendering
-  {
-    struct SelectionBufferPrivate;
+namespace rendering
+{
+struct SelectionBufferPrivate;
 
-    class GZ_RENDERING_VISIBLE SelectionBuffer
-    {
-      /// \brief Constructor
-      /// \param[in] _camera Name of the camera to generate a selection
-      /// buffer for.
-      /// \param[in] _mgr Pointer to the scene manager.
-      /// \param[in] _renderTarget Pointer to the render target.
-      public: SelectionBuffer(const std::string &_cameraName,
-                  Ogre::SceneManager *_mgr, Ogre::RenderTarget *_renderTarget);
+class GZ_RENDERING_VISIBLE SelectionBuffer
+{
+  /// \brief Constructor
+  /// \param[in] _camera Name of the camera to generate a selection
+  /// buffer for.
+  /// \param[in] _mgr Pointer to the scene manager.
+  /// \param[in] _renderTarget Pointer to the render target.
+  public: SelectionBuffer(const std::string &_cameraName,
+              Ogre::SceneManager *_mgr, Ogre::RenderTarget *_renderTarget);
 
-      /// \brief Destructor
-      public: ~SelectionBuffer();
+  /// \brief Destructor
+  public: ~SelectionBuffer();
 
-      /// \brief Handle on mouse click
-      /// \param[in] _x X coordinate in pixels.
-      /// \param[in] _y Y coordinate in pixels.
-      /// \return Returns the Ogre entity at the coordinate.
-      public: Ogre::Entity *OnSelectionClick(int _x, int _y);
+  /// \brief Handle on mouse click
+  /// \param[in] _x X coordinate in pixels.
+  /// \param[in] _y Y coordinate in pixels.
+  /// \return Returns the Ogre entity at the coordinate.
+  public: Ogre::Entity *OnSelectionClick(int _x, int _y);
 
-      /// \brief Debug show overlay
-      /// \param[in] _show True to show the selection buffer in an overlay.
-      public: void ShowOverlay(bool _show);
+  /// \brief Debug show overlay
+  /// \param[in] _show True to show the selection buffer in an overlay.
+  public: void ShowOverlay(bool _show);
 
-      /// \brief Call this to update the selection buffer contents
-      public: void Update();
+  /// \brief Call this to update the selection buffer contents
+  public: void Update();
 
-      /// \brief Delete the render texture
-      private: void DeleteRTTBuffer();
+  /// \brief Delete the render texture
+  private: void DeleteRTTBuffer();
 
-      /// \brief Create the render texture
-      private: void CreateRTTBuffer();
+  /// \brief Create the render texture
+  private: void CreateRTTBuffer();
 
-      /// \brief Create the selection buffer offscreen render texture.
-      private: void CreateRTTOverlays();
+  /// \brief Create the selection buffer offscreen render texture.
+  private: void CreateRTTOverlays();
 
-      /// \internal
-      /// \brief Pointer to private data.
-      private: std::unique_ptr<SelectionBufferPrivate> dataPtr;
-    };
-  }
-}
-#endif
+  /// \internal
+  /// \brief Pointer to private data.
+  private: std::unique_ptr<SelectionBufferPrivate> dataPtr;
+};
+
+}  // namespace rendering
+}  // namespace gazebo
+
+#endif  // SELECTIONBUFFER_HH_

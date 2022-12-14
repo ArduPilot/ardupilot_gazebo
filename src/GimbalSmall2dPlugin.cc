@@ -14,19 +14,19 @@
  * limitations under the License.
  *
 */
+#include "GimbalSmall2dPlugin.hh"
+
 #include <string>
 #include <vector>
 
-#include "gazebo/common/PID.hh"
-#include "gazebo/physics/physics.hh"
-#include "gazebo/transport/transport.hh"
-#include "GimbalSmall2dPlugin.hh"
-
-using namespace gazebo;
-using namespace std;
+#include <gazebo/common/PID.hh>
+#include <gazebo/physics/physics.hh>
+#include <gazebo/transport/transport.hh>
 
 GZ_REGISTER_MODEL_PLUGIN(GimbalSmall2dPlugin)
 
+namespace gazebo
+{
 /// \brief Private data class
 class gazebo::GimbalSmall2dPluginPrivate
 {
@@ -160,3 +160,5 @@ void GimbalSmall2dPlugin::OnUpdate()
     this->dataPtr->pub->Publish(m);
   }
 }
+
+}  // namespace gazebo

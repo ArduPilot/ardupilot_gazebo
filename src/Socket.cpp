@@ -1,4 +1,6 @@
 /*
+   Copyright (C) 2022 ardupilot.org
+
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation, either version 3 of the License, or
@@ -23,7 +25,7 @@
   constructor
  */
 SocketAPM::SocketAPM(bool _datagram) :
-    SocketAPM(_datagram, 
+    SocketAPM(_datagram,
               socket(AF_INET, _datagram?SOCK_DGRAM:SOCK_STREAM, 0))
 {}
 
@@ -46,7 +48,8 @@ SocketAPM::~SocketAPM()
     }
 }
 
-void SocketAPM::make_sockaddr(const char *address, uint16_t port, struct sockaddr_in &sockaddr)
+void SocketAPM::make_sockaddr(const char *address, uint16_t port,
+    struct sockaddr_in &sockaddr)
 {
     memset(&sockaddr, 0, sizeof(sockaddr));
 
@@ -129,11 +132,13 @@ ssize_t SocketAPM::send(const void *buf, size_t size)
 /*
   send some data
  */
-ssize_t SocketAPM::sendto(const void *buf, size_t size, const char *address, uint16_t port)
+ssize_t SocketAPM::sendto(const void *buf, size_t size,
+    const char *address, uint16_t port)
 {
     struct sockaddr_in sockaddr;
     make_sockaddr(address, port, sockaddr);
-    return ::sendto(fd, buf, size, 0, (struct sockaddr *)&sockaddr, sizeof(sockaddr));
+    return ::sendto(fd, buf, size, 0,
+        (struct sockaddr *)&sockaddr, sizeof(sockaddr));
 }
 
 /*
@@ -145,7 +150,8 @@ ssize_t SocketAPM::recv(void *buf, size_t size, uint32_t timeout_ms)
         return -1;
     }
     socklen_t len = sizeof(in_addr);
-    return ::recvfrom(fd, buf, size, MSG_DONTWAIT, (sockaddr *)&in_addr, &len);
+    return ::recvfrom(fd, buf, size, MSG_DONTWAIT,
+        reinterpret_cast<sockaddr *>(&in_addr), &len);
 }
 
 /*
@@ -160,7 +166,8 @@ void SocketAPM::last_recv_address(const char *&ip_addr, uint16_t &port)
 void SocketAPM::set_broadcast(void)
 {
     int one = 1;
-    setsockopt(fd,SOL_SOCKET,SO_BROADCAST,(char *)&one,sizeof(one));
+    setsockopt(fd, SOL_SOCKET, SO_BROADCAST,
+        reinterpret_cast<char *>(&one), sizeof(one));
 }
 
 /*
@@ -209,7 +216,7 @@ bool SocketAPM::pollout(uint32_t timeout_ms)
  */
 bool SocketAPM::listen(uint16_t backlog)
 {
-    return ::listen(fd, (int)backlog) == 0;
+    return ::listen(fd, static_cast<int>(backlog)) == 0;
 }
 
 /*

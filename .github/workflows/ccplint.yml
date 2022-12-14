@@ -1,0 +1,28 @@
+# GitHub Action to run cpplint
+# 
+# The cpplint configuration file is:
+# 
+#   ./CPPLINT.cfg
+#
+name: ccplint
+
+on: [push, pull_request]
+
+jobs:
+  cpplint:
+    runs-on: ubuntu-20.04
+    name: cpplint
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install cpplint
+        run: |
+          pip install cpplint
+      - name: Run cpplint
+        run: |
+          cpplint ./include/*.hh
+          cpplint ./src/*.cc
