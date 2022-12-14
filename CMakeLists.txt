@@ -37,6 +37,7 @@ add_library(ArduPilotPlugin
     SHARED
     src/ArduPilotPlugin.cc
     src/Socket.cpp
+    src/Util.cc
 )
 
 target_include_directories(ArduPilotPlugin PUBLIC
