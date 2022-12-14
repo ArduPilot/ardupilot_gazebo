@@ -1,0 +1,21 @@
+# GitHub Action to run cppcheck
+# 
+name: cppcheck
+
+on: [push, pull_request]
+
+jobs:
+  cpplint:
+    runs-on: ubuntu-20.04
+    name: cppcheck
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install cppcheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install cppcheck
+      - name: Run cppcheck
+        run: |
+          cppcheck --std=c++17 ./include/*.hh
+          cppcheck --std=c++17 ./src/*.cc

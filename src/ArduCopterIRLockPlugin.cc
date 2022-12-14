@@ -15,6 +15,8 @@
  *
 */
 
+#include "ArduCopterIRLockPlugin.hh"
+
 #include <memory>
 #include <functional>
 
@@ -45,48 +47,47 @@
 #include <gazebo/rendering/Camera.hh>
 #include <gazebo/rendering/Conversions.hh>
 #include <gazebo/rendering/Scene.hh>
-#include <include/SelectionBuffer.hh>
 
-#include "include/ArduCopterIRLockPlugin.hh"
+#include <SelectionBuffer.hh>
 
-using namespace gazebo;
-GZ_REGISTER_SENSOR_PLUGIN(ArduCopterIRLockPlugin)
+GZ_REGISTER_SENSOR_PLUGIN(gazebo::ArduCopterIRLockPlugin)
 
 namespace gazebo
 {
-  class ArduCopterIRLockPluginPrivate
-  {
-    /// \brief Pointer to the parent camera sensor
-    public: sensors::CameraSensorPtr parentSensor;
+class ArduCopterIRLockPluginPrivate
+{
+  /// \brief Pointer to the parent camera sensor
+  public: sensors::CameraSensorPtr parentSensor;
 
-    /// \brief Selection buffer used for occlusion detection
-    public: std::unique_ptr<rendering::SelectionBuffer> selectionBuffer;
+  /// \brief Selection buffer used for occlusion detection
+  public: std::unique_ptr<rendering::SelectionBuffer> selectionBuffer;
 
-    /// \brief All event connections.
-    public: std::vector<event::ConnectionPtr> connections;
+  /// \brief All event connections.
+  public: std::vector<event::ConnectionPtr> connections;
 
-    /// \brief A list of fiducials tracked by this camera.
-    public: std::vector<std::string> fiducials;
+  /// \brief A list of fiducials tracked by this camera.
+  public: std::vector<std::string> fiducials;
 
-    /// \brief Irlock address
-    public: std::string irlock_addr;
+  /// \brief Irlock address
+  public: std::string irlock_addr;
 
-    /// \brief Irlock port for receiver socket
-    public: uint16_t irlock_port;
+  /// \brief Irlock port for receiver socket
+  public: uint16_t irlock_port;
 
-    public: int handle;
+  public: int handle;
 
-    public: struct irlockPacket
-            {
-              uint64_t timestamp;
-              uint16_t num_targets;
-              float pos_x;
-              float pos_y;
-              float size_x;
-              float size_y;
-            };
-  };
-}
+  public: struct irlockPacket
+          {
+            uint64_t timestamp;
+            uint16_t num_targets;
+            float pos_x;
+            float pos_y;
+            float size_x;
+            float size_y;
+          };
+};
+
+}  // namespace gazebo
 
 /////////////////////////////////////////////////
 gz::math::Vector2i GetScreenSpaceCoords(gz::math::Vector3d _pt,
