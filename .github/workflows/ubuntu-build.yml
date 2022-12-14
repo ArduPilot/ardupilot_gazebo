@@ -1,4 +1,4 @@
-name: test build
+name: ubuntu-build
 
 on: [push, pull_request, workflow_dispatch]
 # paths:
@@ -11,12 +11,14 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-20.04
+    name: ubuntu-build
     steps:
-      # git checkout the PR
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v3
         with:
           submodules: 'recursive'
-      - name: configure
+
+      - name: Install Build Dependencies
         shell: bash
         run: |
           sudo apt update && sudo apt install --no-install-recommends -y \
@@ -29,28 +31,30 @@ jobs:
           ccache \
           g++ \
           git
-          wget https://packages.osrfoundation.org/gazebo.gpg -O /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg
+          sudo wget https://packages.osrfoundation.org/gazebo.gpg -O /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg
           echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
-          sudo apt update
-          sudo apt install --no-install-recommends -y \
-          rapidjson-dev libignition-gazebo5-dev
+          sudo apt update && sudo apt install --no-install-recommends -y \
+          rapidjson-dev gz-garden
+
       # Put ccache into github cache for faster build
       - name: Prepare ccache timestamp
         id: ccache_cache_timestamp
         run: |
           NOW=$(date -u +"%F-%T")
           echo "::set-output name=timestamp::${NOW}"
-      - name: ccache cache files
+
+      - name: Cache ccache files
         uses: actions/cache@v2
         with:
           path: ~/.ccache
           key: ${{github.workflow}}-ccache-${{steps.ccache_cache_timestamp.outputs.timestamp}}
           restore-keys: ${{github.workflow}}-ccache-  # restore ccache from either previous build on this branch or on master
-      - name: setup ccache
+
+      - name: Setup ccache
         run: |
           . .github/workflows/ccache.env
 
-      - name: build
+      - name: Build
         shell: bash
         run: |
           mkdir build && cd build

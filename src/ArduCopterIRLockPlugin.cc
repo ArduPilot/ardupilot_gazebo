@@ -37,9 +37,9 @@
   typedef SSIZE_T ssize_t;
 #endif
 
-#include <ignition/math/Angle.hh>
-#include <ignition/math/Vector3.hh>
-#include <ignition/math/Vector2.hh>
+#include <gz/math/Angle.hh>
+#include <gz/math/Vector3.hh>
+#include <gz/math/Vector2.hh>
 
 #include <gazebo/sensors/CameraSensor.hh>
 #include <gazebo/rendering/Camera.hh>
@@ -89,7 +89,7 @@ namespace gazebo
 }
 
 /////////////////////////////////////////////////
-ignition::math::Vector2i GetScreenSpaceCoords(ignition::math::Vector3d _pt,
+gz::math::Vector2i GetScreenSpaceCoords(gz::math::Vector3d _pt,
     gazebo::rendering::CameraPtr _cam)
 {
   // Convert from 3D world pos to 2D screen pos
@@ -97,7 +97,7 @@ ignition::math::Vector2i GetScreenSpaceCoords(ignition::math::Vector3d _pt,
       _cam->OgreCamera()->getViewMatrix() *
       gazebo::rendering::Conversions::Convert(_pt);
 
-  ignition::math::Vector2i screenPos;
+  gz::math::Vector2i screenPos;
   screenPos.X() = ((pos.x / 2.0) + 0.5) * _cam->ViewportWidth();
   screenPos.Y() = (1 - ((pos.y / 2.0) + 0.5)) * _cam->ViewportHeight();
 
@@ -169,7 +169,7 @@ void ArduCopterIRLockPlugin::Load(sensors::SensorPtr _sensor,
   }
   this->dataPtr->irlock_addr =
           _sdf->Get("irlock_addr", static_cast<std::string>("127.0.0.1")).first;
-  this->dataPtr->irlock_addr =
+  this->dataPtr->irlock_port =
           _sdf->Get("irlock_port", 9005).first;
 
   this->dataPtr->parentSensor->SetActive(true);
@@ -207,7 +207,7 @@ void ArduCopterIRLockPlugin::OnNewFrame(const unsigned char * /*_image*/,
     if (!camera->IsVisible(vis))
       continue;
 
-    ignition::math::Vector2i pt = GetScreenSpaceCoords(
+    gz::math::Vector2i pt = GetScreenSpaceCoords(
         vis->WorldPose().Pos(), camera);
 
     // use selection buffer to check if visual is occluded by other entities
