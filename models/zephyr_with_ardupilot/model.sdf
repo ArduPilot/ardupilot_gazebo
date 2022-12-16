@@ -590,7 +590,7 @@
           SERVO1_FUNCTION   77 (Elevon Left)
           SERVO1_MAX        1900
           SERVO1_MIN        1100
-          SERVO1_REVERSED   0
+          SERVO1_REVERSED   1
           SERVO1_TRIM       1500
 
           pwm:          =>  [1100, 1900]
@@ -602,7 +602,7 @@
       <control channel="0">
         <jointName>flap_left_joint</jointName>
         <useForce>1</useForce>
-        <multiplier>1.048</multiplier>
+        <multiplier>-1.048</multiplier>
         <offset>-0.5</offset>
         <servo_min>1100</servo_min>
         <servo_max>1900</servo_max>
@@ -620,13 +620,13 @@
           SERVO2_FUNCTION   78 (Elevon Right)
           SERVO2_MAX        1900
           SERVO2_MIN        1100
-          SERVO2_REVERSED   0
+          SERVO2_REVERSED   1
           SERVO2_TRIM       1500
        -->
       <control channel="1">
         <jointName>flap_right_joint</jointName>
         <useForce>1</useForce>
-        <multiplier>1.048</multiplier>
+        <multiplier>-1.048</multiplier>
         <offset>-0.5</offset>
         <servo_min>1100</servo_min>
         <servo_max>1900</servo_max>
