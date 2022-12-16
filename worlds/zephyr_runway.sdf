@@ -1,6 +1,11 @@
 <?xml version="1.0" ?>
 <sdf version="1.7">
-  <world name="iris_arducopter_runway">
+  <world name="zephyr_runway">
+    <physics name="1ms" type="ignore">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>-1.0</real_time_factor>
+    </physics>
+
     <plugin filename="gz-sim-physics-system"
       name="gz::sim::systems::Physics">
     </plugin>
@@ -39,7 +44,8 @@
     </include>
 
     <include>
-      <uri>model://iris_with_ardupilot</uri>
+      <pose>0 0 0.422 -1.5707963 0 1.5707963</pose>
+      <uri>model://zephyr_with_ardupilot</uri>
     </include>
 
   </world>

@@ -65,9 +65,7 @@ cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo
 make -j4
 ```
 
-## Usage
-
-### Configure environment
+## Configure
 
 Set the Gazebo environment variables in your `.bashrc` or `.zshrc` or in 
 the terminal used to run Gazebo.
@@ -92,31 +90,79 @@ echo 'export GZ_SIM_RESOURCE_PATH=$HOME/ardupilot_gazebo/models:$HOME/ardupilot_
 
 Reload your terminal with `source ~/.bashrc` (or `source ~/.zshrc` on macOS).
 
-### Run Gazebo
+## Usage
+
+### 1. Iris quad-copter
+
+#### Run Gazebo
 
 ```bash
-gz sim -v4 -r iris_arducopter_runway.world
+gz sim -v4 -r iris_runway.sdf
 ```
 
 The `-v4` parameter is not mandatory, it shows additional information and is
 useful for troubleshooting.
 
-### Run ArduPilot SITL
+#### Run ArduPilot SITL
 
 To run an ArduPilot simulation with Gazebo, the frame should have `gazebo-`
 in it and have `JSON` as model. Other commandline parameters are the same
-as usal on SITL.
+as usual on SITL.
 
 ```bash
 sim_vehicle.py -v ArduCopter -f gazebo-iris --model JSON --map --console
 ```
 
-### Arm and takeoff
+#### Arm and takeoff
 
 ```bash
 STABILIZE> mode guided
 GUIDED> arm throttle
 GUIDED> takeoff 5
+```
+
+### 2. Zephyr delta wing  
+
+The Zephyr delta wing is positioned on the runway for vertical take-off. 
+
+#### Run Gazebo
+
+```bash
+gz sim -v4 -r zephyr_runway.sdf
+```
+
+#### Run ArduPilot SITL
+
+```bash
+sim_vehicle.py -v ArduPlane -f gazebo-zephyr --model JSON --map --console
+```
+
+#### Arm, takeoff and circle
+
+```bash
+MANUAL> mode fbwa
+FBWA> arm throttle
+FBWA> rc 3 1800
+FBWA> mode circle
+```
+
+#### Increase the simulation speed
+
+The `zephyr_runway.sdf` world has a `<physics>` element configured to run
+faster than real time: 
+
+```xml
+<physics name="1ms" type="ignore">
+  <max_step_size>0.001</max_step_size>
+  <real_time_factor>-1.0</real_time_factor>
+</physics>
+```
+
+To see the effect of the speed-up set the param `SIM_SPEEDUP` to a value
+greater than one:
+
+```bash
+MANUAL> param set SIM_SPEEDUP 10
 ```
 
 ## Troubleshooting
