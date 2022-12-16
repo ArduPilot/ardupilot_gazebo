@@ -71,9 +71,6 @@ Entity JointByName(EntityComponentManager &_ecm,
     Entity _modelEntity,
     const std::string &_name)
 {
-  // // Search relative to the top level model entity
-  // Entity id{this->dataPtr->model.Entity()};
-
   // Retrieve entities from a scoped name.
   // See for example:
   //  https://github.com/gazebosim/ign-gazebo/pull/955
