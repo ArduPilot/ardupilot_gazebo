@@ -1,9 +1,41 @@
 <?xml version="1.0" ?>
 <sdf version="1.7">
-  <model name="zephyr_with_ardupilot">
+  <model name="zephyr_with_parachute">
     <include>
       <uri>model://zephyr</uri>
     </include>
+
+    <!-- 
+      The attachment link connected by a ball joint is to allow the
+      aircraft to rotate freely below parachute, as detachable joint
+      must be fixed.
+    -->
+    <link name="parachute_attachment_link">
+      <pose>0 0 0.1 0 0 -1.5707963</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.1</mass>
+        <inertia>
+          <ixx>0.0001</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.0001</iyy>
+          <iyz>0</iyz>
+          <izz>0.0001</izz>
+        </inertia>
+      </inertial>
+      <visual name="visual">
+        <geometry>
+          <sphere>
+            <radius>0.05</radius>
+          </sphere>
+        </geometry>
+      </visual>
+    </link>
+    <joint name="parachute_attachment_joint" type="ball">
+      <child>parachute_attachment_link</child>
+      <parent>zephyr::wing</parent>
+    </joint>
 
     <!-- plugins -->
     <plugin filename="gz-sim-joint-state-publisher-system"
@@ -260,6 +292,21 @@
         <i_min>0</i_min>
         <cmd_max>2.5</cmd_max>
         <cmd_min>-2.5</cmd_min>
+      </control>
+
+      <!--
+          SERVO5_FUNCTION  27.0        # Parachute
+          SERVO5_MAX       1900
+          SERVO5_MIN       1100
+          SERVO5_REVERSED  0           # Normal
+          SERVO5_TRIM      1500
+      -->
+      <control channel="4">
+        <jointName>parachute_attachment_joint</jointName>
+        <type>COMMAND</type>
+        <cmd_topic>parachute/command</cmd_topic>
+        <servo_min>1100</servo_min>
+        <servo_max>1900</servo_max>
       </control>
 
     </plugin>

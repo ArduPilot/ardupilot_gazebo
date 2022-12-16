@@ -1,34 +1,31 @@
 <?xml version="1.0" ?>
-<sdf version="1.5">
+<sdf version="1.7">
   <model name="parachute_small">
     <pose>0 0 0 0 0 0</pose>
-    <static>false</static>
-
     <link name="chute">
-      <pose>0 0 0  0 0 0</pose>
+      <pose>0 0 0 0 0 0</pose>
       <inertial>
-        <pose>0 0 0  0 0 0</pose>
-        <mass>0.100000</mass>
+        <pose>0 0 2.3 0 0 0</pose>
+        <mass>0.1</mass>
         <inertia>
-          <ixx>0.010000</ixx>
-          <ixy>0.000000</ixy>
-          <ixz>0.000000</ixz>
-          <iyy>0.010000</iyy>
-          <iyz>0.000000</iyz>
-          <izz>0.010000</izz>
+          <ixx>0.06250</ixx>
+          <ixy>0.00</ixy>
+          <ixz>0.00</ixz>
+          <iyy>0.06250</iyy>
+          <iyz>0.00</iyz>
+          <izz>0.06250</izz>
         </inertia>
       </inertial>
-      <collision name="parachute_collision">
-        <pose>0 0 1.25  0 0 0</pose>
+      <collision name="collision">
+        <pose>0 0 2.3  0 0 0</pose>
         <geometry>
-          <cylinder>
-            <radius>0.35</radius>
-            <length>0.4</length>
-          </cylinder>
+          <sphere>
+            <radius>1.25</radius>
+          </sphere>
         </geometry>
       </collision>
-      <visual name="parachute_vis">
-        <pose>-0.000000 0.000000 0.000000 0.000000 -0.000000 0.000000</pose>
+      <visual name="visual">
+        <pose>0 0 0 0 0 0</pose>
         <geometry>
           <mesh>
             <scale>2 2 2</scale>
@@ -36,11 +33,22 @@
           </mesh>
         </geometry>
       </visual>
-      <velocity_decay />
+      <!-- viual at bridle (located at the link origin) -->
+      <visual name="bridle_visual">
+        <geometry>
+          <sphere>
+            <radius>0.025</radius>
+          </sphere>
+        </geometry>
+        <material>
+          <ambient>0.0 0.3 0.7</ambient>
+          <diffuse>0.0 0.3 0.7</diffuse>
+          <specular>0.1 0.1 0.1 1</specular>
+        </material>
+      </visual>
     </link>
-
-    <plugin filename="libignition-gazebo-lift-drag-system.so"
-        name="ignition::gazebo::systems::LiftDrag">
+    <plugin filename="libgz-sim-lift-drag-system.so"
+        name="gz::sim::systems::LiftDrag">
       <a0>0</a0>
       <cla>0</cla>
       <cda>1.75</cda>  <!-- Such that Cd = 1.75 at alpha = 90deg (= upright parachute) -->
@@ -54,7 +62,5 @@
       <upward>0 0 1</upward>
       <link_name>chute</link_name>
     </plugin>
-    
-
   </model>
 </sdf>

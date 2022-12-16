@@ -1,85 +1,82 @@
-#ifndef GAZEBO_PLUGINS_PARACHUTEPLUGIN_HH_
-#define GAZEBO_PLUGINS_PARACHUTEPLUGIN_HH_
+/*
+   Copyright (C) 2022 ardupilot.org
 
-#include <ignition/gazebo/System.hh>
-#include <ignition/transport/Node.hh>
-#include <ignition/gazebo/Model.hh>
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
-namespace ignition {
-namespace gazebo {
-inline namespace IGNITION_GAZEBO_VERSION_NAMESPACE {
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+#ifndef PARACHUTEPLUGIN_HH_
+#define PARACHUTEPLUGIN_HH_
+
+#include <memory>
+
+#include <gz/sim/System.hh>
+
+namespace gz {
+namespace sim {
+inline namespace GZ_SIM_VERSION_NAMESPACE {
 namespace systems {
 
-  class ParachutePlugin : 
+/// @brief  \brief A model system plugin to attach a parachute to a model.
+///
+/// The ParachutePlugin is enabled by adding the following element to
+/// a <model>:
+///
+///   <plugin filename="libParachutePlugin.so" name="ParachutePlugin">
+///     <parent_link>parachute_attachment_link</parent_link>
+///     <child_model>parachute_small</child_model>
+///     <child_link>chute</child_link>
+///     <child_pose>0 0 0 0 -1.0 0</child_pose>
+///     <cmd_topic>parachute/command</cmd_topic>
+///   </plugin>
+///
+/// Parameters:
+///
+///   <parent_link>   the link in the target model to attach the parachute.
+///   <child_model>   name of the parachute model.
+///   <child_link>    base link of the parachute model (bridle point).
+///   <child_pose>    relative pose of child link to parent link when attached.
+///   <cmd_topic>     topic to subscribe to the release command.
+///
+class ParachutePlugin :
     public System,
     public ISystemPreUpdate,
     public ISystemConfigure
-  {
-    /// \brief Constructor
-    public: ParachutePlugin() = default;
+{
+  /// \brief Destructor
+  public: virtual ~ParachutePlugin();
 
-    public: void PreUpdate(const ignition::gazebo::UpdateInfo &_info,
-                ignition::gazebo::EntityComponentManager &_ecm) final;
+  /// \brief Constructor
+  public: ParachutePlugin();
 
-    public: void Configure(const Entity &_entity,
-                             const std::shared_ptr<const sdf::Element> &_sdf,
-                             EntityComponentManager &_ecm,
-                             EventManager &) final;
-    
-    private: void OnDetachRequest(const msgs::Empty &_msg);
-    private: void OnAttachRequest(const msgs::Empty &_msg);
-    private: void OnStartRequest(const msgs::Empty &_msg);
+  // documentation inherited
+  public: void PreUpdate(const gz::sim::UpdateInfo &_info,
+                         gz::sim::EntityComponentManager &_ecm) final;
 
-    private: Model model{kNullEntity};
+  // documentation inherited
+  public: void Configure(const Entity &_entity,
+                         const std::shared_ptr<const sdf::Element> &_sdf,
+                         EntityComponentManager &_ecm,
+                         EventManager &) final;
 
-    //private: Model parachute_model{kNullEntity};
+  /// \internal
+  /// \brief Private implementation
+  private: class Impl;
+  private: std::unique_ptr<Impl> impl;
+};
 
-    //private: math::Pose3d &chute_pos;
-
-    private: std::string world_name;
-
-    private: Entity vehicle_modelLink{kNullEntity};
-
-    private: Entity parentLinkEntity{kNullEntity};
-
-    private: Entity childLinkEntity{kNullEntity};
-
-    private: Entity detachableJointEntity{kNullEntity};
-
-    private: bool init_pos_saved{false};
-    private: bool parachute_entity_created{false};
-    private: math::Pose3d initial_pos{};
-    private: math::Pose3d release_pose{0,0,0,0,0,0};
-
-    private: std::string parentModelName;
-
-    private: std::string parentLinkName;
-
-    private: std::string childModelName;
-
-    private: std::string childLinkName;
-
-    private: std::string detach_topic;
-    private: std::string attach_topic;
-
-    private: std::atomic<bool> detachRequested{false};
-    private: std::atomic<bool> attachRequested{false};
-
-    private: bool validConfig{false};
-
-    private: bool suppressChildWarning{false};
-
-    private: bool attached{false};
-    private: bool should_attach{false};
-    private: bool start{false};
-    private: bool model_ok{false};
-
-    public: transport::Node node;
-
-    private: bool parachute_created{false};
-  };
+}  // namespace systems
 }
-}
-}
-}
-#endif // GAZEBO_PLUGINS_PARACHUTEPLUGIN_HH_
+}  // namespace sim
+}  // namespace gz
+
+#endif  // PARACHUTEPLUGIN_HH_
