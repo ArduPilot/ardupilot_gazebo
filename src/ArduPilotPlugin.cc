@@ -28,13 +28,16 @@
 
 #include <gz/common/SignalHandler.hh>
 #include <gz/sim/components/Imu.hh>
+#include <gz/sim/components/Joint.hh>
 #include <gz/sim/components/JointForceCmd.hh>
 #include <gz/sim/components/JointPosition.hh>
 #include <gz/sim/components/JointVelocity.hh>
 #include <gz/sim/components/JointVelocityCmd.hh>
 #include <gz/sim/components/LinearVelocity.hh>
+#include <gz/sim/components/Link.hh>
 #include <gz/sim/components/Name.hh>
 #include <gz/sim/components/Pose.hh>
+#include <gz/sim/components/Sensor.hh>
 #include <gz/sim/components/World.hh>
 #include <gz/sim/Model.hh>
 #include <gz/sim/World.hh>
@@ -50,6 +53,7 @@
 #include <sdf/sdf.hh>
 
 #include "Socket.h"
+#include "Util.hh"
 
 #define DEBUG_JSON_IO 0
 
@@ -157,8 +161,8 @@ class gz::sim::systems::ArduPilotPluginPrivate
   /// \brief The model
   public: gz::sim::Model model{gz::sim::kNullEntity};
 
-  /// \brief The entity representing the base or root link of the model
-  public: gz::sim::Entity modelLink{gz::sim::kNullEntity};
+  /// \brief The entity representing the link containing the imu sensor.
+  public: gz::sim::Entity imuLink{gz::sim::kNullEntity};
 
   /// \brief The model name;
   public: std::string modelName;
@@ -293,16 +297,16 @@ gz::sim::systems::ArduPilotPlugin::~ArduPilotPlugin()
 void gz::sim::systems::ArduPilotPlugin::Reset(const UpdateInfo &_info,
                                               EntityComponentManager &_ecm)
 {
-  if (!_ecm.EntityHasComponentType(this->dataPtr->modelLink,
+  if (!_ecm.EntityHasComponentType(this->dataPtr->imuLink,
       components::WorldPose::typeId))
   {
-      _ecm.CreateComponent(this->dataPtr->modelLink,
+      _ecm.CreateComponent(this->dataPtr->imuLink,
           gz::sim::components::WorldPose());
   }
-  if (!_ecm.EntityHasComponentType(this->dataPtr->modelLink,
+  if (!_ecm.EntityHasComponentType(this->dataPtr->imuLink,
       components::WorldLinearVelocity::typeId))
   {
-      _ecm.CreateComponent(this->dataPtr->modelLink,
+      _ecm.CreateComponent(this->dataPtr->imuLink,
       gz::sim::components::WorldLinearVelocity());
   }
 
@@ -503,7 +507,8 @@ void gz::sim::systems::ArduPilotPlugin::LoadControlChannels(
     }
 
     // Get the pointer to the joint.
-    control.joint = this->dataPtr->model.JointByName(_ecm, control.jointName);
+    control.joint = JointByName(_ecm,
+        this->dataPtr->model.Entity(), control.jointName);
     if (control.joint == gz::sim::kNullEntity)
     {
       gzerr << "[" << this->dataPtr->modelName << "] "
@@ -865,43 +870,78 @@ void gz::sim::systems::ArduPilotPlugin::PreUpdate(
         // Set unconditionally because we're only going to try this once.
         this->dataPtr->imuInitialized = true;
         std::string imuTopicName;
-        _ecm.Each<gz::sim::components::Imu, gz::sim::components::Name>(
-                [&](const gz::sim::Entity &_imu_entity,
-                    const gz::sim::components::Imu * /*_imu*/,
-                    const gz::sim::components::Name *_name)->bool
-        {
-            if (_name->Data() == this->dataPtr->imuName)
-            {
-                // The parent of the imu is imu_link
-                gz::sim::Entity parent = _ecm.ParentEntity(_imu_entity);
-                if (parent != gz::sim::kNullEntity)
-                {
-                    // The grandparent of the imu is the quad itself,
-                    // which is where this plugin is attached
-                    gz::sim::Entity gparent = _ecm.ParentEntity(parent);
-                    if (gparent != gz::sim::kNullEntity)
-                    {
-                        gz::sim::Model gparent_model(gparent);
-                        if (gparent_model.Name(_ecm) ==
-                            this->dataPtr->modelName)
-                        {
-                            this->dataPtr->modelLink = parent;
-                            imuTopicName = gz::sim::scopedName(
-                                _imu_entity, _ecm) + "/imu";
-                            gzdbg << "Computed IMU topic to be: "
-                                << imuTopicName << std::endl;
-                        }
-                    }
-                }
-            }
-            return true;
-        });
 
-        if (imuTopicName.empty())
+        // The model must contain an imu sensor element:
+        //  <sensor name="..." type="imu">
+        //
+        // Extract the following:
+        //  - Sensor topic name: to subscribe to the imu data
+        //  - Link containing the sensor: to get the pose to transform to
+        //    the correct frame for ArduPilot
+
+        // try scoped names first
+        auto entities = entitiesFromScopedName(
+            this->dataPtr->imuName, _ecm, this->dataPtr->model.Entity());
+
+        // fall-back to unscoped name
+        if (entities.empty())
+        {
+          entities = EntitiesFromUnscopedName(
+            this->dataPtr->imuName, _ecm, this->dataPtr->model.Entity());
+        }
+
+        if (!entities.empty())
+        {
+          if (entities.size() > 1)
+          {
+            gzwarn << "Multiple IMU sensors with name ["
+                   << this->dataPtr->imuName << "] found. "
+                   << "Using the first one.\n";
+          }
+
+          // select first entity
+          gz::sim::Entity imuEntity = *entities.begin();
+
+          // validate
+          if (!_ecm.EntityHasComponentType(imuEntity,
+              gz::sim::components::Imu::typeId))
+          {
+            gzerr << "Entity with name ["
+                  << this->dataPtr->imuName
+                  << "] is not an IMU sensor\n";
+          }
+          else
+          {
+            gzmsg << "Found IMU sensor with name ["
+                  << this->dataPtr->imuName
+                  << "]\n";
+
+            // verify the parent of the imu sensor is a link.
+            gz::sim::Entity parent = _ecm.ParentEntity(imuEntity);
+            if (_ecm.EntityHasComponentType(parent,
+                gz::sim::components::Link::typeId))
+            {
+                this->dataPtr->imuLink = parent;
+
+                imuTopicName = gz::sim::scopedName(
+                    imuEntity, _ecm) + "/imu";
+
+                gzdbg << "Computed IMU topic to be: "
+                    << imuTopicName << std::endl;
+            }
+            else
+            {
+              gzerr << "Parent of IMU sensor ["
+                    << this->dataPtr->imuName
+                    << "] is not a link\n";
+            }
+          }
+        }
+        else
         {
             gzerr << "[" << this->dataPtr->modelName << "] "
-                << "imu_sensor [" << this->dataPtr->imuName
-                << "] not found, abort ArduPilot plugin." << "\n";
+                  << "imu_sensor [" << this->dataPtr->imuName
+                  << "] not found, abort ArduPilot plugin." << "\n";
             return;
         }
 
@@ -909,18 +949,18 @@ void gz::sim::systems::ArduPilotPlugin::PreUpdate(
             &gz::sim::systems::ArduPilotPluginPrivate::imuCb,
             this->dataPtr.get());
 
-        // Make sure that the "imu_link" entity has WorldPose
+        // Make sure that the 'imuLink' entity has WorldPose
         // and WorldLinearVelocity components, which we'll need later.
-        if (!_ecm.EntityHasComponentType(this->dataPtr->modelLink,
+        if (!_ecm.EntityHasComponentType(this->dataPtr->imuLink,
             components::WorldPose::typeId))
         {
-            _ecm.CreateComponent(this->dataPtr->modelLink,
+            _ecm.CreateComponent(this->dataPtr->imuLink,
                 gz::sim::components::WorldPose());
         }
-        if (!_ecm.EntityHasComponentType(this->dataPtr->modelLink,
+        if (!_ecm.EntityHasComponentType(this->dataPtr->imuLink,
             components::WorldLinearVelocity::typeId))
         {
-          _ecm.CreateComponent(this->dataPtr->modelLink,
+          _ecm.CreateComponent(this->dataPtr->imuLink,
               gz::sim::components::WorldLinearVelocity());
         }
     }
@@ -1082,11 +1122,14 @@ void gz::sim::systems::ArduPilotPlugin::ApplyMotorForces(
         gz::sim::components::JointVelocity* vComp =
           _ecm.Component<gz::sim::components::JointVelocity>(
               this->dataPtr->controls[i].joint);
-        const double vel = vComp->Data()[0];
-        const double error = vel - velTarget;
-        const double force = this->dataPtr->controls[i].pid.Update(
-            error, std::chrono::duration<double>(_dt));
-        jfcComp->Data()[0] = force;
+        if (vComp && !vComp->Data().empty())
+        {
+            const double vel = vComp->Data()[0];
+            const double error = vel - velTarget;
+            const double force = this->dataPtr->controls[i].pid.Update(
+                error, std::chrono::duration<double>(_dt));
+            jfcComp->Data()[0] = force;
+        }
       }
       else if (this->dataPtr->controls[i].type == "POSITION")
       {
@@ -1094,11 +1137,14 @@ void gz::sim::systems::ArduPilotPlugin::ApplyMotorForces(
         gz::sim::components::JointPosition* pComp =
           _ecm.Component<gz::sim::components::JointPosition>(
               this->dataPtr->controls[i].joint);
-        const double pos = pComp->Data()[0];
-        const double error = pos - posTarget;
-        const double force = this->dataPtr->controls[i].pid.Update(
-            error, std::chrono::duration<double>(_dt));
-        jfcComp->Data()[0] = force;
+        if (pComp && !pComp->Data().empty())
+        {
+            const double pos = pComp->Data()[0];
+            const double error = pos - posTarget;
+            const double force = this->dataPtr->controls[i].pid.Update(
+                error, std::chrono::duration<double>(_dt));
+            jfcComp->Data()[0] = force;
+        }
       }
       else if (this->dataPtr->controls[i].type == "EFFORT")
       {
@@ -1478,11 +1524,11 @@ void gz::sim::systems::ArduPilotPlugin::CreateStateJSON(
     // get pose and velocity in Gazebo world frame
     const gz::sim::components::WorldPose* worldPose =
         _ecm.Component<gz::sim::components::WorldPose>(
-            this->dataPtr->modelLink);
+            this->dataPtr->imuLink);
 
     const gz::sim::components::WorldLinearVelocity* worldLinearVel =
         _ecm.Component<gz::sim::components::WorldLinearVelocity>(
-            this->dataPtr->modelLink);
+            this->dataPtr->imuLink);
 
     // position and orientation transform (Aircraft world to Aircraft body)
     gz::math::Pose3d bdyAToBdyG =

@@ -39,7 +39,7 @@
     </include>
 
     <include>
-      <uri>model://iris_with_standoffs</uri>
+      <uri>model://iris_with_ardupilot</uri>
     </include>
 
   </world>
