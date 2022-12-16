@@ -1,5 +1,5 @@
 <?xml version='1.0'?>
-<sdf version="1.6">
+<sdf version="1.7">
   <model name="runway">
     <static>true</static>
     <link name="link">
@@ -34,7 +34,7 @@
         </material>
       </visual>
       <visual name="airfield">
-        <pose>0 0 -0.5 0 0 0</pose>
+        <pose>0 0 -0.01 0 0 0</pose>
         <cast_shadows>false</cast_shadows>
         <geometry>
           <mesh>

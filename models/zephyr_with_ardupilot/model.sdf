@@ -1,387 +1,9 @@
 <?xml version="1.0" ?>
 <sdf version="1.7">
   <model name="zephyr_with_ardupilot">
-    <pose>0 0 0 0 0 0</pose>
-    <link name="wing">
-      <inertial>
-        <pose>0 -0.12 0 0 0 0</pose>
-        <mass>1.5</mass>
-        <inertia>
-          <ixx>0.083137104</ixx>
-          <ixy>0</ixy>
-          <iyy>0.387382402</iyy>
-          <ixz>0</ixz>
-          <iyz>0</iyz>
-          <izz>0.469845106</izz>
-        </inertia>
-      </inertial>
-      <visual name="visual">
-        <geometry>
-          <mesh>
-            <uri>model://zephyr_with_ardupilot/meshes/wing.dae</uri>
-            <submesh>
-              <name>Wing</name>
-              <center>true</center>
-            </submesh>
-          </mesh>
-        </geometry>
-      </visual>
-      <collision name="body_collision">
-        <geometry>
-          <mesh>
-            <uri>model://zephyr_with_ardupilot/meshes/wing.dae</uri>
-            <submesh>
-              <name>Wing</name>
-              <center>true</center>
-            </submesh>
-          </mesh>
-        </geometry>
-      </collision>
-      <collision name="right_rudder_collision">
-        <pose>-0.76435 0.33918 0.002 -0.03 0 0</pose>
-        <geometry>
-          <box>
-            <size>.005 0.12993 .12688</size>
-          </box>
-        </geometry>
-      </collision>
-      <collision name="left_rudder_collision">
-        <pose>0.76435 0.33918 0.002 -0.03 0 0</pose>
-        <geometry>
-          <box>
-            <size>.005 0.12993 .12688</size>
-          </box>
-        </geometry>
-      </collision>
-      <!-- save for debugging use -->
-      <visual name="cp_wing">
-        <pose>0 -0.1 0.0 0 0 0</pose>
-        <geometry>
-          <sphere>
-            <radius>0.03</radius>
-          </sphere>
-        </geometry>
-        <material>
-          <ambient>0 0 1</ambient>
-          <diffuse>0 0 1</diffuse>
-          <specular>0.1 0.1 0.1 1</specular>
-        </material>
-      </visual>
-      <visual name="cp_flap_left">
-        <pose>0.7 0.20 0 0 0 0</pose>
-        <geometry>
-          <sphere>
-            <radius>0.03</radius>
-          </sphere>
-        </geometry>
-        <material>
-          <ambient>1 0 0</ambient>
-          <diffuse>1 0 0</diffuse>
-          <specular>0.1 0.1 0.1 1</specular>
-        </material>
-      </visual>
-      <visual name="cp_flap_right">
-        <pose>-0.7 0.20 0 0 0 0</pose>
-        <geometry>
-          <sphere>
-            <radius>0.03</radius>
-          </sphere>
-        </geometry>
-        <material>
-          <ambient>0 1 0</ambient>
-          <diffuse>0 1 0</diffuse>
-          <specular>0.1 0.1 0.1 1</specular>
-        </material>
-      </visual>
-      <!--
-      <visual name="LDleft_wing">
-        <pose>0.7 0.20 0.0 0 0 0</pose>
-        <geometry>
-          <sphere>
-            <radius>0.03</radius>
-          </sphere>
-        </geometry>
-      </visual>
-      <visual name="LDright_wing">
-        <pose>-0.7 0.20 0.0 0 0 0</pose>
-        <geometry>
-          <sphere>
-            <radius>0.03</radius>
-          </sphere>
-        </geometry>
-      </visual>
-      <visual name="LD3">
-        <pose>0.76 0.30 0.025 0 0 0</pose>
-        <geometry>
-          <sphere>
-            <radius>0.03</radius>
-          </sphere>
-        </geometry>
-      </visual>
-      <visual name="LD4">
-        <pose>-0.76 0.30 0.025 0 0 0</pose>
-        <geometry>
-          <sphere>
-            <radius>0.03</radius>
-          </sphere>
-        </geometry>
-      </visual>
-      -->
-      <!-- Disable GPS sensor
-        <sensor name="gps_sensor" type="gps">
-        <pose>0 0 0  0 0 0</pose>
-        <update_rate>10.0</update_rate>
-        <always_on>true</always_on>
-        <gps>
-          <position_sensing>
-            <horizontal>
-              <noise type="gaussian_quantized">
-                <mean>0</mean>
-                <stddev>1</stddev>
-                <bias_mean>3</bias_mean>
-                <bias_stddev>1</bias_stddev>
-                <precision>0.5</precision>
-              </noise>
-            </horizontal>
-            <vertical>
-              <noise type="gaussian_quantized">
-                <mean>0</mean>
-                <stddev>1</stddev>
-                <bias_mean>3</bias_mean>
-                <bias_stddev>1</bias_stddev>
-                <precision>1.0</precision>
-              </noise>
-            </vertical>
-          </position_sensing>
-          <velocity_sensing>
-            <horizontal>
-              <noise type="gaussian_quantized">
-                <mean>0</mean>
-                <stddev>0.1</stddev>
-                <bias_mean>0.1</bias_mean>
-                <bias_stddev>0.1</bias_stddev>
-                <precision>0.1</precision>
-              </noise>
-            </horizontal>
-            <vertical>
-              <noise type="gaussian_quantized">
-                <mean>0</mean>
-                <stddev>0.2</stddev>
-                <bias_mean>0.2</bias_mean>
-                <bias_stddev>0.2</bias_stddev>
-                <precision>0.2</precision>
-              </noise>
-            </vertical>
-          </velocity_sensing>
-        </gps>
-      </sensor> -->
-    </link>
-    <link name="propeller">
-      <!--<pose>0 0.1174 -0.007 0 1.5707 0</pose>-->
-      <pose>0 0.07 0.008 0 1.5707 0</pose>
-      <inertial>
-        <mass>.05</mass>
-        <inertia>
-          <ixx>0.000367571</ixx>
-          <ixy>0</ixy>
-          <iyy>0.00036985</iyy>
-          <ixz>0</ixz>
-          <iyz>0</iyz>
-          <izz>0.000003187</izz>
-        </inertia>
-      </inertial>
-      <visual name="visual">
-        <geometry>
-          <mesh>
-            <uri>model://zephyr_with_ardupilot/meshes/wing.dae</uri>
-            <submesh>
-              <name>Propeller</name>
-              <center>true</center>
-            </submesh>
-          </mesh>
-        </geometry>
-      </visual>
-      <collision name="blade1">
-        <pose>0 0 0.074205 0 0  0.3</pose>
-        <geometry>
-          <box>
-            <size>0.02561 0.00541 0.14841</size>
-          </box>
-        </geometry>
-      </collision>
-      <collision name="blade2">
-        <pose>0 0 -0.074205 0 0  -0.3</pose>
-        <geometry>
-          <box>
-            <size>0.02561 0.00541 0.14841</size>
-          </box>
-        </geometry>
-      </collision>
-      <!-- save for debugging use
-      <visual name="LD1">
-        <pose>0 0 0.074205 0 0  0.3</pose>
-        <geometry>
-         <sphere>
-            <radius>0.02</radius>
-          </sphere>
-        </geometry>
-      </visual>
-      <visual name="LD2">
-        <pose>0 0 -0.074205 0 0  -0.3</pose>
-        <geometry>
-          <sphere>
-            <radius>0.02</radius>
-          </sphere>
-        </geometry>
-      </visual>
-      -->
-    </link>
-    <link name="flap_left">
-      <pose>0.4530 .239 0.007 0 0 0</pose>
-      <inertial>
-        <pose>0 0 0 0 0 0.32445671</pose>
-        <mass>.1</mass>
-        <inertia>
-          <ixx>0.000102319</ixx>
-          <ixy>0</ixy>
-          <iyy>0.00334417</iyy>
-          <ixz>0</ixz>
-          <iyz>0</iyz>
-          <izz>0.003446072</izz>
-        </inertia>
-      </inertial>
-      <visual name="visual">
-        <geometry>
-          <mesh>
-            <uri>model://zephyr_with_ardupilot/meshes/wing.dae</uri>
-            <submesh>
-              <name>Flap_Left</name>
-              <center>true</center>
-            </submesh>
-          </mesh>
-        </geometry>
-      </visual>
-      <collision name="collision">
-        <pose>-0.01 0.01 0 0 0 0.32445671</pose>
-        <geometry>
-          <box>
-            <size>0.633463031 0.110694312 0.005</size>
-          </box>
-        </geometry>
-      </collision>
-    </link>
-    <link name="flap_right">
-      <pose>-0.4530 .239 0.007 0 0 0</pose>
-      <inertial>
-        <pose>0 0 0 0 0 -0.32445671</pose>
-        <mass>.1</mass>
-        <inertia>
-          <ixx>0.000102319</ixx>
-          <ixy>0</ixy>
-          <iyy>0.00334417</iyy>
-          <ixz>0</ixz>
-          <iyz>0</iyz>
-          <izz>0.003446072</izz>
-        </inertia>
-      </inertial>
-      <visual name="visual">
-        <geometry>
-          <mesh>
-            <uri>model://zephyr_with_ardupilot/meshes/wing.dae</uri>
-            <submesh>
-              <name>Flap_Right</name>
-              <center>true</center>
-            </submesh>
-          </mesh>
-        </geometry>
-      </visual>
-      <collision name="collision">
-        <pose>0.01 0.01 0 0 0 -0.32445671</pose>
-        <geometry>
-          <box>
-            <size>0.633463031 0.110694312 0.005</size>
-          </box>
-        </geometry>
-      </collision>
-    </link>
-    <joint name="propeller_joint" type="revolute">
-      <parent>wing</parent>
-      <child>propeller</child>
-      <axis>
-        <xyz>0 -1 0</xyz>
-        <dynamics>
-          <damping>0.002</damping>
-        </dynamics>
-      </axis>
-    </joint>
-    <joint name="flap_left_joint" type="revolute">
-      <parent>wing</parent>
-      <child>flap_left</child>
-      <pose>0 -0.04 0 0 0 0</pose>
-      <axis>
-        <xyz>1 0.330321014 0</xyz>
-        <limit>
-          <lower>-0.524</lower>
-          <upper>0.524</upper>
-        </limit>
-        <dynamics>
-          <damping>0.1</damping>
-        </dynamics>
-      </axis>
-    </joint>
-    <joint name="flap_right_joint" type="revolute">
-      <parent>wing</parent>
-      <child>flap_right</child>
-      <pose>0 -0.04 0 0 0 0</pose>
-      <axis>
-        <xyz>1 -0.330321014 0</xyz>
-        <limit>
-          <lower>-0.524</lower>
-          <upper>0.524</upper>
-        </limit>
-        <dynamics>
-          <damping>0.1</damping>
-        </dynamics>
-      </axis>
-    </joint>
-
-    <!-- sensors -->
-    <link name='imu_link'>
-      <inertial>
-        <pose>0 0 0 0 0 0</pose>
-        <mass>0.15</mass>
-        <inertia>
-          <ixx>0.00002</ixx>
-          <ixy>0</ixy>
-          <ixz>0</ixz>
-          <iyy>0.00002</iyy>
-          <iyz>0</iyz>
-          <izz>0.00002</izz>
-        </inertia>
-      </inertial>
-      <sensor name="imu_sensor" type="imu">
-        <pose>0 0 0 3.141593 0 -1.5707963</pose>
-        <always_on>1</always_on>
-        <update_rate>1000.0</update_rate>
-      </sensor>
-    </link>
-    <joint name='zephyr/imu_joint' type='revolute'>
-      <child>imu_link</child>
-      <parent>wing</parent>
-      <axis>
-        <xyz>0 0 1</xyz>
-        <limit>
-          <lower>0</lower>
-          <upper>0</upper>
-          <effort>0</effort>
-          <velocity>0</velocity>
-        </limit>
-        <dynamics>
-          <damping>1.0</damping>
-        </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
-      </axis>
-    </joint>
+    <include>
+      <uri>model://zephyr</uri>
+    </include>
 
     <!-- plugins -->
     <plugin filename="gz-sim-joint-state-publisher-system"
@@ -403,7 +25,7 @@
       <air_density>1.2041</air_density>
       <forward>0 -1 0</forward>
       <upward>0 0 1</upward>
-      <link_name>wing</link_name>
+      <link_name>zephyr::wing</link_name>
     </plugin>
     <!-- left_wing -->
     <plugin filename="gz-sim-lift-drag-system"
@@ -421,8 +43,8 @@
       <air_density>1.2041</air_density>
       <forward>0 -1 0</forward>
       <upward>0 0 1</upward>
-      <link_name>wing</link_name>
-      <control_joint_name>flap_left_joint</control_joint_name>
+      <link_name>zephyr::wing</link_name>
+      <control_joint_name>zephyr::flap_left_joint</control_joint_name>
       <control_joint_rad_to_cl>-5.0</control_joint_rad_to_cl>
     </plugin>
     <!-- right_wing -->
@@ -441,8 +63,8 @@
       <air_density>1.2041</air_density>
       <forward>0 -1 0</forward>
       <upward>0 0 1</upward>
-      <link_name>wing</link_name>
-      <control_joint_name>flap_right_joint</control_joint_name>
+      <link_name>zephyr::wing</link_name>
+      <control_joint_name>zephyr::flap_right_joint</control_joint_name>
       <control_joint_rad_to_cl>-5.0</control_joint_rad_to_cl>
     </plugin>
     <!-- left_rudder -->
@@ -461,7 +83,7 @@
       <air_density>1.2041</air_density>
       <forward>0 -1 0</forward>
       <upward>1 0 0</upward>
-      <link_name>wing</link_name>
+      <link_name>zephyr::wing</link_name>
     </plugin>
     <!-- right_rudder -->
     <plugin filename="gz-sim-lift-drag-system"
@@ -479,7 +101,7 @@
       <air_density>1.2041</air_density>
       <forward>0 -1 0</forward>
       <upward>1 0 0</upward>
-      <link_name>wing</link_name>
+      <link_name>zephyr::wing</link_name>
     </plugin>
     <!-- propeller_blade_1 -->
     <plugin filename="gz-sim-lift-drag-system"
@@ -497,7 +119,7 @@
       <cp>0 0 0.074205</cp>
       <forward>-1 0 0</forward>
       <upward>0 -1 0</upward>
-      <link_name>propeller</link_name>
+      <link_name>zephyr::propeller</link_name>
     </plugin>
     <!-- propeller_blade_2 -->
     <plugin filename="gz-sim-lift-drag-system"
@@ -515,20 +137,20 @@
       <cp>0 0 -0.074205</cp>
       <forward>1 0 0</forward>
       <upward>0 -1 0</upward>
-      <link_name>propeller</link_name>
+      <link_name>zephyr::propeller</link_name>
     </plugin>
 
     <plugin filename="gz-sim-apply-joint-force-system"
       name="gz::sim::systems::ApplyJointForce">
-      <joint_name>propeller_joint</joint_name>
+      <joint_name>zephyr::propeller_joint</joint_name>
     </plugin>
     <plugin filename="gz-sim-apply-joint-force-system"
       name="gz::sim::systems::ApplyJointForce">
-      <joint_name>flap_left_joint</joint_name>
+      <joint_name>zephyr::flap_left_joint</joint_name>
     </plugin>
     <plugin filename="gz-sim-apply-joint-force-system"
       name="gz::sim::systems::ApplyJointForce">
-      <joint_name>flap_right_joint</joint_name>
+      <joint_name>zephyr::flap_right_joint</joint_name>
     </plugin>
 
     <plugin name="ArduPilotPlugin" filename="libArduPilotPlugin">
@@ -552,7 +174,7 @@
       <gazeboXYZToNED>0 0 0 3.141593 0 0</gazeboXYZToNED>
 
       <!-- Sensors -->
-      <imuName>imu_sensor</imuName>
+      <imuName>zephyr::imu_link::imu_sensor</imuName>
 
       <!--
           incoming control command [0, 1]
@@ -570,7 +192,7 @@
           SERVO3_TRIM       1100
        -->
       <control channel="2">
-        <jointName>propeller_joint</jointName>
+        <jointName>zephyr::propeller_joint</jointName>
         <useForce>1</useForce>
         <multiplier>838</multiplier>
         <offset>0</offset>
@@ -600,7 +222,7 @@
           scale: 0.524  =>  [-0.524, 0.524]
        -->
       <control channel="0">
-        <jointName>flap_left_joint</jointName>
+        <jointName>zephyr::flap_left_joint</jointName>
         <useForce>1</useForce>
         <multiplier>-1.048</multiplier>
         <offset>-0.5</offset>
@@ -624,7 +246,7 @@
           SERVO2_TRIM       1500
        -->
       <control channel="1">
-        <jointName>flap_right_joint</jointName>
+        <jointName>zephyr::flap_right_joint</jointName>
         <useForce>1</useForce>
         <multiplier>-1.048</multiplier>
         <offset>-0.5</offset>
