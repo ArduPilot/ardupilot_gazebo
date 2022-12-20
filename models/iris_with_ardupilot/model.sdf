@@ -5,14 +5,13 @@
       <uri>model://iris_with_standoffs</uri>
     </include>
 
-    <!-- TODO: migrate gimbal model to Gazebo Sim and add camera.
     <include>
       <uri>model://gimbal_small_2d</uri>
-      <pose>0 -0.01 0.070 1.57 0 1.57</pose>
+      <pose>0 -0.01 0.070 1.57 0 1.57</pose>    
     </include>
 
-    <joint name="iris_gimbal_mount" type="revolute">
-      <parent>iris::base_link</parent>
+    <joint name="gimbal_joint" type="revolute">
+      <parent>iris_with_standoffs::base_link</parent>
       <child>gimbal_small_2d::base_link</child>
       <axis>
         <limit>
@@ -20,10 +19,8 @@
           <upper>0</upper>
         </limit>
         <xyz>0 0 1</xyz>
-        <use_parent_model_frame>true</use_parent_model_frame>
       </axis>
     </joint>
-    -->
 
     <!-- visual markers for debugging
     <link name="rotor_0_blade_1_cp">
@@ -544,7 +541,8 @@
       <joint_name>iris_with_standoffs::rotor_3_joint</joint_name>
     </plugin>
 
-    <plugin name="ArduPilotPlugin" filename="libArduPilotPlugin">
+    <plugin name="ArduPilotPlugin"
+      filename="libArduPilotPlugin">
       <!-- Port settings -->
       <fdm_addr>127.0.0.1</fdm_addr>
       <fdm_port_in>9002</fdm_port_in>
@@ -639,6 +637,21 @@
         <controlVelocitySlowdownSim>1</controlVelocitySlowdownSim>
       </control>
     </plugin>
+
+    <!-- <plugin
+      filename="gz-sim-joint-position-controller-system"
+      name="gz::sim::systems::JointPositionController">
+      <joint_name>gimbal_small_2d::arm_joint</joint_name>
+      <topic>/iris_with_ardupilot/gimbal/arm_cmd</topic>
+      <p_gain>2</p_gain>
+    </plugin>
+    <plugin
+      filename="gz-sim-joint-position-controller-system"
+      name="gz::sim::systems::JointPositionController">
+      <joint_name>gimbal_small_2d::tilt_joint</joint_name>
+      <topic>/iris_with_ardupilot/gimbal/tilt_cmd</topic>
+      <p_gain>2</p_gain>
+    </plugin> -->
 
   </model>
 </sdf>

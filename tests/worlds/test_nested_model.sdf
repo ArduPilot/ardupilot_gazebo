@@ -1,0 +1,365 @@
+<?xml version="1.0" ?>
+<!-- 
+  Run example
+  gz sim -v4 -r test_nested_model.sdf
+
+  Move rotor in model1
+  gz topic -t "/rotor1_cmd" -m gz.msgs.Double -p "data: 1"
+
+  Move rotor in model2 (nested)
+  gz topic -t "/rotor2_cmd" -m gz.msgs.Double -p "data: 1"
+
+  Move rotor in model3
+  gz topic -t "/rotor3_cmd" -m gz.msgs.Double -p "data: 1"
+ -->
+
+<sdf version="1.7">
+  <world name="test_nested_model">
+    <physics name="1ms" type="ignore">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+    </physics>
+
+    <plugin filename="gz-sim-physics-system"
+      name="gz::sim::systems::Physics">
+    </plugin>
+    <plugin filename="gz-sim-user-commands-system"
+      name="gz::sim::systems::UserCommands">
+    </plugin>
+    <plugin filename="gz-sim-scene-broadcaster-system"
+      name="gz::sim::systems::SceneBroadcaster">
+    </plugin>
+
+    <scene>
+      <ambient>1.0 1.0 1.0</ambient>
+      <background>0.8 0.8 0.8</background>
+    </scene>
+
+    <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.8 0.8 0.8 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+          <material>
+            <ambient>0.8 0.8 0.8 1</ambient>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+            <specular>0.8 0.8 0.8 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- model with a position controlled joint -->
+    <model name="model1">
+      <pose>0 0 0.5 0 0 0</pose>
+      <link name="base1_link">
+        <inertial>
+          <mass>1.0</mass>
+          <inertia>
+            <ixx>0.166666667</ixx>
+            <ixy>0.00</ixy>
+            <ixz>0.00</ixz>
+            <iyy>0.166666667</iyy>
+            <iyz>0.00</iyz>
+            <izz>0.166666667</izz>
+          </inertia>
+        </inertial>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>1 1 1</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>1 1 0</ambient>
+            <diffuse>1 1 0</diffuse>
+            <specular>0.1 0.1 0 1</specular>
+          </material>
+        </visual>
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>1 1 1</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+      <link name="rotor1_link">
+        <pose>0 0 0.6 0 0 0</pose>
+        <inertial>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>1.66667E-05</ixx>
+            <ixy>0.00</ixy>
+            <ixz>0.00</ixz>
+            <iyy>0.000841667</iyy>
+            <iyz>0.00</iyz>
+            <izz>0.000841667</izz>
+          </inertia>
+        </inertial>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>1 0.1 0.1</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>1 0.5 0</ambient>
+            <diffuse>1 0.5 0</diffuse>
+            <specular>0.1 0.1 0 1</specular>
+          </material>
+        </visual>
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>1 0.1 0.1</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+      <joint name="rotor1_joint" type="revolute">
+        <parent>base1_link</parent>
+        <child>rotor1_link</child>
+        <axis>
+          <dynamics>
+            <damping>0.5</damping>
+          </dynamics>
+          <limit>
+            <lower>-3.14159265</lower>
+            <upper>3.14159265</upper>
+          </limit>
+          <xyz>0 0 1</xyz>
+        </axis>
+      </joint>
+      <plugin
+        filename="gz-sim-joint-position-controller-system"
+        name="gz::sim::systems::JointPositionController">
+        <joint_name>rotor1_joint</joint_name>
+        <topic>rotor1_cmd</topic>
+        <p_gain>2</p_gain>
+      </plugin>
+    </model>
+
+    <!-- nested model with two position controlled joints -->
+    <model name="model3">
+      <pose>2 0 0.5 0 0 0</pose>
+      <link name="base3_link">
+        <inertial>
+          <mass>1.0</mass>
+          <inertia>
+            <ixx>0.166666667</ixx>
+            <ixy>0.00</ixy>
+            <ixz>0.00</ixz>
+            <iyy>0.166666667</iyy>
+            <iyz>0.00</iyz>
+            <izz>0.166666667</izz>
+          </inertia>
+        </inertial>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>1 1 1</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0 1 1</ambient>
+            <diffuse>0 1 1</diffuse>
+            <specular>0.1 0.1 0 1</specular>
+          </material>
+        </visual>
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>1 1 1</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+      <link name="rotor3_link">
+        <pose>0 0 0.6 0 0 0</pose>
+        <inertial>
+          <mass>0.01</mass>
+          <inertia>
+            <ixx>1.66667E-05</ixx>
+            <ixy>0.00</ixy>
+            <ixz>0.00</ixz>
+            <iyy>0.000841667</iyy>
+            <iyz>0.00</iyz>
+            <izz>0.000841667</izz>
+          </inertia>
+        </inertial>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>1 0.1 0.1</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>1 0.5 0</ambient>
+            <diffuse>1 0.5 0</diffuse>
+            <specular>0.1 0.1 0 1</specular>
+          </material>
+        </visual>
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>1 0.1 0.1</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+      <joint name="rotor3_joint" type="revolute">
+        <parent>base3_link</parent>
+        <child>rotor3_link</child>
+        <axis>
+          <dynamics>
+            <damping>0.5</damping>
+          </dynamics>
+          <limit>
+            <lower>-3.14159265</lower>
+            <upper>3.14159265</upper>
+          </limit>
+          <xyz>0 0 1</xyz>
+        </axis>
+      </joint>
+      <plugin
+        filename="gz-sim-joint-position-controller-system"
+        name="gz::sim::systems::JointPositionController">
+        <joint_name>rotor3_joint</joint_name>
+        <topic>rotor3_cmd</topic>
+        <p_gain>2</p_gain>
+      </plugin>
+      <model name="model2">
+        <pose>1.0 0 0 0 0 0</pose>
+        <link name="base2_link">
+          <inertial>
+            <mass>1.0</mass>
+            <inertia>
+              <ixx>0.166666667</ixx>
+              <ixy>0.00</ixy>
+              <ixz>0.00</ixz>
+              <iyy>0.166666667</iyy>
+              <iyz>0.00</iyz>
+              <izz>0.166666667</izz>
+            </inertia>
+          </inertial>
+          <visual name="visual">
+            <geometry>
+              <box>
+                <size>1 1 1</size>
+              </box>
+            </geometry>
+            <material>
+              <ambient>1 1 0</ambient>
+              <diffuse>1 1 0</diffuse>
+              <specular>0.1 0.1 0 1</specular>
+            </material>
+          </visual>
+          <collision name="collision">
+            <geometry>
+              <box>
+                <size>1 1 1</size>
+              </box>
+            </geometry>
+          </collision>
+        </link>
+        <link name="rotor2_link">
+          <pose>0 0 0.6 0 0 0</pose>
+          <inertial>
+            <mass>0.01</mass>
+            <inertia>
+              <ixx>1.66667E-05</ixx>
+              <ixy>0.00</ixy>
+              <ixz>0.00</ixz>
+              <iyy>0.000841667</iyy>
+              <iyz>0.00</iyz>
+              <izz>0.000841667</izz>
+            </inertia>
+          </inertial>
+          <visual name="visual">
+            <geometry>
+              <box>
+                <size>1 0.1 0.1</size>
+              </box>
+            </geometry>
+            <material>
+              <ambient>1 0.5 0</ambient>
+              <diffuse>1 0.5 0</diffuse>
+              <specular>0.1 0.1 0 1</specular>
+            </material>
+          </visual>
+          <collision name="collision">
+            <geometry>
+              <box>
+                <size>1 0.1 0.1</size>
+              </box>
+            </geometry>
+          </collision>
+        </link>
+        <joint name="rotor2_joint" type="revolute">
+          <parent>base2_link</parent>
+          <child>rotor2_link</child>
+          <axis>
+            <dynamics>
+              <damping>0.5</damping>
+            </dynamics>
+            <limit>
+              <lower>-3.14159265</lower>
+              <upper>3.14159265</upper>
+            </limit>
+            <xyz>0 0 1</xyz>
+          </axis>
+        </joint>
+        <plugin
+          filename="gz-sim-joint-position-controller-system"
+          name="gz::sim::systems::JointPositionController">
+          <joint_name>rotor2_joint</joint_name>
+          <topic>rotor2_cmd</topic>
+          <p_gain>2</p_gain>
+        </plugin>
+      </model>
+      <joint name="model2_joint" type="revolute">
+        <parent>base3_link</parent>
+        <child>model2::base2_link</child>
+        <axis>
+          <dynamics>
+            <damping>0.5</damping>
+          </dynamics>
+          <limit>
+            <lower>0</lower>
+            <upper>0</upper>
+          </limit>
+          <xyz>0 0 1</xyz>
+        </axis>
+      </joint>
+    </model>
+
+  </world>
+</sdf>
