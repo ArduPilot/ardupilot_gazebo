@@ -1,0 +1,142 @@
+<?xml version="1.0" ?>
+<!--
+  Parachute Example
+
+  A standalone example using the parachute plugin.
+  A box is dropped from 50m. The parachute is deployed by issuing a
+  command with value 1.0 to the topic /parachute/cmd_release.
+
+  Server
+  ======
+
+  gz sim -v4 -s test_parachute.sdf
+
+  Publish
+  =======
+
+  gz topic -t /parachute/cmd_release -m gz.msgs.Double -p 'data:1.0'
+
+-->
+<sdf version="1.7">
+  <world name="test_parachute">
+    <physics name="1ms" type="ignore">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>0.1</real_time_factor>
+    </physics>
+    <plugin filename="gz-sim-physics-system"
+      name="gz::sim::systems::Physics">
+    </plugin>
+    <plugin filename="gz-sim-user-commands-system"
+      name="gz::sim::systems::UserCommands">
+    </plugin>
+    <plugin filename="gz-sim-scene-broadcaster-system"
+      name="gz::sim::systems::SceneBroadcaster">
+    </plugin>
+
+    <scene>
+      <ambient>1.0 1.0 1.0</ambient>
+      <background>0.8 0.8 0.8</background>
+      <sky></sky>
+    </scene>
+
+    <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.8 0.8 0.8 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+
+    <include>
+      <uri>model://runway</uri>
+    </include>
+
+    <model name="payload">
+      <pose>0 0 50 0 0 0</pose>
+      <link name="base_link">
+        <inertial>
+          <mass>0.25</mass>
+          <inertia>
+            <ixx>0.000417</ixx>
+            <ixy>0.00</ixy>
+            <ixz>0.00</ixz>
+            <iyy>0.000417</iyy>
+            <iyz>0.00</iyz>
+            <izz>0.000417</izz>
+          </inertia>
+        </inertial>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>1 1 1</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>1 1 0</ambient>
+            <diffuse>1 1 0</diffuse>
+            <specular>0.1 0.1 0 1</specular>
+          </material>
+        </visual>
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>1 1 1</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+      <link name="attachment_link">
+        <pose>0 0 0.6 0 0 0</pose>
+        <inertial>
+          <mass>0.025</mass>
+          <inertia>
+            <ixx>0.0000417</ixx>
+            <ixy>0.00</ixy>
+            <ixz>0.00</ixz>
+            <iyy>0.0000417</iyy>
+            <iyz>0.00</iyz>
+            <izz>0.0000417</izz>
+          </inertia>
+        </inertial>
+        <visual name="visual">
+          <geometry>
+            <sphere>
+              <radius>0.05</radius>
+            </sphere>
+          </geometry>
+          <material>
+            <ambient>0.7 0.7 0.7</ambient>
+            <diffuse>0.7 0.7 0.7</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+          </material>
+        </visual>
+        <collision name="collision">
+          <geometry>
+            <sphere>
+              <radius>0.05</radius>
+            </sphere>
+          </geometry>
+        </collision>
+      </link>
+      <joint name="attachment_joint" type="ball">
+        <child>attachment_link</child>
+        <parent>base_link</parent>
+      </joint>
+
+      <plugin filename="libParachutePlugin.so" name="ParachutePlugin">
+        <parent_link>attachment_link</parent_link>
+        <child_model>parachute_small</child_model>
+        <child_link>chute</child_link>
+        <child_pose>0 0 0 0 0 0</child_pose>
+        <cmd_topic>/parachute/cmd_release</cmd_topic>
+      </plugin>
+
+    </model>
+  </world>
+</sdf>

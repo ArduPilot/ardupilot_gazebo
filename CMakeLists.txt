@@ -39,12 +39,23 @@ add_library(ArduPilotPlugin
     src/Socket.cpp
     src/Util.cc
 )
-
 target_include_directories(ArduPilotPlugin PUBLIC
   include
 	${GZ-SIM_INCLUDE_DIRS}
 )
-
 target_link_libraries(ArduPilotPlugin PUBLIC
+  ${GZ-SIM_LIBRARIES}
+)
+
+add_library(ParachutePlugin
+  SHARED
+  src/ParachutePlugin.cc
+)
+target_include_directories(ParachutePlugin PUBLIC
+  include
+  ${GZ-SIM_INCLUDE_DIRS}
+)
+
+target_link_libraries(ParachutePlugin PUBLIC
   ${GZ-SIM_LIBRARIES}
 )
