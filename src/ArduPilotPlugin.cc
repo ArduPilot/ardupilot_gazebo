@@ -871,7 +871,7 @@ void gz::sim::systems::ArduPilotPlugin::LoadRangeSensors(
         }
         else
         {
-            ignwarn << "[" << this->dataPtr->modelName << "] "
+            gzwarn << "[" << this->dataPtr->modelName << "] "
                 << "sensor element 'type' not specified, skipping.\n";
         }
 
@@ -882,7 +882,7 @@ void gz::sim::systems::ArduPilotPlugin::LoadRangeSensors(
         }
         else
         {
-            ignwarn << "[" << this->dataPtr->modelName << "] "
+            gzwarn << "[" << this->dataPtr->modelName << "] "
                 << "sensor element 'index' not specified, skipping.\n";
         }
 
@@ -893,7 +893,7 @@ void gz::sim::systems::ArduPilotPlugin::LoadRangeSensors(
         }
         else
         {
-            ignwarn << "[" << this->dataPtr->modelName << "] "
+            gzwarn << "[" << this->dataPtr->modelName << "] "
                 << "sensor element 'topic' not specified, skipping.\n";
         }
 
@@ -901,7 +901,7 @@ void gz::sim::systems::ArduPilotPlugin::LoadRangeSensors(
 
         sensorSdf = sensorSdf->GetNextElement("sensor");
 
-        ignmsg << "[" << this->dataPtr->modelName << "] range "
+        gzmsg << "[" << this->dataPtr->modelName << "] range "
             << "type: " << sensorId.type
             << ", index: " << sensorId.index
             << ", topic: " << sensorId.topic
@@ -951,7 +951,7 @@ void gz::sim::systems::ArduPilotPlugin::LoadRangeSensors(
         /// (AP convention for ignored value?)
         this->dataPtr->ranges.push_back(-1.0);
 
-        ignmsg << "[" << this->dataPtr->modelName << "] subscribing to "
+        gzmsg << "[" << this->dataPtr->modelName << "] subscribing to "
               << topicName << "\n";
     }
 }
