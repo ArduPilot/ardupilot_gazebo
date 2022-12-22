@@ -155,6 +155,37 @@ double Control::kDefaultRotorVelocitySlowdownSim = 10.0;
 double Control::kDefaultFrequencyCutoff = 5.0;
 double Control::kDefaultSamplingRate = 0.2;
 
+/////////////////////////////////////////////////
+// Wrapper class to store callback functions
+template <typename M>
+class OnMessageWrapper
+{
+  /// \brief Callback function type definition
+  public: typedef std::function<void(const M &)> callback_t;
+
+  /// \brief Callback function
+  public: callback_t callback;
+
+  /// \brief Constructor
+  public: OnMessageWrapper(const callback_t &_callback)
+    : callback(_callback)
+  {
+  }
+
+  /// \brief Callback function
+  public: void OnMessage(const M &_msg)
+  {
+    if (callback)
+    {
+      callback(_msg);
+    }
+  }
+};
+
+typedef std::shared_ptr<OnMessageWrapper<
+    gz::msgs::LaserScan>> RangeOnMessageWrapperPtr;
+
+/////////////////////////////////////////////////
 // Private data class
 class gz::sim::systems::ArduPilotPluginPrivate
 {
@@ -223,21 +254,53 @@ class gz::sim::systems::ArduPilotPluginPrivate
 
   /// \brief This subscriber callback latches the most recently received
   ///        IMU data message for later use.
-  public: void imuCb(const gz::msgs::IMU &_msg)
+  public: void ImuCb(const gz::msgs::IMU &_msg)
   {
     std::lock_guard<std::mutex> lock(this->imuMsgMutex);
     imuMsg = _msg;
     imuMsgValid = true;
   }
 
-  /// \brief Pointer to an IMU sensor [required]
-//   public: sensors::ImuSensorPtr imuSensor;
+  // Range sensors
+
+  /// \brief This mutex must be used when accessing ranges
+  public: std::mutex rangeMsgMutex;
+
+  /// \brief A copy of the most recently received range data
+  public: std::vector<double> ranges;
+
+  /// \brief Callbacks for each range sensor
+  public: std::vector<RangeOnMessageWrapperPtr> rangeCbs;
+
+  /// \brief This subscriber callback latches the most recently received
+  /// data message for later use.
+  ///
+  /// \todo(anyone) using msgs::LaserScan as a proxy for msgs::SonarStamped
+  public: void RangeCb(const gz::msgs::LaserScan &_msg, int _sensorIndex)
+  {
+    // Extract data
+    double range_max = _msg.range_max();
+    auto&& ranges = _msg.ranges();
+    auto&& intensities = _msg.intensities();
+
+    // If there is no return, the range should be greater than range_max
+    double sample_min = 2.0 * range_max;
+    for (auto&& range : ranges)
+    {
+      sample_min = std::min(
+          sample_min, std::isinf(range) ? 2.0 * range_max : range);
+    }
+
+    // Aquire lock and update the range data
+    std::lock_guard<std::mutex> lock(this->rangeMsgMutex);
+    this->ranges[_sensorIndex] = sample_min;
+  }
 
   /// \brief Pointer to an GPS sensor [optional]
-//   public: sensors::GpsSensorPtr gpsSensor;
+  //  public: sensors::GpsSensorPtr gpsSensor;
 
   /// \brief Pointer to an Rangefinder sensor [optional]
-//   public: sensors::RaySensorPtr rangefinderSensor;
+  //  public: sensors::RaySensorPtr rangefinderSensor;
 
   /// \brief Set to true when the ArduPilot flight controller is online
   ///
@@ -779,83 +842,118 @@ void gz::sim::systems::ArduPilotPlugin::LoadGpsSensors(
 
 /////////////////////////////////////////////////
 void gz::sim::systems::ArduPilotPlugin::LoadRangeSensors(
-    sdf::ElementPtr /*_sdf*/,
+    sdf::ElementPtr _sdf,
     gz::sim::EntityComponentManager &/*_ecm*/)
 {
-  /*
-  // Get Rangefinder
-  // TODO add sonar
-  std::string rangefinderName = _sdf->Get("rangefinderName",
-    static_cast<std::string>("rangefinder_sensor")).first;
-  std::vector<std::string> rangefinderScopedName =
-      SensorScopedName(this->dataPtr->model, rangefinderName);
-  if (rangefinderScopedName.size() > 1)
-  {
-    gzwarn << "[" << this->dataPtr->modelName << "] "
-           << "multiple names match [" << rangefinderName << "]"
-           << " using first found"
-           << " name.\n";
-    for (unsigned k = 0; k < rangefinderScopedName.size(); ++k)
+    struct SensorIdentifier
     {
-      gzwarn << "  sensor " << k << " [" << rangefinderScopedName[k] << "].\n";
+        std::string type;
+        int index;
+        std::string topic;
+    };
+    std::vector<SensorIdentifier> sensorIds;
+
+    // read sensor elements
+    sdf::ElementPtr sensorSdf;
+    if (_sdf->HasElement("sensor"))
+    {
+        sensorSdf = _sdf->GetElement("sensor");
     }
-  }
 
-  if (rangefinderScopedName.size() > 0)
-  {
-    this->dataPtr->rangefinderSensor =
-        std::dynamic_pointer_cast<sensors::RaySensor>
-            (sensors::SensorManager::Instance()->
-                GetSensor(rangefinderScopedName[0]));
-  }
-
-  if (!this->dataPtr->rangefinderSensor)
-  {
-    if (rangefinderScopedName.size() > 1)
+    while (sensorSdf)
     {
-      gzwarn << "[" << this->dataPtr->modelName << "] "
-             << "first rangefinder_sensor scoped name ["
-             << rangefinderScopedName[0]
-             << "] not found, trying the rest of the sensor names.\n";
-      for (unsigned k = 1; k < rangefinderScopedName.size(); ++k)
-      {
-        this->dataPtr->rangefinderSensor =
-            std::dynamic_pointer_cast<sensors::RaySensor>
-                (sensors::SensorManager::Instance()->
-                    GetSensor(rangefinderScopedName[k]));
-        if (this->dataPtr->rangefinderSensor)
+        SensorIdentifier sensorId;
+
+        // <type> is required
+        if (sensorSdf->HasElement("type"))
         {
-          gzwarn << "found [" << rangefinderScopedName[k] << "]\n";
-          break;
+            sensorId.type = sensorSdf->Get<std::string>("type");
         }
-      }
+        else
+        {
+            gzwarn << "[" << this->dataPtr->modelName << "] "
+                << "sensor element 'type' not specified, skipping.\n";
+        }
+
+        // <index> is required
+        if (sensorSdf->HasElement("index"))
+        {
+            sensorId.index = sensorSdf->Get<int>("index");
+        }
+        else
+        {
+            gzwarn << "[" << this->dataPtr->modelName << "] "
+                << "sensor element 'index' not specified, skipping.\n";
+        }
+
+        // <topic> is required
+        if (sensorSdf->HasElement("topic"))
+        {
+            sensorId.topic = sensorSdf->Get<std::string>("topic");
+        }
+        else
+        {
+            gzwarn << "[" << this->dataPtr->modelName << "] "
+                << "sensor element 'topic' not specified, skipping.\n";
+        }
+
+        sensorIds.push_back(sensorId);
+
+        sensorSdf = sensorSdf->GetNextElement("sensor");
+
+        gzmsg << "[" << this->dataPtr->modelName << "] range "
+            << "type: " << sensorId.type
+            << ", index: " << sensorId.index
+            << ", topic: " << sensorId.topic
+            << "\n";
     }
 
-    if (!this->dataPtr->rangefinderSensor)
+    /// \todo(anyone) gazebo classic has different rules for generating
+    /// topic names, gazebo sim would benefit from similar rules when providing
+    /// topics names in sdf sensors elements.
+
+    // get the topic prefix
+    // std::string topicPrefix = "~/";
+    // topicPrefix += this->dataPtr->modelName;
+    // boost::replace_all(topicPrefix, "::", "/");
+
+    // subscriptions
+    for (auto &&sensorId : sensorIds)
     {
-      gzwarn << "[" << this->dataPtr->modelName << "] "
-             << "rangefinder_sensor scoped name [" << rangefinderName
-             << "] not found, trying unscoped name.\n" << "\n";
-      /// TODO: this fails for multi-nested models.
-      /// TODO: and transforms fail for rotated nested model,
-      ///       joints point the wrong way.
-      this->dataPtr->rangefinderSensor =
-          std::dynamic_pointer_cast<sensors::RaySensor>
-              (sensors::SensorManager::Instance()->GetSensor(rangefinderName));
+        /// \todo(anyone) see comment above re. topics
+        /// fully qualified topic name
+        /// std::string topicName = topicPrefix;
+        /// topicName.append("/").append(sensorId.topic);
+        std::string topicName = sensorId.topic;
+
+        // Bind the sensor index to the callback function
+        // (adjust from unit to zero offset)
+        OnMessageWrapper<gz::msgs::LaserScan>::callback_t fn =
+            std::bind(
+                &gz::sim::systems::ArduPilotPluginPrivate::RangeCb,
+                this->dataPtr.get(),
+                std::placeholders::_1,
+                sensorId.index - 1);
+
+        // Wrap the std::function so we can register the callback
+        auto callbackWrapper = RangeOnMessageWrapperPtr(
+            new OnMessageWrapper<gz::msgs::LaserScan>(fn));
+
+        auto callback = &OnMessageWrapper<gz::msgs::LaserScan>::OnMessage;
+
+        // Subscribe to range sensor topic
+        this->dataPtr->node.Subscribe(
+            topicName, callback, callbackWrapper.get());
+
+        this->dataPtr->rangeCbs.push_back(callbackWrapper);
+
+        /// \todo(anyone) initalise ranges properly
+        /// (AP convention for ignored value?)
+        this->dataPtr->ranges.push_back(-1.0);
+
+        gzmsg << "[" << this->dataPtr->modelName << "] subscribing to "
+              << topicName << "\n";
     }
-    if (!this->dataPtr->rangefinderSensor)
-    {
-      gzwarn << "[" << this->dataPtr->modelName << "] "
-             << "ranfinder [" << rangefinderName
-             << "] not found, skipping rangefinder support.\n" << "\n";
-    }
-    else
-    {
-      gzwarn << "[" << this->dataPtr->modelName << "] "
-             << "  found "  << " [" << rangefinderName << "].\n";
-    }
-  }
-  */
 }
 
 /////////////////////////////////////////////////
@@ -946,7 +1044,7 @@ void gz::sim::systems::ArduPilotPlugin::PreUpdate(
         }
 
         this->dataPtr->node.Subscribe(imuTopicName,
-            &gz::sim::systems::ArduPilotPluginPrivate::imuCb,
+            &gz::sim::systems::ArduPilotPluginPrivate::ImuCb,
             this->dataPtr.get());
 
         // Make sure that the 'imuLink' entity has WorldPose
@@ -1308,7 +1406,7 @@ bool gz::sim::systems::ArduPilotPlugin::ReceiveServoPacket()
     // check for controller reset
     if (pkt.frame_count < this->dataPtr->fcu_frame_count)
     {
-        // @TODO - implement re-initialisation
+        /// \todo(anyone) implement re-initialisation
         gzwarn << "ArduPilot controller has reset\n";
     }
 
@@ -1409,7 +1507,7 @@ void gz::sim::systems::ArduPilotPlugin::CreateStateJSON(
     const gz::sim::EntityComponentManager &_ecm) const
 {
     // Make a local copy of the latest IMU data (it's filled in
-    // on receipt by imuCb()).
+    // on receipt by ImuCb()).
     gz::msgs::IMU imuMsg;
     {
         std::lock_guard<std::mutex> lock(this->dataPtr->imuMsgMutex);
@@ -1593,17 +1691,41 @@ void gz::sim::systems::ArduPilotPlugin::CreateStateJSON(
     writer.Double(velWldA.Z());
     writer.EndArray();
 
-    // SITL/SIM_JSON supports these additional sensor fields
-    //      rng_1 : 0
-    //      rng_2 : 0
-    //      rng_3 : 0
-    //      rng_4 : 0
-    //      rng_5 : 0
-    //      rng_6 : 0
-    //      windvane : { direction: 0, speed: 0 }
+    // Range sensor
+    {
+      // Aquire lock on this->dataPtr->ranges
+      std::lock_guard<std::mutex> lock(this->dataPtr->rangeMsgMutex);
 
-    // writer.Key("rng_1");
-    // writer.Double(0.0);
+      // Assume that all range sensors with index less than
+      // ranges.size() provide data.
+      // Use switch-case fall-through to set each range sensor
+      switch (std::min<size_t>(6, this->dataPtr->ranges.size()))
+      {
+      case 6:
+          writer.Key("rng_6");
+          writer.Double(this->dataPtr->ranges[5]);
+      case 5:
+          writer.Key("rng_5");
+          writer.Double(this->dataPtr->ranges[4]);
+      case 4:
+          writer.Key("rng_4");
+          writer.Double(this->dataPtr->ranges[3]);
+      case 3:
+          writer.Key("rng_3");
+          writer.Double(this->dataPtr->ranges[2]);
+      case 2:
+          writer.Key("rng_2");
+          writer.Double(this->dataPtr->ranges[1]);
+      case 1:
+          writer.Key("rng_1");
+          writer.Double(this->dataPtr->ranges[0]);
+      default:
+          break;
+      }
+    }
+
+    // SITL/SIM_JSON supports these additional sensor fields
+    //      windvane : { direction: 0, speed: 0 }
 
     // writer.Key("windvane");
     // writer.StartObject();
@@ -1612,6 +1734,8 @@ void gz::sim::systems::ArduPilotPlugin::CreateStateJSON(
     // writer.Key("speed");
     // writer.Double(5.5);
     // writer.EndObject();
+
+    writer.EndObject();
 
     // get JSON
     this->dataPtr->json_str = "\n" + std::string(s.GetString()) + "\n";
