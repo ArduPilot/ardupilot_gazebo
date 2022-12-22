@@ -26,26 +26,24 @@ namespace sim {
 inline namespace GZ_SIM_VERSION_NAMESPACE {
 namespace systems {
 
-/// @brief  \brief A model system plugin to attach a parachute to a model.
+/// \brief Parachute releaase plugin which may be attached to a model.
 ///
-/// The ParachutePlugin is enabled by adding the following element to
-/// a <model>:
+/// ## System Parameters:
 ///
-///   <plugin filename="libParachutePlugin.so" name="ParachutePlugin">
-///     <parent_link>parachute_attachment_link</parent_link>
-///     <child_model>parachute_small</child_model>
-///     <child_link>chute</child_link>
-///     <child_pose>0 0 0 0 -1.0 0</child_pose>
-///     <cmd_topic>parachute/command</cmd_topic>
-///   </plugin>
+///   `<parent_link>` The link in the target model to attach the parachute.
+///   Required.
 ///
-/// Parameters:
+///   `<child_model>` The name of the parachute model.
+///   Required.
 ///
-///   <parent_link>   the link in the target model to attach the parachute.
-///   <child_model>   name of the parachute model.
-///   <child_link>    base link of the parachute model (bridle point).
-///   <child_pose>    relative pose of child link to parent link when attached.
-///   <cmd_topic>     topic to subscribe to the release command.
+///   `<child_link>` The base link of the parachute model (bridle point).
+///   Required.
+///
+///   `<child_pose>` The relative pose of parent link to the child link.
+///   The default value is: `0, 0, 0, 0, 0, 0`.
+///
+///   `<cmd_topic>` The topic to receive  the parachute release command.
+///   The default value is: `/model/<model_name>/parachute/cmd_release`.
 ///
 class ParachutePlugin :
     public System,
@@ -58,11 +56,11 @@ class ParachutePlugin :
   /// \brief Constructor
   public: ParachutePlugin();
 
-  // documentation inherited
+  // Documentation inherited
   public: void PreUpdate(const gz::sim::UpdateInfo &_info,
                          gz::sim::EntityComponentManager &_ecm) final;
 
-  // documentation inherited
+  // Documentation inherited
   public: void Configure(const Entity &_entity,
                          const std::shared_ptr<const sdf::Element> &_sdf,
                          EntityComponentManager &_ecm,

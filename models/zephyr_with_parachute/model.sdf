@@ -304,7 +304,7 @@
       <control channel="4">
         <jointName>parachute_attachment_joint</jointName>
         <type>COMMAND</type>
-        <cmd_topic>parachute/command</cmd_topic>
+        <cmd_topic>/parachute/cmd_release</cmd_topic>
         <servo_min>1100</servo_min>
         <servo_max>1900</servo_max>
       </control>

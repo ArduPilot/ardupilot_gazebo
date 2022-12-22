@@ -212,7 +212,7 @@ void ParachutePlugin::Configure(
     gzdbg << "child_pos: rot: " << this->impl->childPose.Rot() << std::endl;
   }
 
-  // configure command topic
+  // configure parachute release command topic
   {
     std::vector<std::string> topics;
     if (_sdf->HasElement("cmd_topic"))
@@ -220,7 +220,7 @@ void ParachutePlugin::Configure(
       topics.push_back(_sdf->Get<std::string>("cmd_topic"));
     }
     topics.push_back("/model/" + this->impl->parentModelName +
-        "/parachute/command");
+        "/parachute/cmd_release");
     this->impl->commandTopic = validTopic(topics);
   }
 

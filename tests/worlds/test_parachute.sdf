@@ -4,7 +4,7 @@
 
   A standalone example using the parachute plugin.
   A box is dropped from 50m. The parachute is deployed by issuing a
-  command with value 1.0 to the topic /parachute/command.
+  command with value 1.0 to the topic /parachute/cmd_release.
 
   Server
   ======
@@ -14,7 +14,7 @@
   Publish
   =======
 
-  gz topic -t /parachute/command -m gz.msgs.Double -p 'data:1.0'
+  gz topic -t /parachute/cmd_release -m gz.msgs.Double -p 'data:1.0'
 
 -->
 <sdf version="1.7">
@@ -134,7 +134,7 @@
         <child_model>parachute_small</child_model>
         <child_link>chute</child_link>
         <child_pose>0 0 0 0 0 0</child_pose>
-        <cmd_topic>parachute/command</cmd_topic>
+        <cmd_topic>/parachute/cmd_release</cmd_topic>
       </plugin>
 
     </model>

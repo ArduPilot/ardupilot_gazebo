@@ -14,7 +14,7 @@
     <control channel="4">
       <jointName>parachute_attachment_joint</jointName>
       <type>COMMAND</type>
-      <cmd_topic>parachute/command</cmd_topic>
+      <cmd_topic>/parachute/cmd_release</cmd_topic>
       <servo_min>1100</servo_min>
       <servo_max>1900</servo_max>
     </control>
@@ -30,7 +30,7 @@
         <child_model>parachute_small</child_model>
         <child_link>chute</child_link>
         <child_pose>0 0 0 0 -1.0 0</child_pose>
-        <cmd_topic>parachute/command</cmd_topic>
+        <cmd_topic>/parachute/cmd_release</cmd_topic>
       </plugin>
 
 
@@ -144,7 +144,7 @@
         <child_model>parachute_small</child_model>
         <child_link>chute</child_link>
         <child_pose>0 0 0 0 -1.0 0</child_pose>
-        <cmd_topic>parachute/command</cmd_topic>
+        <cmd_topic>/parachute/cmd_release</cmd_topic>
       </plugin>
 
     </include>
