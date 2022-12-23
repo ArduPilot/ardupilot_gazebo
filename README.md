@@ -165,6 +165,50 @@ greater than one:
 MANUAL> param set SIM_SPEEDUP 10
 ```
 
+## Models
+
+In addition to the Iris and Zephyr models included here, a selection
+of models configured use the ArduPilot Gazebo plugin is available in
+[ArduPilot/SITL_Models](https://github.com/ArduPilot/SITL_Models). 
+Click on the images to see further details.
+
+<table>
+<tr>
+<td title="Alti Transition">
+<a href="https://github.com/ArduPilot/SITL_Models/blob/master/Gazebo/docs/AltiTransition.md">
+<img src="https://user-images.githubusercontent.com/24916364/150612555-958a64d4-c434-4f90-94bd-678e6b6011ec.png" width="100%" height="100%" style="display: block;">
+</a>
+</td>
+<td title="SkyCat TVBS">
+<a href="https://github.com/ArduPilot/SITL_Models/blob/master/Gazebo/docs/SkyCatTVBS.md">
+<img src="https://user-images.githubusercontent.com/24916364/145025150-4e7e48e1-3e83-4c83-be7b-b944db1d9152.png" width="100%" height="100%" style="display: block;">
+</a>
+</td>
+<td title="Skywalker X8">
+<a href="https://github.com/ArduPilot/SITL_Models/blob/master/Gazebo/docs/SkywalkerX8.md">
+<img src="https://user-images.githubusercontent.com/24916364/142733947-1a39e963-0aea-4b1b-a57b-85455b2278fe.png" width="100%" height="100%" style="display: block;">
+</a>
+</td>
+</tr>
+<tr>
+<td title="Quadruped">
+<a href="https://github.com/ArduPilot/SITL_Models/blob/master/Gazebo/docs/Quadruped.md">
+<img src="https://user-images.githubusercontent.com/24916364/144449710-5bab34b4-dabf-410f-b276-d290ddbb54b2.gif" width="100%" height="100%" style="display: block;">
+</a>
+</td>
+<td title="WildThumper">
+<a href="https://github.com/ArduPilot/SITL_Models/blob/master/Gazebo/docs/WildThumper.md">
+<img src="https://user-images.githubusercontent.com/24916364/144286154-231ac9b3-e54b-489f-b35e-bc2adb4b1aa0.png" width="100%" height="100%" style="display: block;">
+</a>
+</td>
+<td title="Rover Playpen">
+<a href="https://github.com/ArduPilot/SITL_Models/blob/master/Gazebo/docs/RoverPlayPen.md">
+<img src="https://user-images.githubusercontent.com/24916364/144513412-1b0661f1-fdf8-4aed-a745-e8bb73ffca91.jpg" width="100%" height="100%" style="display: block;">
+</a>
+</td>
+</tr>
+</table>
+
 ## Troubleshooting
 
 For issues concerning installing and running Gazebo on your platform please
