@@ -2,7 +2,6 @@
 <sdf version='1.6'>
   <model name='gimbal_small_2d'>
     <pose>0 0 0.18 0 0 0</pose>
-
     <link name='base_link'>
       <inertial>
         <mass>0.2</mass>
@@ -15,7 +14,6 @@
           <izz>0.0001</izz>
         </inertia>
       </inertial>
-
       <visual name='base_main_viz'>
         <geometry>
           <mesh>
@@ -29,7 +27,6 @@
           <specular>0.01 0.01 0.01 1.0</specular>
         </material>
       </visual>
-
       <collision name='base_col'>
         <pose>0.01 0.075 -0.025 0 0 0</pose>
         <geometry>
@@ -39,8 +36,7 @@
         </geometry>
       </collision>
     </link>
-
-    <link name='arm_link'>
+    <link name='roll_link'>
       <inertial>
         <mass>0.01</mass>
         <inertia>
@@ -52,8 +48,7 @@
           <izz>0.00001</izz>
         </inertia>
       </inertial>
-
-      <visual name='arm_viz'>
+      <visual name='roll_viz'>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -66,8 +61,7 @@
           <specular>0.01 0.01 0.01 1.0</specular>
         </material>
       </visual>
-
-      <collision name='arm_col'>
+      <collision name='roll_col'>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -76,23 +70,21 @@
         </geometry>
       </collision>
     </link>
-
-    <joint name='arm_joint' type='revolute'>
+    <joint name='roll_joint' type='revolute'>
       <parent>base_link</parent>
-      <child>arm_link</child>
+      <child>roll_link</child>
       <axis>
         <xyz>0 0 1</xyz>
         <dynamics>
           <damping>0.5</damping>
         </dynamics>
         <limit>
-          <lower>-3.14159265</lower>
-          <upper>3.14159265</upper>
+          <lower>-1.57079632</lower>
+          <upper>1.57079632</upper>
         </limit>
       </axis>
       <pose>0.01 0 -0.04 0 0 0</pose>
     </joint>
-
     <link name='tilt_link'>
       <inertial>
         <mass>0.01</mass>
@@ -119,7 +111,6 @@
           <specular>0.1 0.1 0.1 1.0</specular>
         </material>
       </visual>
-
       <collision name='tilt_col'>
         <pose>0 0 -0.005 0 0 0</pose>
         <geometry>
@@ -129,7 +120,6 @@
           </mesh>
         </geometry>
       </collision>
-
       <visual name='camera_viz'>
         <pose>0 0 0.02 0 0 0</pose>
         <geometry>
@@ -138,14 +128,12 @@
             <length>0.050</length>
           </cylinder>
         </geometry>
-
         <material>
           <ambient>0.4 0.4 0.4</ambient>
           <diffuse>0.4 0.4 0.4</diffuse>
           <specular>0.1 0.1 0.1 1.0</specular>
         </material>
       </visual>
-
       <collision name='camera_col'>
         <pose>0 0 0.02 0 0 0</pose>
         <geometry>
@@ -155,7 +143,6 @@
           </cylinder>
         </geometry>
       </collision>
-
       <sensor name="camera" type="camera">
         <pose>0 0 0 -1.57 -1.57 0</pose>
         <camera>
@@ -174,9 +161,8 @@
         <visualize>1</visualize>
       </sensor>
     </link>
-
     <joint name='tilt_joint' type='revolute'>
-      <parent>arm_link</parent>
+      <parent>roll_link</parent>
       <child>tilt_link</child>
       <axis>
         <xyz>1 0 0</xyz>
@@ -185,11 +171,10 @@
         </dynamics>
         <limit>
           <lower>-1.57079632</lower>
-          <upper>3.14159265</upper>
+          <upper>1.57079632</upper>
         </limit>
       </axis>
       <pose>0 0 0.02 0 0 0</pose>
     </joint>
-
   </model>
 </sdf>
