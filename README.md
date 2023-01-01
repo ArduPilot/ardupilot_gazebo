@@ -23,9 +23,9 @@ The project comprises a Gazebo Sim plugin to connect to ArduPilot SITL
 
 ## Prerequisites
 
-Gazebo Sim Garden is supported on Ubuntu 20.04 (Focal) and (22.04) Jammy.
+Gazebo Sim Garden is supported on Ubuntu 20.04 (Focal) and 22.04 (Jammy).
 If you are running Ubuntu as a virtual machine you will need at least
-Ubuntu 20.04 (Focal) in order to have the OpenGL support required for the
+Ubuntu 20.04 in order to have the OpenGL support required for the
 `ogre2` render engine. Gazebo Sim and ArduPilot SITL will also run on macOS
 (Big Sur and Monterey; Intel and M1 devices).
 
