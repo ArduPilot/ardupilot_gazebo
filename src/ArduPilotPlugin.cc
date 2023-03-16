@@ -61,8 +61,8 @@
 // can be defined in the <plugin>.
 #define MAX_MOTORS 255
 
-// SITL JSON interface supplies 16 servo channels
-#define MAX_SERVO_CHANNELS 16
+// SITL JSON interface supplies 32 servo channels
+#define MAX_SERVO_CHANNELS 32
 
 // Register plugin
 GZ_ADD_PLUGIN(gz::sim::systems::ArduPilotPlugin,

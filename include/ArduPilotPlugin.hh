@@ -28,12 +28,14 @@ namespace sim
 {
 namespace systems
 {
+/// \todo(srmainwaring) handle 16 or 32 based on magic
+
 // The servo packet received from ArduPilot SITL. Defined in SIM_JSON.h.
 struct servo_packet {
     uint16_t magic;         // 18458 expected magic value
     uint16_t frame_rate;
     uint32_t frame_count;
-    uint16_t pwm[16];
+    uint16_t pwm[32];
 };
 
 // Forward declare private data class
