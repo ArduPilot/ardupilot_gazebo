@@ -1350,65 +1350,6 @@ bool gz::sim::systems::ArduPilotPlugin::ReceiveServoPacket()
         waitMs = 1;
     }
 
-#if 0
-    // 16 / 32 channel compatibility
-    uint16_t pkt_magic{0};
-    uint16_t pkt_frame_rate{0};
-    uint16_t pkt_frame_count{0};
-    std::array<uint16_t, 32> pkt_pwm;
-    ssize_t recvSize{-1};
-    {
-      servo_packet_16 pkt;
-
-      auto getPkt = [](
-        SocketAPM &_sock,
-        const char *&_fcu_address,
-        uint16_t &_fcu_port_out,
-        uint32_t _waitMs,
-        const std::string &_modelName,
-        servo_packet_16 &_pkt
-      ) -> ssize_t {
-        ssize_t recvSize = _sock.recv(&_pkt, sizeof(servo_packet_16), _waitMs);
-
-        _sock.last_recv_address(_fcu_address, _fcu_port_out);
-
-        // drain the socket in the case we're backed up
-        int counter = 0;
-        while (true)
-        {
-            servo_packet_16 last_pkt;
-            auto recvSize_last = _sock.recv(&last_pkt,
-              sizeof(servo_packet_16), 0ul);
-            if (recvSize_last == -1)
-            {
-                break;
-            }
-            counter++;
-            _pkt = last_pkt;
-            recvSize = recvSize_last;
-        }
-        if (counter > 0)
-        {
-            gzwarn << "[" << _modelName << "] "
-                << "Drained n packets: " << counter << "\n";
-        }
-        return recvSize;
-      };
-
-      recvSize = getPkt(
-        this->dataPtr->sock,
-        this->dataPtr->fcu_address,
-        this->dataPtr->fcu_port_out,
-        waitMs,
-        this->dataPtr->modelName,
-        pkt
-      );
-      pkt_magic = pkt.magic;
-      pkt_frame_rate = pkt.frame_rate;
-      pkt_frame_count = pkt.frame_count;
-      std::copy(std::begin(pkt.pwm), std::end(pkt.pwm), std::begin(pkt_pwm));
-    }
-#else
     // 16 / 32 channel compatibility
     uint16_t pkt_magic{0};
     uint16_t pkt_frame_rate{0};
@@ -1445,7 +1386,6 @@ bool gz::sim::systems::ArduPilotPlugin::ReceiveServoPacket()
       pkt_frame_count = pkt.frame_count;
       std::copy(std::begin(pkt.pwm), std::end(pkt.pwm), std::begin(pkt_pwm));
     }
-#endif
 
     // didn't receive a packet, increment timeout count if online, then return
     if (recvSize == -1)
