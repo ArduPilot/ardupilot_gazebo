@@ -1416,7 +1416,7 @@ bool gz::sim::systems::ArduPilotPlugin::ReceiveServoPacket()
     }
 
 #if DEBUG_JSON_IO
-    int max_servo_channels = this->dataPtr->have32Channels ? 32 : 16; 
+    int max_servo_channels = this->dataPtr->have32Channels ? 32 : 16;
 
     // debug: inspect sitl packet
     std::ostringstream oss;
@@ -1505,7 +1505,7 @@ bool gz::sim::systems::ArduPilotPlugin::ReceiveServoPacket()
 void gz::sim::systems::ArduPilotPlugin::UpdateMotorCommands(
     const std::array<uint16_t, 32> &_pwm)
 {
-    int max_servo_channels = this->dataPtr->have32Channels ? 32 : 16; 
+    int max_servo_channels = this->dataPtr->have32Channels ? 32 : 16;
 
     // compute command based on requested motorSpeed
     for (unsigned i = 0; i < this->dataPtr->controls.size(); ++i)
