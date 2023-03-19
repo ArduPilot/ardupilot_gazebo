@@ -786,6 +786,7 @@
       <fdm_port_in>9002</fdm_port_in>
       <connectionTimeoutMaxCount>5</connectionTimeoutMaxCount>
       <lock_step>1</lock_step>
+      <have_32_channels>0</have_32_channels>
 
       <!-- Frame conventions
         Require by ArduPilot: change model and gazebo from XYZ to XY-Z coordinates

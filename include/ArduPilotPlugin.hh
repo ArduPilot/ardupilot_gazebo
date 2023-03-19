@@ -17,6 +17,7 @@
 #ifndef ARDUPILOTPLUGIN_HH_
 #define ARDUPILOTPLUGIN_HH_
 
+#include <array>
 #include <memory>
 
 #include <gz/sim/System.hh>
@@ -28,12 +29,21 @@ namespace sim
 {
 namespace systems
 {
+/// \todo(srmainwaring) handle 16 or 32 based on magic
+
 // The servo packet received from ArduPilot SITL. Defined in SIM_JSON.h.
-struct servo_packet {
+struct servo_packet_16 {
     uint16_t magic;         // 18458 expected magic value
     uint16_t frame_rate;
     uint32_t frame_count;
     uint16_t pwm[16];
+};
+
+struct servo_packet_32 {
+    uint16_t magic;         // 29569 expected magic value
+    uint16_t frame_rate;
+    uint32_t frame_count;
+    uint16_t pwm[32];
 };
 
 // Forward declare private data class
@@ -72,6 +82,8 @@ class ArduPilotPluginPrivate;
 /// <imuName>     scoped name for the imu sensor
 /// <connectionTimeoutMaxCount> timeout before giving up on
 ///                             controller synchronization
+/// <have_32_channels>    set true if 32 channels are enabled
+///
 class GZ_SIM_VISIBLE ArduPilotPlugin:
   public gz::sim::System,
   public gz::sim::ISystemConfigure,
@@ -143,7 +155,7 @@ class GZ_SIM_VISIBLE ArduPilotPlugin:
   private: bool ReceiveServoPacket();
 
   /// \brief Update the motor commands given servo PWM values
-  private: void UpdateMotorCommands(const servo_packet &_pkt);
+  private: void UpdateMotorCommands(const std::array<uint16_t, 32> &_pwm);
 
   /// \brief Create the state JSON
   private: void CreateStateJSON(

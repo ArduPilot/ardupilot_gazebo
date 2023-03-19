@@ -61,9 +61,6 @@
 // can be defined in the <plugin>.
 #define MAX_MOTORS 255
 
-// SITL JSON interface supplies 16 servo channels
-#define MAX_SERVO_CHANNELS 16
-
 // Register plugin
 GZ_ADD_PLUGIN(gz::sim::systems::ArduPilotPlugin,
               gz::sim::System,
@@ -236,6 +233,9 @@ class gz::sim::systems::ArduPilotPluginPrivate
 
   /// \brief Set true to enforce lock-step simulation
   public: bool isLockStep{false};
+
+  /// \brief Set true if have 32 servo channels
+  public: bool have32Channels{false};
 
   /// \brief Have we initialized subscription to the IMU data yet?
   public: bool imuInitialized{false};
@@ -474,6 +474,9 @@ void gz::sim::systems::ArduPilotPlugin::Configure(
   // Enforce lock-step simulation (has default: false)
   this->dataPtr->isLockStep =
     sdfClone->Get("lock_step", this->dataPtr->isLockStep).first;
+
+  this->dataPtr->have32Channels =
+    sdfClone->Get("have_32_channels", false).first;
 
   // Add the signal handler
   this->dataPtr->sigHandler.AddCallback(
@@ -1281,6 +1284,47 @@ void gz::sim::systems::ArduPilotPlugin::ApplyMotorForces(
 }
 
 /////////////////////////////////////////////////
+namespace
+{
+/// \brief Get a servo packet. Templated for 16 or 32 channel packets.
+template<typename TServoPacket>
+ssize_t getServoPacket(
+  SocketAPM &_sock,
+  const char *&_fcu_address,
+  uint16_t &_fcu_port_out,
+  uint32_t _waitMs,
+  const std::string &_modelName,
+  TServoPacket &_pkt
+)
+{
+    ssize_t recvSize = _sock.recv(&_pkt, sizeof(TServoPacket), _waitMs);
+
+    _sock.last_recv_address(_fcu_address, _fcu_port_out);
+
+    // drain the socket in the case we're backed up
+    int counter = 0;
+    while (true)
+    {
+        TServoPacket last_pkt;
+        auto recvSize_last = _sock.recv(&last_pkt, sizeof(TServoPacket), 0ul);
+        if (recvSize_last == -1)
+        {
+            break;
+        }
+        counter++;
+        _pkt = last_pkt;
+        recvSize = recvSize_last;
+    }
+    if (counter > 0)
+    {
+        gzwarn << "[" << _modelName << "] "
+               << "Drained n packets: " << counter << "\n";
+    }
+    return recvSize;
+}
+}  // namespace
+
+/////////////////////////////////////////////////
 bool gz::sim::systems::ArduPilotPlugin::ReceiveServoPacket()
 {
     // Added detection for whether ArduPilot is online or not.
@@ -1306,32 +1350,41 @@ bool gz::sim::systems::ArduPilotPlugin::ReceiveServoPacket()
         waitMs = 1;
     }
 
-    servo_packet pkt;
-    auto recvSize = this->dataPtr->sock.recv(&pkt,
-        sizeof(servo_packet), waitMs);
-
-    this->dataPtr->sock.last_recv_address(this->dataPtr->fcu_address,
-        this->dataPtr->fcu_port_out);
-
-    // drain the socket in the case we're backed up
-    int counter = 0;
-    while (true)
+    // 16 / 32 channel compatibility
+    uint16_t pkt_magic{0};
+    uint16_t pkt_frame_rate{0};
+    uint16_t pkt_frame_count{0};
+    std::array<uint16_t, 32> pkt_pwm;
+    ssize_t recvSize{-1};
+    if (this->dataPtr->have32Channels)
     {
-        servo_packet last_pkt;
-        auto recvSize_last = this->dataPtr->sock.recv(&last_pkt,
-            sizeof(servo_packet), 0ul);
-        if (recvSize_last == -1)
-        {
-            break;
-        }
-        counter++;
-        pkt = last_pkt;
-        recvSize = recvSize_last;
+      servo_packet_32 pkt;
+      recvSize = getServoPacket(
+          this->dataPtr->sock,
+          this->dataPtr->fcu_address,
+          this->dataPtr->fcu_port_out,
+          waitMs,
+          this->dataPtr->modelName,
+          pkt);
+      pkt_magic = pkt.magic;
+      pkt_frame_rate = pkt.frame_rate;
+      pkt_frame_count = pkt.frame_count;
+      std::copy(std::begin(pkt.pwm), std::end(pkt.pwm), std::begin(pkt_pwm));
     }
-    if (counter > 0)
+    else
     {
-        gzwarn << "[" << this->dataPtr->modelName << "] "
-            << "Drained n packets: " << counter << "\n";
+      servo_packet_16 pkt;
+      recvSize = getServoPacket(
+          this->dataPtr->sock,
+          this->dataPtr->fcu_address,
+          this->dataPtr->fcu_port_out,
+          waitMs,
+          this->dataPtr->modelName,
+          pkt);
+      pkt_magic = pkt.magic;
+      pkt_frame_rate = pkt.frame_rate;
+      pkt_frame_count = pkt.frame_count;
+      std::copy(std::begin(pkt.pwm), std::end(pkt.pwm), std::begin(pkt_pwm));
     }
 
     // didn't receive a packet, increment timeout count if online, then return
@@ -1363,28 +1416,32 @@ bool gz::sim::systems::ArduPilotPlugin::ReceiveServoPacket()
     }
 
 #if DEBUG_JSON_IO
+    int max_servo_channels = this->dataPtr->have32Channels ? 32 : 16;
+
     // debug: inspect sitl packet
     std::ostringstream oss;
     oss << "recv " << recvSize << " bytes from "
         << this->dataPtr->fcu_address << ":"
         << this->dataPtr->fcu_port_out << "\n";
-    // oss << "magic: " << pkt.magic << "\n";
-    // oss << "frame_rate: " << pkt.frame_rate << "\n";
-    oss << "frame_count: " << pkt.frame_count << "\n";
+    // oss << "magic: " << pkt_magic << "\n";
+    // oss << "frame_rate: " << pkt_frame_rate << "\n";
+    oss << "frame_count: " << pkt_frame_count << "\n";
     // oss << "pwm: [";
-    // for (auto i=0; i<MAX_SERVO_CHANNELS - 1; ++i) {
-    //     oss << pkt.pwm[i] << ", ";
+    // for (auto i=0; i<max_servo_channels - 1; ++i) {
+    //     oss << pkt_pwm[i] << ", ";
     // }
-    // oss << pkt.pwm[MAX_SERVO_CHANNELS - 1] << "]\n";
+    // oss << pkt_pwm[max_servo_channels - 1] << "]\n";
     gzdbg << "\n" << oss.str();
 #endif
 
     // check magic, return if invalid
-    const uint16_t magic = 18458;
-    if (magic != pkt.magic)
+    constexpr uint16_t magic_16 = 18458;
+    constexpr uint16_t magic_32 = 29569;
+    uint16_t magic = this->dataPtr->have32Channels ? magic_32 : magic_16;
+    if (magic != pkt_magic)
     {
         gzwarn << "Incorrect protocol magic "
-            << pkt.magic << " should be "
+            << pkt_magic << " should be "
             << magic << "\n";
         return false;
     }
@@ -1401,17 +1458,17 @@ bool gz::sim::systems::ArduPilotPlugin::ReceiveServoPacket()
     }
 
     // update frame rate
-    this->dataPtr->fcu_frame_rate = pkt.frame_rate;
+    this->dataPtr->fcu_frame_rate = pkt_frame_rate;
 
     // check for controller reset
-    if (pkt.frame_count < this->dataPtr->fcu_frame_count)
+    if (pkt_frame_count < this->dataPtr->fcu_frame_count)
     {
         /// \todo(anyone) implement re-initialisation
         gzwarn << "ArduPilot controller has reset\n";
     }
 
     // check for duplicate frame
-    else if (pkt.frame_count == this->dataPtr->fcu_frame_count)
+    else if (pkt_frame_count == this->dataPtr->fcu_frame_count)
     {
         gzwarn << "Duplicate input frame\n";
 
@@ -1425,40 +1482,42 @@ bool gz::sim::systems::ArduPilotPlugin::ReceiveServoPacket()
     }
 
     // check for skipped frames
-    else if (pkt.frame_count != this->dataPtr->fcu_frame_count + 1
+    else if (pkt_frame_count != this->dataPtr->fcu_frame_count + 1
         && this->dataPtr->arduPilotOnline)
     {
         gzwarn << "Missed "
-            << pkt.frame_count - this->dataPtr->fcu_frame_count
+            << pkt_frame_count - this->dataPtr->fcu_frame_count
             << " input frames\n";
     }
 
     // update frame count
-    this->dataPtr->fcu_frame_count = pkt.frame_count;
+    this->dataPtr->fcu_frame_count = pkt_frame_count;
 
     // reset the connection timeout so we don't accumulate
     this->dataPtr->connectionTimeoutCount = 0;
 
-    this->UpdateMotorCommands(pkt);
+    this->UpdateMotorCommands(pkt_pwm);
 
     return true;
 }
 
 /////////////////////////////////////////////////
 void gz::sim::systems::ArduPilotPlugin::UpdateMotorCommands(
-    const servo_packet &_pkt)
+    const std::array<uint16_t, 32> &_pwm)
 {
+    int max_servo_channels = this->dataPtr->have32Channels ? 32 : 16;
+
     // compute command based on requested motorSpeed
     for (unsigned i = 0; i < this->dataPtr->controls.size(); ++i)
     {
         // enforce limit on the number of <control> elements
         if (i < MAX_MOTORS)
         {
-            if (this->dataPtr->controls[i].channel < MAX_SERVO_CHANNELS)
+            if (this->dataPtr->controls[i].channel < max_servo_channels)
             {
                 // convert pwm to raw cmd: [servo_min, servo_max] => [0, 1],
                 // default is: [1000, 2000] => [0, 1]
-                const double pwm = _pkt.pwm[this->dataPtr->controls[i].channel];
+                const double pwm = _pwm[this->dataPtr->controls[i].channel];
                 const double pwm_min = this->dataPtr->controls[i].servo_min;
                 const double pwm_max = this->dataPtr->controls[i].servo_max;
                 const double multiplier = this->dataPtr->controls[i].multiplier;
@@ -1488,7 +1547,7 @@ void gz::sim::systems::ArduPilotPlugin::UpdateMotorCommands(
                     << "control[" << i << "] channel ["
                     << this->dataPtr->controls[i].channel
                     << "] is greater than the number of servo channels ["
-                    << MAX_SERVO_CHANNELS
+                    << max_servo_channels
                     << "], control not applied.\n";
             }
         }
