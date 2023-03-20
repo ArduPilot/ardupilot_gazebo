@@ -207,6 +207,27 @@ Click on the images to see further details.
 </a>
 </td>
 </tr>
+
+</td>
+</tr>
+<tr>
+<td title="Swan-K1">
+<a href="https://github.com/ArduPilot/SITL_Models/blob/master/Gazebo/docs/Swan-K1.md">
+<img src="https://user-images.githubusercontent.com/24916364/210408630-01e5f56d-57ba-430e-b04d-62cb8d232527.png" width="100%" style="display: block;">
+</a>
+</td>
+<td title="Sawppy Rover">
+<a href="https://github.com/ArduPilot/SITL_Models/blob/master/Gazebo/docs/Sawppy.md">
+<img src="https://user-images.githubusercontent.com/24916364/210653579-e635ffc2-2962-4221-83a8-9622915a4121.png" width="100%" style="display: block;">
+</a>
+</td>
+<td title="Hexapod Copter">
+<a href="https://github.com/ArduPilot/SITL_Models/blob/master/Gazebo/docs/HexapodCopter.md">
+<img src="https://user-images.githubusercontent.com/24916364/225340320-9aa31fe2-4602-4036-ba6b-491f72097c01.jpg" width="100%" style="display: block;">
+</a>
+</td>
+</tr>
+
 </table>
 
 ## Troubleshooting
