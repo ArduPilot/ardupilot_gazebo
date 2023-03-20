@@ -1,0 +1,294 @@
+<?xml version="1.0" ?>
+<!--
+  Usage
+
+  Ensure tests/worlds is added to GZ_SIM_RESOURCE_PATH
+
+  Gazebo
+
+  gz sim -v4 -s -r test_anemometer.sdf
+
+  SITL
+
+  sim_vehicle.py -D -v Rover -f JSON -/-console -/-map
+
+  MANUAL> param set WNDVN_TYPE 11
+  MANUAL> param set WNDVN_SPEED_TYPE 11
+  MANUAL> param set WNDVN_SPEED_OFS 0
+  MANUAL> module load sail
+
+-->
+<sdf version="1.7">
+  <world name="test_anemometer">
+    <physics name="1ms" type="ignored">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+    </physics>
+
+    <plugin filename="gz-sim-physics-system"
+        name="gz::sim::systems::Physics">
+    </plugin>
+    <plugin filename="gz-sim-sensors-system"
+        name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+      <background_color>0.8 0.8 0.8</background_color>
+    </plugin>
+    <plugin filename="gz-sim-scene-broadcaster-system"
+        name="gz::sim::systems::SceneBroadcaster">
+    </plugin>
+    <plugin filename="gz-sim-user-commands-system"
+        name="gz::sim::systems::UserCommands">
+    </plugin>
+    <plugin filename="gz-sim-imu-system"
+        name="gz::sim::systems::Imu">
+    </plugin>
+    <plugin filename="asv_sim2-anemometer-system"
+      name="gz::sim::systems::Anemometer">
+    </plugin>
+
+    <scene>
+      <ambient>1.0 1.0 1.0</ambient>
+      <background>0.8 0.8 0.8</background>
+      <sky></sky>
+    </scene>
+
+    <spherical_coordinates>
+      <latitude_deg>51.56991349023042</latitude_deg>
+      <longitude_deg>-4.033693921107272</longitude_deg>
+      <elevation>10.0</elevation>
+      <heading_deg>0</heading_deg>
+      <surface_model>EARTH_WGS84</surface_model>
+    </spherical_coordinates>
+
+    <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.6 0.6 0.6 1</specular>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+
+    <!-- Wind directed from the north at 5 m/s -->
+    <wind>
+      <linear_velocity>0 -5 0</linear_velocity>
+    </wind>
+
+    <model name="axes">
+      <static>1</static>
+      <link name="link">
+        <visual name="r">
+          <cast_shadows>0</cast_shadows>
+          <pose>5 0 0.1 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>10 0.01 0.01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>1 0 0 1</ambient>
+            <diffuse>1 0 0 1</diffuse>
+            <emissive>1 0 0 1</emissive>
+            <specular>0.5 0.5 0.5 1</specular>
+          </material>
+        </visual>
+        <visual name="g">
+          <cast_shadows>0</cast_shadows>
+          <pose>0 5 0.1 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.01 10 0.01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0 1 0 1</ambient>
+            <diffuse>0 1 0 1</diffuse>
+            <emissive>0 1 0 1</emissive>
+            <specular>0.5 0.5 0.5 1</specular>
+          </material>
+        </visual>
+        <visual name="b">
+          <cast_shadows>0</cast_shadows>
+          <pose>0 0 5.1 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.01 0.01 10</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0 0 1 1</ambient>
+            <diffuse>0 0 1 1</diffuse>
+            <emissive>0 0 1 1</emissive>
+            <specular>0.5 0.5 0.5 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+          <material>
+            <ambient>0.8 0.8 0.8 1</ambient>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+            <specular>0.8 0.8 0.8 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="anemometer">
+      <pose>0 0 0.5 0 0 1.57079632</pose>
+      <link name="base_link">
+        <inertial>
+          <mass>10</mass>
+          <inertia>
+            <ixx>1.6</ixx>
+            <ixy>0</ixy>
+            <iyy>1.6</iyy>
+            <iyz>0</iyz>
+            <izz>1.6</izz>
+          </inertia>
+        </inertial>
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>1 1 1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>1 1 1</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.0 0.5 0.0 0.7</ambient>
+            <diffuse>0.0 0.5 0.0 0.7</diffuse>
+            <specular>0.1 0.1 0.1 0.7</specular>
+          </material>
+        </visual>
+        <visual name="direction_visual">
+          <pose>0.425 0 0.5005 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.05</radius>
+              <length>0.001</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>1 0 0 0.7</ambient>
+            <diffuse>1 0 0 0.7</diffuse>
+            <specular>0.1 0.1 0.1 0.7</specular>
+          </material>
+        </visual>
+      </link>
+
+      <link name='imu_link'>
+        <inertial>
+          <pose>0 0 0 0 0 0</pose>
+          <mass>0.15</mass>
+          <inertia>
+            <ixx>0.00001</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00002</iyy>
+            <iyz>0</iyz>
+            <izz>0.00002</izz>
+          </inertia>
+        </inertial>
+        <sensor name="imu_sensor" type="imu">
+          <pose>0 0 0 3.141593 0 0</pose>
+          <always_on>1</always_on>
+          <update_rate>1000.0</update_rate>
+        </sensor>
+      </link>
+      <joint name='imu_joint' type='revolute'>
+        <child>imu_link</child>
+        <parent>base_link</parent>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0</upper>
+            <effort>0</effort>
+            <velocity>0</velocity>
+          </limit>
+          <dynamics>
+            <damping>1.0</damping>
+          </dynamics>
+        </axis>
+      </joint>
+
+      <link name='anemometer_link'>
+        <inertial>
+          <pose>0 0 0 0 0 0</pose>
+          <mass>0.15</mass>
+          <inertia>
+            <ixx>0.00001</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00002</iyy>
+            <iyz>0</iyz>
+            <izz>0.00002</izz>
+          </inertia>
+        </inertial>
+        <sensor name="anemometer" type="custom" gz:type="anemometer">
+          <always_on>1</always_on>
+          <update_rate>30</update_rate>
+          <gz:anemometer>
+            <noise type="gaussian">
+              <mean>0.2</mean>
+              <stddev>0.1</stddev>
+            </noise>
+          </gz:anemometer>
+        </sensor>
+      </link>
+      <joint name='anemometer_joint' type='revolute'>
+        <child>anemometer_link</child>
+        <parent>base_link</parent>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>0</lower>
+            <upper>0</upper>
+            <effort>0</effort>
+            <velocity>0</velocity>
+          </limit>
+          <dynamics>
+            <damping>1.0</damping>
+          </dynamics>
+        </axis>
+      </joint>
+
+      <plugin name="ArduPilotPlugin"
+        filename="libArduPilotPlugin">
+        <fdm_addr>127.0.0.1</fdm_addr>
+        <fdm_port_in>9002</fdm_port_in>
+        <connectionTimeoutMaxCount>5</connectionTimeoutMaxCount>
+        <lock_step>1</lock_step>
+        <gazeboXYZToNED>0 0 0 3.141593 0 1.57079632</gazeboXYZToNED>
+        <modelXYZToAirplaneXForwardZDown>0 0 0 3.141593 0 0</modelXYZToAirplaneXForwardZDown>
+        <imuName>imu_link::imu_sensor</imuName>
+        <anemometer>anemometer_link::anemometer</anemometer>
+      </plugin>
+
+    </model>
+
+  </world>
+</sdf>

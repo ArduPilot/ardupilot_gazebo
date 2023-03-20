@@ -79,7 +79,9 @@ class ArduPilotPluginPrivate;
 ///    <frequencyCutoff>  filter incoming joint state
 ///    <samplingRate>     sampling rate for filtering incoming joint state
 ///    <rotorVelocitySlowdownSim> for rotor aliasing problem, experimental
+///
 /// <imuName>     scoped name for the imu sensor
+/// <anemometer>  scoped name for the wind sensor
 /// <connectionTimeoutMaxCount> timeout before giving up on
 ///                             controller synchronization
 /// <have_32_channels>    set true if 32 channels are enabled
@@ -133,6 +135,11 @@ class GZ_SIM_VISIBLE ArduPilotPlugin:
 
   /// \brief Load range sensors
   private: void LoadRangeSensors(
+      sdf::ElementPtr _sdf,
+      gz::sim::EntityComponentManager &_ecm);
+
+  /// \brief Load wind sensors
+  private: void LoadWindSensors(
       sdf::ElementPtr _sdf,
       gz::sim::EntityComponentManager &_ecm);
 

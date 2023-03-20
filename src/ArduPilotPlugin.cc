@@ -26,7 +26,10 @@
 #include <sstream>
 #include <vector>
 
+
 #include <gz/common/SignalHandler.hh>
+#include <gz/msgs/Utility.hh>
+#include <gz/sim/components/CustomSensor.hh>
 #include <gz/sim/components/Imu.hh>
 #include <gz/sim/components/Joint.hh>
 #include <gz/sim/components/JointForceCmd.hh>
@@ -296,6 +299,30 @@ class gz::sim::systems::ArduPilotPluginPrivate
     this->ranges[_sensorIndex] = sample_min;
   }
 
+  // Anemometer
+
+  /// \brief The entity representing the anemometer.
+  public: gz::sim::Entity anemometerEntity{gz::sim::kNullEntity};
+
+  /// \brief The name of the anemometer.
+  public: std::string anemometerName;
+
+  /// \brief This mutex must be used when accessing the anemometer.
+  public: std::mutex anemometerMsgMutex;
+
+  /// \brief Have we initialized subscription to the anemometer data yet?
+  public: bool anemometerInitialized{false};
+
+  /// \brief A copy of the most recently received apparent wind message.
+  public: gz::msgs::Vector3d anemometerMsg;
+
+  /// \brief Callback for the anemometer.
+  public: void AnemometerCb(const gz::msgs::Vector3d &_msg)
+  {
+    std::lock_guard<std::mutex> lock(this->anemometerMsgMutex);
+    anemometerMsg = _msg;
+  }
+
   /// \brief Pointer to an GPS sensor [optional]
   //  public: sensors::GpsSensorPtr gpsSensor;
 
@@ -460,6 +487,7 @@ void gz::sim::systems::ArduPilotPlugin::Configure(
   this->LoadImuSensors(sdfClone, _ecm);
   this->LoadGpsSensors(sdfClone, _ecm);
   this->LoadRangeSensors(sdfClone, _ecm);
+  this->LoadWindSensors(sdfClone, _ecm);
 
   // Initialise sockets
   if (!InitSockets(sdfClone))
@@ -960,10 +988,106 @@ void gz::sim::systems::ArduPilotPlugin::LoadRangeSensors(
 }
 
 /////////////////////////////////////////////////
+void gz::sim::systems::ArduPilotPlugin::LoadWindSensors(
+    sdf::ElementPtr _sdf,
+    gz::sim::EntityComponentManager &/*_ecm*/)
+{
+    this->dataPtr->anemometerName =
+        _sdf->Get("anemometer", static_cast<std::string>("")).first;
+}
+
+/////////////////////////////////////////////////
 void gz::sim::systems::ArduPilotPlugin::PreUpdate(
     const gz::sim::UpdateInfo &_info,
     gz::sim::EntityComponentManager &_ecm)
 {
+    static bool calledInitAnemometerOnce{false};
+    if (!this->dataPtr->anemometerName.empty() &&
+        !this->dataPtr->anemometerInitialized &&
+        !calledInitAnemometerOnce)
+    {
+        calledInitAnemometerOnce = true;
+        std::string anemometerTopicName;
+
+        // try scoped names first
+        auto entities = entitiesFromScopedName(
+            this->dataPtr->anemometerName, _ecm, this->dataPtr->model.Entity());
+
+        // fall-back to unscoped name
+        if (entities.empty())
+        {
+          entities = EntitiesFromUnscopedName(
+            this->dataPtr->anemometerName, _ecm, this->dataPtr->model.Entity());
+        }
+
+        if (!entities.empty())
+        {
+          if (entities.size() > 1)
+          {
+            gzwarn << "Multiple anemometers with name ["
+                   << this->dataPtr->anemometerName << "] found. "
+                   << "Using the first one.\n";
+          }
+
+          // select first entity
+          this->dataPtr->anemometerEntity = *entities.begin();
+
+          // validate
+          if (!_ecm.EntityHasComponentType(this->dataPtr->anemometerEntity,
+              gz::sim::components::CustomSensor::typeId))
+          {
+            gzerr << "Entity with name ["
+                  << this->dataPtr->anemometerName
+                  << "] is not an anemometer.\n";
+          }
+          else
+          {
+            gzmsg << "Found anemometer with name ["
+                  << this->dataPtr->anemometerName
+                  << "].\n";
+
+            // verify the parent of the anemometer is a link.
+            gz::sim::Entity parent = _ecm.ParentEntity(
+                this->dataPtr->anemometerEntity);
+            if (_ecm.EntityHasComponentType(parent,
+                gz::sim::components::Link::typeId))
+            {
+                anemometerTopicName = gz::sim::scopedName(
+                    this->dataPtr->anemometerEntity, _ecm) + "/anemometer";
+
+                gzdbg << "Computed anemometers topic to be: "
+                    << anemometerTopicName << ".\n";
+            }
+            else
+            {
+              gzerr << "Parent of anemometer ["
+                    << this->dataPtr->anemometerName
+                    << "] is not a link.\n";
+            }
+          }
+        }
+        else
+        {
+            gzerr << "[" << this->dataPtr->modelName << "] "
+                  << "anemometer [" << this->dataPtr->anemometerName
+                  << "] not found, abort ArduPilot plugin." << "\n";
+            return;
+        }
+
+        this->dataPtr->node.Subscribe(anemometerTopicName,
+            &gz::sim::systems::ArduPilotPluginPrivate::AnemometerCb,
+            this->dataPtr.get());
+
+        // Make sure that the anemometer entity has WorldPose
+        // and WorldLinearVelocity components, which we'll need later.
+        enableComponent<components::WorldPose>(
+            _ecm, this->dataPtr->anemometerEntity, true);
+        enableComponent<components::WorldLinearVelocity>(
+            _ecm, this->dataPtr->anemometerEntity, true);
+
+        this->dataPtr->anemometerInitialized = true;
+    }
+
     // This lookup is done in PreUpdate() because in Configure()
     // it's not possible to get the fully qualified topic name we want
     if (!this->dataPtr->imuInitialized)
@@ -1052,18 +1176,10 @@ void gz::sim::systems::ArduPilotPlugin::PreUpdate(
 
         // Make sure that the 'imuLink' entity has WorldPose
         // and WorldLinearVelocity components, which we'll need later.
-        if (!_ecm.EntityHasComponentType(this->dataPtr->imuLink,
-            components::WorldPose::typeId))
-        {
-            _ecm.CreateComponent(this->dataPtr->imuLink,
-                gz::sim::components::WorldPose());
-        }
-        if (!_ecm.EntityHasComponentType(this->dataPtr->imuLink,
-            components::WorldLinearVelocity::typeId))
-        {
-          _ecm.CreateComponent(this->dataPtr->imuLink,
-              gz::sim::components::WorldLinearVelocity());
-        }
+        enableComponent<components::WorldPose>(
+            _ecm, this->dataPtr->imuLink, true);
+        enableComponent<components::WorldLinearVelocity>(
+            _ecm, this->dataPtr->imuLink, true);
     }
     else
     {
@@ -1690,7 +1806,17 @@ void gz::sim::systems::ArduPilotPlugin::CreateStateJSON(
     // position and orientation transform (Aircraft world to Aircraft body)
     gz::math::Pose3d bdyAToBdyG =
         this->dataPtr->modelXYZToAirplaneXForwardZDown.Inverse();
+
+    /// \todo(srmainwaring) check for error.
+    /// The inverse may be incorrect. The error is not evident when using
+    /// the transform from the original plugin:
+    ///   <gazeboXYZToNED>0 0 0 GZ_PI 0 0</gazeboXYZToNED>
+    /// but is when using the correct transform which is
+    ///   <gazeboXYZToNED>0 0 0 GZ_PI 0 GZ_PI/2</gazeboXYZToNED>
+    ///
     gz::math::Pose3d wldAToWldG = this->dataPtr->gazeboXYZToNED.Inverse();
+    // gz::math::Pose3d wldAToWldG = this->dataPtr->gazeboXYZToNED;
+
     gz::math::Pose3d wldGToBdyG = worldPose->Data();
     gz::math::Pose3d wldAToBdyA =
         wldAToWldG * wldGToBdyG * bdyAToBdyG.Inverse();
@@ -1701,6 +1827,57 @@ void gz::sim::systems::ArduPilotPlugin::CreateStateJSON(
 
     // require the duration since sim start in seconds
     double timestamp = _simTime;
+
+    // Anemometer
+    // AP_WindVane_SITL use apparent wind speed and dir in body frame.
+    // WNDVN_SPEED_TYPE 11
+    // WNDVN_TYPE       11
+    double windSpdBdyA{0.0};
+    double windDirBdyA{0.0};
+
+    if (this->dataPtr->anemometerInitialized)
+    {
+        std::lock_guard<std::mutex> lock(this->dataPtr->anemometerMsgMutex);
+
+        // Anemometer sensors reports apparent wind velocity in sensor frame.
+        auto windVelSnsG = gz::msgs::Convert(this->dataPtr->anemometerMsg);
+
+        // sensor pose relative to the world frame
+        auto wldGToSnsG = gz::sim::worldPose(
+            this->dataPtr->anemometerEntity, _ecm);
+
+        auto bdyAToWldA = wldAToBdyA.Inverse();
+        auto bdyAToSnsG = bdyAToWldA * wldAToWldG * wldGToSnsG;
+
+        // rotate to AP body (FRD) frame
+        auto windVelBdyA = bdyAToSnsG.Rot().RotateVector(windVelSnsG);
+
+        // speed and direction - consider only xy-components and switch sign
+        // of direction (Gazebo specifies where wind is going to,
+        // AruPilot expects where wind is from).
+        double windXBdyA = windVelBdyA.X() * -1.0;
+        double windYBdyA = windVelBdyA.Y() * -1.0;
+        windSpdBdyA = std::sqrt(windXBdyA * windXBdyA + windYBdyA * windYBdyA);
+        windDirBdyA = atan2(windYBdyA, windXBdyA);
+
+        double windXSnsG = windVelSnsG.X();
+        double windYSnsG = windVelSnsG.Y();
+        auto windSpdSnsG = std::sqrt(
+            windXSnsG * windXSnsG + windYSnsG * windYSnsG);
+        auto windDirSnsG = atan2(windYSnsG, windXSnsG);
+
+        // gzdbg << "\nEuler angles:\n"
+        //       << "bdyAToBdyG:  " << bdyAToBdyG.Rot().Euler() << "\n"
+        //       << "Wind velocity:\n"
+        //       << "windVelSnsG: " << windVelSnsG << "\n"
+        //       << "windVelBdyA: " << windVelBdyA << "\n"
+        //       << "Wind speed and direction:\n"
+        //       << "windSpdSnsG: " << windSpdSnsG << "\n"
+        //       << "windDirSnsG: " << windDirSnsG * 180 / GZ_PI <<  "\n"
+        //       << "windSpdBdyA: " << windSpdBdyA << "\n"
+        //       << "windDirBdyA: " << windDirBdyA * 180 / GZ_PI <<  "\n"
+        //       << "\n";
+    }
 
     // build JSON document
     rapidjson::StringBuffer s;
@@ -1783,16 +1960,17 @@ void gz::sim::systems::ArduPilotPlugin::CreateStateJSON(
       }
     }
 
-    // SITL/SIM_JSON supports these additional sensor fields
-    //      windvane : { direction: 0, speed: 0 }
-
-    // writer.Key("windvane");
-    // writer.StartObject();
-    // writer.Key("direction");
-    // writer.Double(1.57079633);
-    // writer.Key("speed");
-    // writer.Double(5.5);
-    // writer.EndObject();
+    // Wind sensor
+    if (this->dataPtr->anemometerInitialized)
+    {
+      writer.Key("windvane");
+      writer.StartObject();
+      writer.Key("direction");
+      writer.Double(windDirBdyA);
+      writer.Key("speed");
+      writer.Double(windSpdBdyA);
+      writer.EndObject();
+    }
 
     writer.EndObject();
 
