@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<sdf version="1.7">
+  <model name="launchpad">
+    <pose>0 0 0 0 0 0</pose>
+    <link name="base_link">
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>0.3 0.3 0.5</size>
+          </box>
+        </geometry>
+      </visual>
+    </link>
+    <joint name="world_joint" type="fixed">
+      <pose>0 0 0 0 0 0</pose>
+      <parent>world</parent>
+      <child>base_link</child>
+    </joint>
+  </model>
+</sdf>
