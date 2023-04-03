@@ -48,7 +48,7 @@ class CatapultPlugin:
   public: void PreUpdate(const gz::sim::UpdateInfo &_info,
                          gz::sim::EntityComponentManager &_ecm) final;
 
-  // TODO need implementation
+  // TODO(41Mo): need implementation
   // Documentation inherited
   // public: void Reset(const gz::sim::UpdateInfo &_info,
   //                        gz::sim::EntityComponentManager &_ecm) final;
