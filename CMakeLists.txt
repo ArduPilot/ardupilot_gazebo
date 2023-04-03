@@ -51,11 +51,26 @@ add_library(ParachutePlugin
   SHARED
   src/ParachutePlugin.cc
 )
+
 target_include_directories(ParachutePlugin PUBLIC
   include
   ${GZ-SIM_INCLUDE_DIRS}
 )
 
 target_link_libraries(ParachutePlugin PUBLIC
+  ${GZ-SIM_LIBRARIES}
+)
+
+add_library(CatapultPlugin
+  SHARED
+  src/CatapultPlugin.cc
+)
+
+target_include_directories(CatapultPlugin PUBLIC
+  include
+  ${GZ-SIM_INCLUDE_DIRS}
+)
+
+target_link_libraries(CatapultPlugin PUBLIC
   ${GZ-SIM_LIBRARIES}
 )

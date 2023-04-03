@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<!--
+    Zephyr Delta Wing with Catapult
+
+    1. Catapult set up
+
+    CatapultPlugin
+    ===============
+
+    Add the parachute plugin element to the model:
+
+    <plugin filename="libCatapultPlugin.so" name="CatapultPlugin">
+      <direction>0.7 0 0.3</direction>
+      <force_magnetude>100.0</force_magnetude>
+      <launch_duration>0.5</launch_duration>
+      <vehicle_link>zephyr::wing</vehicle_link>
+      <catapult_link>launchpad::base_link</catapult_link>
+    </plugin>
+
+  2. Running
+
+  Server
+  ======
+
+  gz sim -v4 -s -r zephyr_catapult.sdf
+
+  Client
+  ======
+
+  gz sim -v4 -g
+
+  SITL
+  ====
+
+  sim_vehicle.py -D -v ArduPlane -f gazebo-zephyr \-\-model JSON \-\-map \-\-console
+
+  3. How to launch
+
+  3.1 SITL
+  ===
+  
+  3.1.1 setup auto mission with takeoff waypoint and change mode to AUTO. Another approach - change mode to `mode takeoff`
+  3.1.2 arm throttle
+
+  3.2 GAZEBO
+  ======
+  Release catapult with topic
+      `gz topic -t "/model/zephyr_with_catapult/catapult/cmd_release" -m gz.msgs.Empty -p "unused: true"`
+-->
+<sdf version="1.7">
+  <world name="zephyr_runway">
+    <physics name="1ms" type="ignore">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>-1.0</real_time_factor>
+    </physics>
+
+    <plugin filename="gz-sim-physics-system"
+      name="gz::sim::systems::Physics">
+    </plugin>
+    <plugin filename="gz-sim-user-commands-system"
+      name="gz::sim::systems::UserCommands">
+    </plugin>
+    <plugin filename="gz-sim-scene-broadcaster-system"
+      name="gz::sim::systems::SceneBroadcaster">
+    </plugin>
+    <plugin filename="gz-sim-imu-system"
+      name="gz::sim::systems::Imu">
+    </plugin>
+
+    <scene>
+      <ambient>1.0 1.0 1.0</ambient>
+      <background>0.8 0.8 0.8</background>
+      <sky></sky>
+    </scene>
+
+    <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.8 0.8 0.8 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+
+    <include>
+      <uri>model://runway</uri>
+    </include>
+
+    <include>
+      <pose>0 0 1.5 0 0 1.5707963</pose>
+      <uri>model://zephyr_with_catapult</uri>
+    </include>
+
+  </world>
+</sdf>
+
