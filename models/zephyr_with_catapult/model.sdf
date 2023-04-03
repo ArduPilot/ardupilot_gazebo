@@ -165,13 +165,6 @@
       <joint_name>zephyr::flap_right_joint</joint_name>
     </plugin>
 
-    <!-- <plugin filename="gz-sim-detachable-joint-system" name="gz::sim::systems::DetachableJoint"> -->
-    <!--   <parent_link>wing</parent_link> -->
-    <!--   <child_model>launchpad</child_model> -->
-    <!--   <child_link>launchpad::base_link</child_link> -->
-    <!--   <topic>/B3/detach</topic> -->
-    <!-- </plugin> -->
-
     <plugin name="ArduPilotPlugin" filename="libArduPilotPlugin">
       <!-- Port settings -->
       <fdm_addr>127.0.0.1</fdm_addr>
