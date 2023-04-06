@@ -35,6 +35,7 @@
 #include <gz/sim/Util.hh>
 #include <gz/sim/World.hh>
 #include <gz/sim/components/DetachableJoint.hh>
+#include <gz/sim/components/Inertial.hh>
 #include <gz/sim/components/Link.hh>
 #include <gz/sim/components/Model.hh>
 #include <gz/sim/components/Name.hh>
@@ -52,6 +53,10 @@ public:
   void OnCommand(const msgs::Empty &);
 
 public:
+  math::Inertiald VehicleInertial(const EntityComponentManager &_ecm,
+                                  Entity _entity);
+
+public:
   enum LaunchStatus { VEHICLE_STANDBY, VEHICLE_INLAUNCH, VEHICLE_LAUNCHED };
 
 public:
@@ -67,10 +72,10 @@ public:
   math::Vector3d direction;
 
 public:
-  double force_magnitude;
+  double launchAccel;
 
 public:
-  int64_t launch_duration;
+  int64_t launchDuration;
 
 public:
   bool validConfig{false};
@@ -82,11 +87,36 @@ public:
   Link vehicleLink;
 
 public:
+  double vehicleMass;
+
+public:
   transport::Node node;
 };
 
 void CatapultPlugin::Impl::OnCommand(const msgs::Empty &) {
   catapult_released = true;
+}
+
+math::Inertiald
+CatapultPlugin::Impl::VehicleInertial(const EntityComponentManager &_ecm,
+                                      Entity _entity) {
+  math::Inertiald vehicleInertial;
+
+  for (const Entity &link :
+       _ecm.ChildrenByComponents(_entity, components::Link())) {
+    auto inertial = _ecm.Component<components::Inertial>(link);
+    if (nullptr == inertial) {
+      gzerr << "Could not find inertial component" << std::endl;
+      return vehicleInertial;
+    }
+    vehicleInertial += inertial->Data();
+  }
+
+  for (const Entity &modelEnt :
+       _ecm.ChildrenByComponents(_entity, components::Model())) {
+    vehicleInertial += this->VehicleInertial(_ecm, modelEnt);
+  }
+  return vehicleInertial;
 }
 
 std::vector<std::string> split_str_by_delim(const std::string &s,
@@ -170,14 +200,14 @@ void CatapultPlugin::Configure(const Entity &_entity,
     return;
   }
 
-  this->impl->direction = _sdf->Get<math::Vector3d>("direction");
+  this->impl->direction = _sdf->Get<math::Vector3d>("direction").Normalize();
   gzdbg << "direction: " << this->impl->direction << std::endl;
 
-  this->impl->force_magnitude = _sdf->Get<double>("force_magnetude");
-  gzdbg << "force_magnetude: " << this->impl->force_magnitude << std::endl;
+  this->impl->launchAccel = _sdf->Get<double>("launch_accel");
+  gzdbg << "launch_accel: " << this->impl->launchAccel << std::endl;
 
-  this->impl->launch_duration = _sdf->Get<int>("launch_duration");
-  gzdbg << "launch_duration: " << this->impl->launch_duration << std::endl;
+  this->impl->launchDuration = _sdf->Get<int>("launch_duration");
+  gzdbg << "launch_duration: " << this->impl->launchDuration << std::endl;
 
   auto vehicleLinkName = _sdf->Get<std::string>("vehicle_link");
   gzdbg << "vehicleLink: " << vehicleLinkName << std::endl;
@@ -242,6 +272,9 @@ void CatapultPlugin::Configure(const Entity &_entity,
   gzdbg << "CatapultPlugin subscribing to messages on "
         << "[" << command_topic << "]\n";
 
+  this->impl->vehicleMass =
+      this->impl->VehicleInertial(_ecm, _entity).MassMatrix().Mass();
+  gzdbg << "Detected vehicle mass" << this->impl->vehicleMass << std::endl;
   this->impl->validConfig = true;
 }
 
@@ -275,12 +308,10 @@ void CatapultPlugin::PreUpdate(const UpdateInfo &_info,
       this->impl->detachableJointEntity = kNullEntity;
     }
 
-    // Define launch direction
-    this->impl->direction.Normalize();
-
     // Apply force to the vehicle
-    math::Vector3d force = this->impl->force_magnitude * this->impl->direction;
-    this->impl->vehicleLink.AddWorldForce(_ecm, force);
+    this->impl->vehicleLink.AddWorldForce(_ecm, this->impl->launchAccel *
+                                                    this->impl->vehicleMass *
+                                                    this->impl->direction);
 
     auto sec =
         std::chrono::duration_cast<std::chrono::seconds>(_info.simTime).count();
