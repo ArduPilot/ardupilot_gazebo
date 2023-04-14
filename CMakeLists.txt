@@ -1,37 +1,33 @@
 cmake_minimum_required(VERSION 3.10.2 FATAL_ERROR)
+project(ardupilot_gazebo)
 
-#============================================================================
-# Initialize the project
-#============================================================================
-project(ardupilot_sitl_gazebo)
+# --------------------------------------------------------------------------- #
+# If ament_cmake is found build as an ament package, otherwise ignore.
+# This is so the system may be built for Gazebo only, if ROS is not available.
+find_package(ament_cmake)
+if(${ament_cmake_FOUND})
+  message("Building ${PROJECT_NAME} as an `ament_cmake` project.")
+endif()
 
-#------------------------------------------------------------------------
-# Compile as C++14
-
+# --------------------------------------------------------------------------- #
+# Compile as C++14.
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-#============================================================================
-# Find gz-cmake
-#============================================================================
-find_package(gz-cmake3 3.0.0 REQUIRED)
+# --------------------------------------------------------------------------- #
+# Find gz-sim and dependencies.
+find_package(gz-cmake3 REQUIRED)
 set(GZ_CMAKE_VER ${gz-cmake3_VERSION_MAJOR})
 
-#============================================================================
-# Search for project-specific dependencies
-#============================================================================
-
-#--------------------------------------
-# Find gz-sim
 gz_find_package(gz-sim7 REQUIRED)
 set(GZ_SIM_VER ${gz-sim7_VERSION_MAJOR})
 
-#--------------------------------------
-# Find RapidJSON
+# --------------------------------------------------------------------------- #
+# Find RapidJSON.
 find_package(RapidJSON REQUIRED)
 
-#======================================
-# Build plugin
+# --------------------------------------------------------------------------- #
+# Build plugin.
 
 add_library(ArduPilotPlugin
     SHARED
@@ -39,23 +35,59 @@ add_library(ArduPilotPlugin
     src/Socket.cpp
     src/Util.cc
 )
-target_include_directories(ArduPilotPlugin PUBLIC
+target_include_directories(ArduPilotPlugin PRIVATE
   include
-	${GZ-SIM_INCLUDE_DIRS}
 )
-target_link_libraries(ArduPilotPlugin PUBLIC
-  ${GZ-SIM_LIBRARIES}
+target_link_libraries(ArduPilotPlugin PRIVATE
+  gz-sim${GZ_SIM_VER}::gz-sim${GZ_SIM_VER}
 )
 
 add_library(ParachutePlugin
   SHARED
   src/ParachutePlugin.cc
 )
-target_include_directories(ParachutePlugin PUBLIC
+target_include_directories(ParachutePlugin PRIVATE
   include
-  ${GZ-SIM_INCLUDE_DIRS}
+)
+target_link_libraries(ParachutePlugin PRIVATE
+  gz-sim${GZ_SIM_VER}::gz-sim${GZ_SIM_VER}
 )
 
-target_link_libraries(ParachutePlugin PUBLIC
-  ${GZ-SIM_LIBRARIES}
+# --------------------------------------------------------------------------- #
+# Install.
+
+install(
+  TARGETS
+  ArduPilotPlugin
+  ParachutePlugin
+  DESTINATION lib/${PROJECT_NAME}
 )
+
+install(
+  DIRECTORY
+  config/
+  DESTINATION share/${PROJECT_NAME}/config
+)
+
+install(
+  DIRECTORY
+  models/
+  DESTINATION share/${PROJECT_NAME}/models
+)
+
+install(
+  DIRECTORY
+  worlds/
+  DESTINATION share/${PROJECT_NAME}/worlds
+)
+
+# --------------------------------------------------------------------------- #
+# Register as an ament package if ament_cmake is available.
+if(${ament_cmake_FOUND})
+  ament_environment_hooks(
+    "${CMAKE_CURRENT_SOURCE_DIR}/hooks/${PROJECT_NAME}.dsv.in")
+  ament_environment_hooks(
+    "${CMAKE_CURRENT_SOURCE_DIR}/hooks/${PROJECT_NAME}.sh.in")
+
+  ament_package()
+endif()
