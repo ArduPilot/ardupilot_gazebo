@@ -4,7 +4,7 @@ project(ardupilot_gazebo)
 # --------------------------------------------------------------------------- #
 # If ament_cmake is found build as an ament package, otherwise ignore.
 # This is so the system may be built for Gazebo only, if ROS is not available.
-find_package(ament_cmake)
+find_package(ament_cmake QUIET)
 if(${ament_cmake_FOUND})
   message("Building ${PROJECT_NAME} as an `ament_cmake` project.")
 endif()
