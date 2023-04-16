@@ -1,8 +1,8 @@
 <?xml version='1.0'?>
 <sdf version='1.9'>
   <model name='gimbal_small_2d'>
-    <pose>0 0 0.18 0 0 0</pose>
-    <link name='base_link'>
+    <!-- <pose>0 0 0.18 0 0 0</pose> -->
+    <link name='gimbal_link'>
       <inertial>
         <mass>0.2</mass>
         <inertia>
@@ -14,11 +14,11 @@
           <izz>0.0001</izz>
         </inertia>
       </inertial>
-      <visual name='base_main_viz'>
+      <visual name='gimbal_main_viz'>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://gimbal_small_2d/meshes/base_main.dae</uri>
+            <uri>package://ardupilot_gazebo/models/gimbal_small_2d/meshes/base_main.dae</uri>
           </mesh>
         </geometry>
         <material>
@@ -27,7 +27,7 @@
           <specular>0.01 0.01 0.01 1.0</specular>
         </material>
       </visual>
-      <collision name='base_col'>
+      <collision name='gimbal_col'>
         <pose>0.01 0.075 -0.025 0 0 0</pose>
         <geometry>
           <box>
@@ -52,7 +52,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://gimbal_small_2d/meshes/base_arm.dae</uri>
+            <uri>package://ardupilot_gazebo/models/gimbal_small_2d/meshes/base_arm.dae</uri>
           </mesh>
         </geometry>
         <material>
@@ -65,13 +65,13 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://gimbal_small_2d/meshes/base_arm.dae</uri>
+            <uri>package://ardupilot_gazebo/models/gimbal_small_2d/meshes/base_arm.dae</uri>
           </mesh>
         </geometry>
       </collision>
     </link>
     <joint name='roll_joint' type='revolute'>
-      <parent>base_link</parent>
+      <parent>gimbal_link</parent>
       <child>roll_link</child>
       <axis>
         <xyz>0 0 1</xyz>
@@ -102,7 +102,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://gimbal_small_2d/meshes/tilt.dae</uri>
+            <uri>package://ardupilot_gazebo/models/gimbal_small_2d/meshes/tilt.dae</uri>
           </mesh>
         </geometry>
         <material>
@@ -116,7 +116,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://gimbal_small_2d/meshes/tilt.dae</uri>
+            <uri>package://ardupilot_gazebo/models/gimbal_small_2d/meshes/tilt.dae</uri>
           </mesh>
         </geometry>
       </collision>

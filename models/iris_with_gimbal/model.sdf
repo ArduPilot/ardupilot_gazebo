@@ -1,19 +1,20 @@
 <?xml version='1.0'?>
 <sdf version="1.9">
   <model name="iris_with_gimbal">
-    <include>
-      <uri>model://iris_with_standoffs</uri>
+    <include merge="true">
+      <uri>package://ardupilot_gazebo/models/iris_with_standoffs</uri>
+      <name>iris</name>
     </include>
 
-    <include>
-      <uri>model://gimbal_small_2d</uri>
+    <include merge="true">
+      <uri>package://ardupilot_gazebo/models/gimbal_small_2d</uri>
       <name>gimbal</name>
-      <pose>0 -0.01 0.070 1.57 0 1.57</pose>    
+      <pose>0 -0.01 -0.11 1.57 0 1.57</pose>
     </include>
 
     <joint name="gimbal_joint" type="revolute">
-      <parent>iris_with_standoffs::base_link</parent>
-      <child>gimbal::base_link</child>
+      <parent>base_link</parent>
+      <child>gimbal_link</child>
       <axis>
         <limit>
           <lower>0</lower>
@@ -27,6 +28,22 @@
     <plugin filename="gz-sim-joint-state-publisher-system"
       name="gz::sim::systems::JointStatePublisher">
     </plugin>
+    <plugin
+      filename="gz-sim-pose-publisher-system"
+      name="gz::sim::systems::PosePublisher">
+      <publish_link_pose>true</publish_link_pose>
+      <use_pose_vector_msg>true</use_pose_vector_msg>
+      <static_publisher>true</static_publisher>
+      <static_update_frequency>1</static_update_frequency>
+    </plugin>
+
+    <plugin
+      filename="gz-sim-odometry-publisher-system"
+      name="gz::sim::systems::OdometryPublisher">
+      <odom_frame>iris/odom</odom_frame>
+      <robot_base_frame>iris</robot_base_frame>
+      <dimensions>3</dimensions>
+    </plugin>
     <plugin filename="gz-sim-lift-drag-system"
         name="gz::sim::systems::LiftDrag">
       <a0>0.3</a0>
@@ -42,7 +59,7 @@
       <cp>0.084 0 0</cp>
       <forward>0 1 0</forward>
       <upward>0 0 1</upward>
-      <link_name>iris_with_standoffs::rotor_0</link_name>
+      <link_name>rotor_0</link_name>
     </plugin>
     <plugin filename="gz-sim-lift-drag-system"
         name="gz::sim::systems::LiftDrag">
@@ -59,7 +76,7 @@
       <cp>-0.084 0 0</cp>
       <forward>0 -1 0</forward>
       <upward>0 0 1</upward>
-      <link_name>iris_with_standoffs::rotor_0</link_name>
+      <link_name>rotor_0</link_name>
     </plugin>
 
     <plugin filename="gz-sim-lift-drag-system"
@@ -77,7 +94,7 @@
       <cp>0.084 0 0</cp>
       <forward>0 1 0</forward>
       <upward>0 0 1</upward>
-      <link_name>iris_with_standoffs::rotor_1</link_name>
+      <link_name>rotor_1</link_name>
     </plugin>
     <plugin filename="gz-sim-lift-drag-system"
         name="gz::sim::systems::LiftDrag">
@@ -94,7 +111,7 @@
       <cp>-0.084 0 0</cp>
       <forward>0 -1 0</forward>
       <upward>0 0 1</upward>
-      <link_name>iris_with_standoffs::rotor_1</link_name>
+      <link_name>rotor_1</link_name>
     </plugin>
 
     <plugin filename="gz-sim-lift-drag-system"
@@ -112,7 +129,7 @@
       <cp>0.084 0 0</cp>
       <forward>0 -1 0</forward>
       <upward>0 0 1</upward>
-      <link_name>iris_with_standoffs::rotor_2</link_name>
+      <link_name>rotor_2</link_name>
     </plugin>
     <plugin filename="gz-sim-lift-drag-system"
         name="gz::sim::systems::LiftDrag">
@@ -129,7 +146,7 @@
       <cp>-0.084 0 0</cp>
       <forward>0 1 0</forward>
       <upward>0 0 1</upward>
-      <link_name>iris_with_standoffs::rotor_2</link_name>
+      <link_name>rotor_2</link_name>
     </plugin>
 
     <plugin filename="gz-sim-lift-drag-system"
@@ -147,7 +164,7 @@
       <cp>0.084 0 0</cp>
       <forward>0 -1 0</forward>
       <upward>0 0 1</upward>
-      <link_name>iris_with_standoffs::rotor_3</link_name>
+      <link_name>rotor_3</link_name>
     </plugin>
     <plugin filename="gz-sim-lift-drag-system"
         name="gz::sim::systems::LiftDrag">
@@ -164,24 +181,39 @@
       <cp>-0.084 0 0</cp>
       <forward>0 1 0</forward>
       <upward>0 0 1</upward>
-      <link_name>iris_with_standoffs::rotor_3</link_name>
+      <link_name>rotor_3</link_name>
     </plugin>
 
     <plugin filename="gz-sim-apply-joint-force-system"
       name="gz::sim::systems::ApplyJointForce">
-      <joint_name>iris_with_standoffs::rotor_0_joint</joint_name>
+      <joint_name>rotor_0_joint</joint_name>
     </plugin>
     <plugin filename="gz-sim-apply-joint-force-system"
       name="gz::sim::systems::ApplyJointForce">
-      <joint_name>iris_with_standoffs::rotor_1_joint</joint_name>
+      <joint_name>rotor_1_joint</joint_name>
     </plugin>
     <plugin filename="gz-sim-apply-joint-force-system"
       name="gz::sim::systems::ApplyJointForce">
-      <joint_name>iris_with_standoffs::rotor_2_joint</joint_name>
+      <joint_name>rotor_2_joint</joint_name>
     </plugin>
     <plugin filename="gz-sim-apply-joint-force-system"
       name="gz::sim::systems::ApplyJointForce">
-      <joint_name>iris_with_standoffs::rotor_3_joint</joint_name>
+      <joint_name>rotor_3_joint</joint_name>
+    </plugin>
+
+    <plugin
+      filename="gz-sim-joint-position-controller-system"
+      name="gz::sim::systems::JointPositionController">
+      <joint_name>roll_joint</joint_name>
+      <topic>/gimbal/cmd_roll</topic>
+      <p_gain>2</p_gain>
+    </plugin>
+    <plugin
+      filename="gz-sim-joint-position-controller-system"
+      name="gz::sim::systems::JointPositionController">
+      <joint_name>tilt_joint</joint_name>
+      <topic>/gimbal/cmd_tilt</topic>
+      <p_gain>2</p_gain>
     </plugin>
 
     <plugin name="ArduPilotPlugin"
@@ -194,7 +226,7 @@
       <gazeboXYZToNED>0 0 0 3.141593 0 1.57079632</gazeboXYZToNED>
 
       <!-- Sensors -->
-      <imuName>iris_with_standoffs::imu_link::imu_sensor</imuName>
+      <imuName>imu_link::imu_sensor</imuName>
 
       <!-- Control channels -->
       <!--
@@ -205,7 +237,7 @@
           multiplier = 838 max rpm / 1 = 838
         -->
       <control channel="0">
-        <jointName>iris_with_standoffs::rotor_0_joint</jointName>
+        <jointName>rotor_0_joint</jointName>
         <useForce>1</useForce>
         <multiplier>838</multiplier>
         <offset>0</offset>
@@ -223,7 +255,7 @@
       </control>
 
       <control channel="1">
-        <jointName>iris_with_standoffs::rotor_1_joint</jointName>
+        <jointName>rotor_1_joint</jointName>
         <useForce>1</useForce>
         <multiplier>838</multiplier>
         <offset>0</offset>
@@ -241,7 +273,7 @@
       </control>
 
       <control channel="2">
-        <jointName>iris_with_standoffs::rotor_2_joint</jointName>
+        <jointName>rotor_2_joint</jointName>
         <useForce>1</useForce>
         <multiplier>-838</multiplier>
         <offset>0</offset>
@@ -259,7 +291,7 @@
       </control>
 
       <control channel="3">
-        <jointName>iris_with_standoffs::rotor_3_joint</jointName>
+        <jointName>rotor_3_joint</jointName>
         <useForce>1</useForce>
         <multiplier>-838</multiplier>
         <offset>0</offset>
@@ -277,7 +309,7 @@
       </control>
 
       <control channel="4">
-        <jointName>gimbal::roll_joint</jointName>
+        <jointName>roll_joint</jointName>
         <multiplier>3.14159265</multiplier>
         <offset>-0.5</offset>
         <servo_min>1100</servo_min>
@@ -288,7 +320,7 @@
       </control>
 
       <control channel="5">
-        <jointName>gimbal::tilt_joint</jointName>
+        <jointName>tilt_joint</jointName>
         <multiplier>3.14159265</multiplier>
         <offset>-0.5</offset>
         <servo_min>1100</servo_min>
@@ -298,21 +330,6 @@
         <p_gain>3</p_gain>
       </control>
 
-    </plugin>
-
-    <plugin
-      filename="gz-sim-joint-position-controller-system"
-      name="gz::sim::systems::JointPositionController">
-      <joint_name>gimbal::roll_joint</joint_name>
-      <topic>/gimbal/cmd_roll</topic>
-      <p_gain>2</p_gain>
-    </plugin>
-    <plugin
-      filename="gz-sim-joint-position-controller-system"
-      name="gz::sim::systems::JointPositionController">
-      <joint_name>gimbal::tilt_joint</joint_name>
-      <topic>/gimbal/cmd_tilt</topic>
-      <p_gain>2</p_gain>
     </plugin>
 
   </model>
