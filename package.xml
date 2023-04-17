@@ -10,6 +10,10 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
+  <build_depend>rapidjson-dev</build_depend>  
+  <build_depend>libgz-cmake3-dev</build_depend>
+  <build_depend>libgz-sim7-dev</build_depend>
+
   <test_depend>ament_lint_auto</test_depend>
 
   <export>
