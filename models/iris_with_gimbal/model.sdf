@@ -186,21 +186,17 @@
 
     <plugin name="ArduPilotPlugin"
       filename="ArduPilotPlugin">
-      <!-- Port settings -->
       <fdm_addr>127.0.0.1</fdm_addr>
       <fdm_port_in>9002</fdm_port_in>
       <connectionTimeoutMaxCount>5</connectionTimeoutMaxCount>
       <lock_step>1</lock_step>
-
-      <!-- Frame conventions
-        Require by ArduPilot: change model and gazebo from XYZ to XY-Z coordinates
-      -->
       <modelXYZToAirplaneXForwardZDown>0 0 0 3.141593 0 0</modelXYZToAirplaneXForwardZDown>
-      <gazeboXYZToNED>0 0 0 3.141593 0 0</gazeboXYZToNED>
+      <gazeboXYZToNED>0 0 0 3.141593 0 1.57079632</gazeboXYZToNED>
 
       <!-- Sensors -->
       <imuName>iris_with_standoffs::imu_link::imu_sensor</imuName>
 
+      <!-- Control channels -->
       <!--
           incoming control command [0, 1]
           so offset it by 0 to get [0, 1]
