@@ -17,7 +17,7 @@
   gz topic -t /parachute/cmd_release -m gz.msgs.Double -p 'data:1.0'
 
 -->
-<sdf version="1.7">
+<sdf version="1.9">
   <world name="test_parachute">
     <physics name="1ms" type="ignore">
       <max_step_size>0.001</max_step_size>

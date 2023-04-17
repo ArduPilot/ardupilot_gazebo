@@ -91,7 +91,7 @@
   FBWA>   auto            # switch to auto
   AUTO>   rc 9 1900       # manual parachute release
 -->
-<sdf version="1.7">
+<sdf version="1.9">
   <world name="zephyr_runway">
     <physics name="1ms" type="ignore">
       <max_step_size>0.001</max_step_size>

@@ -13,7 +13,7 @@
   gz topic -t "/rotor3_cmd" -m gz.msgs.Double -p "data: 1"
  -->
 
-<sdf version="1.7">
+<sdf version="1.9">
   <world name="test_nested_model">
     <physics name="1ms" type="ignore">
       <max_step_size>0.001</max_step_size>
