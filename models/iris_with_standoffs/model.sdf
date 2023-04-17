@@ -209,8 +209,8 @@
             <name>Gazebo/Blue</name>
             <uri>__default__</uri>
           </script-->
-          <ambient>0 0 1</ambient>
-          <diffuse>0 0 1</diffuse>
+          <ambient>0 0 1 1</ambient>
+          <diffuse>0 0 1 1</diffuse>
           <specular>0.1 0.1 0.1 1</specular>
         </material>
       </visual>
@@ -278,12 +278,12 @@
         </geometry>
         <material>
           <!--script>
-            <name>Gazebo/White</name>
+            <name>Gazebo/Blue</name>
             <uri>__default__</uri>
           </script-->
-          <ambient>1 1 1 1</ambient>
-          <diffuse>1 1 1 1</diffuse>
-          <specular>.1 .1 .1 1</specular>
+          <ambient>0 0 1 1</ambient>
+          <diffuse>0 0 1 1</diffuse>
+          <specular>0.1 0.1 0.1 1</specular>
         </material>
       </visual>
       <gravity>1</gravity>
@@ -350,11 +350,11 @@
         </geometry>
         <material>
           <!--script>
-            <name>Gazebo/Blue</name>
+            <name>Gazebo/Green</name>
             <uri>__default__</uri>
           </script-->
-          <ambient>0 0 1</ambient>
-          <diffuse>0 0 1</diffuse>
+          <ambient>0 1 0 1</ambient>
+          <diffuse>0 1 0 1</diffuse>
           <specular>0.1 0.1 0.1 1</specular>
         </material>
       </visual>
@@ -422,12 +422,12 @@
         </geometry>
         <material>
           <!--script>
-            <name>Gazebo/White</name>
+            <name>Gazebo/Green</name>
             <uri>__default__</uri>
           </script-->
-          <ambient>1 1 1 1</ambient>
-          <diffuse>1 1 1 1</diffuse>
-          <specular>.1 .1 .1 1</specular>
+          <ambient>0 1 0 1</ambient>
+          <diffuse>0 1 0 1</diffuse>
+          <specular>0.1 0.1 0.1 1</specular>
         </material>
       </visual>
       <gravity>1</gravity>
