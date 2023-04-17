@@ -153,7 +153,7 @@
       <joint_name>zephyr::flap_right_joint</joint_name>
     </plugin>
 
-    <plugin name="ArduPilotPlugin" filename="libArduPilotPlugin">
+    <plugin name="ArduPilotPlugin" filename="ArduPilotPlugin">
       <!-- Port settings -->
       <fdm_addr>127.0.0.1</fdm_addr>
       <fdm_port_in>9002</fdm_port_in>

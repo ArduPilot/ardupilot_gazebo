@@ -277,7 +277,7 @@
       </joint>
 
       <plugin name="ArduPilotPlugin"
-        filename="libArduPilotPlugin">
+        filename="ArduPilotPlugin">
         <fdm_addr>127.0.0.1</fdm_addr>
         <fdm_port_in>9002</fdm_port_in>
         <connectionTimeoutMaxCount>5</connectionTimeoutMaxCount>
