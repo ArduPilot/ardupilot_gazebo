@@ -18,7 +18,7 @@
   MANUAL> module load sail
 
 -->
-<sdf version="1.7">
+<sdf version="1.9">
   <world name="test_anemometer">
     <physics name="1ms" type="ignored">
       <max_step_size>0.001</max_step_size>
