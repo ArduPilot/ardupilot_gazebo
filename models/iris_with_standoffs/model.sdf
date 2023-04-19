@@ -129,6 +129,29 @@
           <specular>0.01 0.01 0.01 1.0</specular>
         </material>
       </visual>
+ 
+      <!-- Additional sensors -->
+      <sensor name="air_pressure_sensor" type="air_pressure">
+        <always_on>1</always_on>
+        <update_rate>30</update_rate>
+      </sensor>
+      <sensor name="air_speed_sensor" type="air_speed">
+        <always_on>1</always_on>
+        <update_rate>30</update_rate>
+      </sensor>
+      <sensor name="altimeter_sensor" type="altimeter">
+        <always_on>1</always_on>
+        <update_rate>30</update_rate>
+      </sensor>
+      <sensor name="magnetometer_sensor" type="magnetometer">
+        <always_on>1</always_on>
+        <update_rate>30</update_rate>
+      </sensor>
+      <sensor name="navsat_sensor" type="navsat">
+        <always_on>1</always_on>
+        <update_rate>30</update_rate>
+      </sensor>
+
     </link>
     <link name='imu_link'>
       <inertial>
