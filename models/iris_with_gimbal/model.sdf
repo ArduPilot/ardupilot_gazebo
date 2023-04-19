@@ -216,6 +216,19 @@
       <p_gain>2</p_gain>
     </plugin>
 
+    <plugin filename="gz-sim-linearbatteryplugin-system"
+      name="gz::sim::systems::LinearBatteryPlugin">
+      <battery_name>lipo_3500mAh</battery_name>
+      <fix_issue_225>true</fix_issue_225>
+      <open_circuit_voltage_constant_coef>12.6</open_circuit_voltage_constant_coef>
+      <open_circuit_voltage_linear_coef>-2.7</open_circuit_voltage_linear_coef>
+      <capacity>3.5</capacity>
+      <voltage>12.6</voltage>
+      <initial_charge>3.5</initial_charge>
+      <power_load>200.0</power_load>
+      <start_draining>false</start_draining>
+    </plugin>
+
     <plugin name="ArduPilotPlugin"
       filename="ArduPilotPlugin">
       <fdm_addr>127.0.0.1</fdm_addr>
