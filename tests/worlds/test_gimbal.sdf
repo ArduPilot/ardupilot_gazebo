@@ -6,22 +6,21 @@
       <real_time_factor>1.0</real_time_factor>
     </physics>
 
-    <plugin filename="gz-sim-physics-system"
-      name="gz::sim::systems::Physics">
+    <plugin name="gz::sim::systems::Physics"
+      filename="gz-sim-physics-system">
     </plugin>
-    <plugin
-      filename="gz-sim-sensors-system"
-      name="gz::sim::systems::Sensors">
+    <plugin name="gz::sim::systems::Sensors"
+      filename="gz-sim-sensors-system">
       <render_engine>ogre2</render_engine>
     </plugin>
-    <plugin filename="gz-sim-user-commands-system"
-      name="gz::sim::systems::UserCommands">
+    <plugin name="gz::sim::systems::UserCommands"
+      filename="gz-sim-user-commands-system">
     </plugin>
-    <plugin filename="gz-sim-scene-broadcaster-system"
-      name="gz::sim::systems::SceneBroadcaster">
+    <plugin name="gz::sim::systems::SceneBroadcaster"
+      filename="gz-sim-scene-broadcaster-system">
     </plugin>
-    <plugin filename="gz-sim-imu-system"
-      name="gz::sim::systems::Imu">
+    <plugin name="gz::sim::systems::Imu"
+      filename="gz-sim-imu-system">
     </plugin>
 
     <scene>
@@ -54,10 +53,9 @@
       <uri>model://gimbal_small_2d</uri>
       <name>gimbal</name>
       <pose degrees="true">0 0 0.11 -90 0 90</pose>
-      <plugin
-        filename="gz-sim-joint-position-controller-system"
-        name="gz::sim::systems::JointPositionController">
-        <joint_name>arm_joint</joint_name>
+      <plugin name="gz::sim::systems::JointPositionController"
+        filename="gz-sim-joint-position-controller-system">
+        <joint_name>roll_link</joint_name>
         <topic>arm_cmd</topic>
         <p_gain>2</p_gain>
         <i_gain>0.1</i_gain>
@@ -67,9 +65,8 @@
         <cmd_max>1000</cmd_max>
         <cmd_min>-1000</cmd_min>
       </plugin>
-      <plugin
-        filename="gz-sim-joint-position-controller-system"
-        name="gz::sim::systems::JointPositionController">
+      <plugin name="gz::sim::systems::JointPositionController"
+        filename="gz-sim-joint-position-controller-system">
         <joint_name>tilt_joint</joint_name>
         <topic>tilt_cmd</topic>
         <p_gain>2</p_gain>
@@ -83,8 +80,8 @@
     </include> -->
 
     <!-- nested -->
-    <model name="model2">
-      <pose degrees="true">0 0 0.5 0 0 90</pose>
+    <model name="gimbal_base">
+      <pose>2 0 0.5 0 0 0</pose>
       <link name="base_link">
         <inertial>
           <mass>0.25</mass>
@@ -138,21 +135,25 @@
         </axis>
       </joint>
 
-      <plugin filename="gz-sim-joint-state-publisher-system"
-        name="gz::sim::systems::JointStatePublisher">
+      <plugin name="gz::sim::systems::JointStatePublisher"
+        filename="gz-sim-joint-state-publisher-system">
       </plugin>
-      <plugin
-        filename="gz-sim-joint-position-controller-system"
-        name="gz::sim::systems::JointPositionController">
+      <plugin name="gz::sim::systems::JointPositionController"
+        filename="gz-sim-joint-position-controller-system">
         <joint_name>gimbal::roll_joint</joint_name>
-        <topic>cmd_roll</topic>
+        <topic>/gimbal/cmd_roll</topic>
         <p_gain>2</p_gain>
       </plugin>
-      <plugin
-        filename="gz-sim-joint-position-controller-system"
-        name="gz::sim::systems::JointPositionController">
+      <plugin name="gz::sim::systems::JointPositionController"
+        filename="gz-sim-joint-position-controller-system">
         <joint_name>gimbal::tilt_joint</joint_name>
-        <topic>cmd_pitch</topic>
+        <topic>/gimbal/cmd_pitch</topic>
+        <p_gain>2</p_gain>
+      </plugin>
+      <plugin name="gz::sim::systems::JointPositionController"
+        filename="gz-sim-joint-position-controller-system">
+        <joint_name>gimbal::yaw_joint</joint_name>
+        <topic>/gimbal/cmd_yaw</topic>
         <p_gain>2</p_gain>
       </plugin>
 
