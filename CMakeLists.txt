@@ -22,6 +22,12 @@ if("$ENV{GZ_VERSION}" STREQUAL "harmonic")
   find_package(gz-cmake3 REQUIRED)
   set(GZ_CMAKE_VER ${gz-cmake3_VERSION_MAJOR})
 
+  gz_find_package(gz-common5 REQUIRED)
+  set(GZ_COMMON_VER ${gz-common5_VERSION_MAJOR})
+
+  gz_find_package(gz-rendering8 REQUIRED)
+  set(GZ_RENDERING_VER ${gz-rendering8_VERSION_MAJOR})
+
   gz_find_package(gz-sim8 REQUIRED)
   set(GZ_SIM_VER ${gz-sim8_VERSION_MAJOR})
 
@@ -31,6 +37,12 @@ elseif("$ENV{GZ_VERSION}" STREQUAL "garden" OR NOT DEFINED "ENV{GZ_VERSION}")
   find_package(gz-cmake3 REQUIRED)
   set(GZ_CMAKE_VER ${gz-cmake3_VERSION_MAJOR})
 
+  gz_find_package(gz-common5 REQUIRED)
+  set(GZ_COMMON_VER ${gz-common5_VERSION_MAJOR})
+
+  gz_find_package(gz-rendering7 REQUIRED)
+  set(GZ_RENDERING_VER ${gz-rendering7_VERSION_MAJOR})
+  
   gz_find_package(gz-sim7 REQUIRED)
   set(GZ_SIM_VER ${gz-sim7_VERSION_MAJOR})
 
@@ -70,6 +82,19 @@ target_link_libraries(ParachutePlugin PRIVATE
   gz-sim${GZ_SIM_VER}::gz-sim${GZ_SIM_VER}
 )
 
+add_library(CameraZoomPlugin
+  SHARED
+  src/CameraZoomPlugin.cc
+)
+target_include_directories(CameraZoomPlugin PRIVATE
+  include
+)
+target_link_libraries(CameraZoomPlugin PRIVATE
+  gz-common${GZ_COMMON_VER}::gz-common${GZ_COMMON_VER}
+  gz-rendering${GZ_RENDERING_VER}::gz-rendering${GZ_RENDERING_VER}
+  gz-sim${GZ_SIM_VER}::gz-sim${GZ_SIM_VER}
+)
+
 # --------------------------------------------------------------------------- #
 # Install.
 
@@ -77,6 +102,7 @@ install(
   TARGETS
   ArduPilotPlugin
   ParachutePlugin
+  CameraZoomPlugin
   DESTINATION lib/${PROJECT_NAME}
 )
 

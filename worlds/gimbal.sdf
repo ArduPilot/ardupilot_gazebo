@@ -1,0 +1,288 @@
+<?xml version="1.0" ?>
+<sdf version="1.9">
+  <world name="gimbal">
+    <physics name="1ms" type="ignore">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+    </physics>
+
+    <plugin name="gz::sim::systems::Physics"
+      filename="gz-sim-physics-system">
+    </plugin>
+    <plugin name="gz::sim::systems::Sensors"
+      filename="gz-sim-sensors-system">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+    <plugin name="gz::sim::systems::UserCommands"
+      filename="gz-sim-user-commands-system">
+    </plugin>
+    <plugin name="gz::sim::systems::SceneBroadcaster"
+      filename="gz-sim-scene-broadcaster-system">
+    </plugin>
+    <plugin name="gz::sim::systems::Imu"
+      filename="gz-sim-imu-system">
+    </plugin>
+
+    <scene>
+      <ambient>1.0 1.0 1.0</ambient>
+      <background>0.8 0.8 0.8</background>
+      <sky></sky>
+    </scene>
+
+    <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.8 0.8 0.8 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+          <material>
+            <ambient>0.8 0.8 0.8 1</ambient>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+            <specular>0.8 0.8 0.8 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Gimbal mount fixed to world. -->
+    <model name="mount">
+      <link name="mount_link">
+        <inertial>
+          <mass>10</mass>
+          <inertia>
+            <ixx>0.13733333</ixx>
+            <ixy>0.00</ixy>
+            <ixz>0.00</ixz>
+            <iyy>0.13733333</iyy>
+            <iyz>0.00</iyz>
+            <izz>0.008</izz>
+          </inertia>
+        </inertial>
+        <visual name="post_visual">
+          <pose>-0.2 0 0.5 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.04</radius>
+              <length>1.0</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>1 1 0</ambient>
+            <diffuse>1 1 0</diffuse>
+            <specular>0.1 0.1 0 1</specular>
+          </material>
+        </visual>
+        <visual name="plate_visual">
+          <pose>-0.1 0 1.01 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.2</radius>
+              <length>0.02</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>1 1 0</ambient>
+            <diffuse>1 1 0</diffuse>
+            <specular>0.1 0.1 0 1</specular>
+          </material>
+        </visual>
+        <collision name="post_collision">
+          <pose>-0.2 0 0.5 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.04</radius>
+              <length>1.0</length>
+            </cylinder>
+          </geometry>
+        </collision>
+        <collision name="plate_collision">
+          <pose>-0.1 0 1.01 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.2</radius>
+              <length>0.02</length>
+            </cylinder>
+          </geometry>
+        </collision>
+      </link>
+      <joint name="mount_joint" type="fixed">
+        <parent>world</parent>
+        <child>mount_link</child>
+      </joint>
+
+      <include>
+        <uri>model://gimbal_small_3d</uri>
+        <name>gimbal</name>
+        <pose degrees="true">0 0 0.9055 90 0 90</pose>    
+      </include>
+      <joint name="gimbal_joint" type="revolute">
+        <parent>mount_link</parent>
+        <child>gimbal::base_link</child>
+        <axis>
+          <dynamics>
+            <damping>0.5</damping>
+          </dynamics>
+          <limit>
+            <lower>0</lower>
+            <upper>0</upper>
+          </limit>
+          <xyz>0 0 1</xyz>
+        </axis>
+      </joint>
+
+      <plugin name="gz::sim::systems::JointStatePublisher"
+        filename="gz-sim-joint-state-publisher-system">
+      </plugin>
+      <plugin name="gz::sim::systems::JointPositionController"
+        filename="gz-sim-joint-position-controller-system">
+        <joint_name>gimbal::yaw_joint</joint_name>
+        <topic>/gimbal/cmd_yaw</topic>
+        <p_gain>2</p_gain>
+      </plugin>
+      <plugin name="gz::sim::systems::JointPositionController"
+        filename="gz-sim-joint-position-controller-system">
+        <joint_name>gimbal::roll_joint</joint_name>
+        <topic>/gimbal/cmd_roll</topic>
+        <p_gain>2</p_gain>
+      </plugin>
+      <plugin name="gz::sim::systems::JointPositionController"
+        filename="gz-sim-joint-position-controller-system">
+        <joint_name>gimbal::pitch_joint</joint_name>
+        <topic>/gimbal/cmd_pitch</topic>
+        <p_gain>2</p_gain>
+      </plugin>
+    </model>
+
+  <!-- @online{GazeboFuel-OpenRobotics-Oak-tree,
+    title={Oak tree},
+    organization={Open Robotics},
+    date={2021},
+    month={January},
+    day={2},
+    author={OpenRobotics},
+    url={https://fuel.gazebosim.org/1.0/OpenRobotics/models/Oak tree},
+  } -->
+  <include>
+    <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Oak tree</uri>
+    <name>oak_tree0</name>
+    <pose>10 10 0 0 0 0</pose>
+  </include>
+  <include>
+    <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Oak tree</uri>
+    <name>oak_tree1</name>
+    <pose>8 15 0 0 0 0</pose>
+  </include>
+
+  <!-- @online{GazeboFuel-OpenRobotics-Pine-Tree,
+    title={Pine Tree},
+    organization={Open Robotics},
+    date={2021},
+    month={January},
+    day={2},
+    author={OpenRobotics},
+    url={https://fuel.gazebosim.org/1.0/OpenRobotics/models/Pine Tree},
+  } -->
+  <include>
+    <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Pine Tree</uri>
+    <name>pine_tree0</name>
+    <pose>15 -15 0 0 0 0</pose>
+  </include>
+  <include>
+    <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Pine Tree</uri>
+    <name>pine_tree1</name>
+    <pose>10 -20 0 0 0 0</pose>
+  </include>
+  <include>
+    <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Pine Tree</uri>
+    <name>pine_tree2</name>
+    <pose>12 -10 0 0 0 0</pose>
+  </include>
+
+  <!-- @online{GazeboFuel-OpenRobotics-ground_station,
+    title={ground_station},
+    organization={Open Robotics},
+    date={2022},
+    month={December},
+    day={2},
+    author={OpenRobotics},
+    url={https://fuel.gazebosim.org/1.0/OpenRobotics/models/ground_station},
+  } -->
+  <include>
+    <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/ground_station</uri>
+    <name>ground_station</name>
+    <pose>10 0 0 0 0 0</pose>
+  </include>
+
+  <!-- @online{GazeboFuel-OpenRobotics-Walking-person,
+    title={Walking person},
+    organization={Open Robotics},
+    date={2018},
+    month={January},
+    day={6},
+    author={OpenRobotics},
+    url={https://fuel.gazebosim.org/1.0/OpenRobotics/models/Walking person},
+  } -->
+  <include>
+    <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Walking person</uri>
+    <name>walking_person0</name>
+    <pose>8 2 0 0 0 0</pose>
+  </include>
+
+  <!-- @online{GazeboFuel-plateau-Casual-female,
+    title={Casual female},
+    organization={Open Robotics},
+    date={2022},
+    month={April},
+    day={6},
+    author={plateau},
+    url={https://fuel.gazebosim.org/1.0/plateau/models/Casual female},
+  } -->
+  <include>
+    <uri>https://fuel.gazebosim.org/1.0/plateau/models/Casual female</uri>
+    <name>casual_female0</name>
+    <pose degrees="true">6 -4 0 0 0 145</pose>
+  </include>
+
+  <!-- @online{GazeboFuel-OpenRobotics-Prius-Hybrid,
+    title={Prius Hybrid},
+    organization={Open Robotics},
+    date={2020},
+    month={March},
+    day={6},
+    author={OpenRobotics},
+    url={https://fuel.gazebosim.org/1.0/OpenRobotics/models/Prius Hybrid},
+  } -->
+  <include>
+    <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Prius Hybrid</uri>
+    <name>prius_hybrid0</name>
+    <pose degrees="true">0 7 0 0 0 40</pose>
+  </include>
+
+  </world>
+</sdf>
