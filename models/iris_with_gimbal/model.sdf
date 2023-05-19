@@ -196,7 +196,7 @@
         Require by ArduPilot: change model and gazebo from XYZ to XY-Z coordinates
       -->
       <modelXYZToAirplaneXForwardZDown>0 0 0 3.141593 0 0</modelXYZToAirplaneXForwardZDown>
-      <gazeboXYZToNED>0 0 0 3.141593 0 0</gazeboXYZToNED>
+      <gazeboXYZToNED>0 0 0 3.141593 0 1.57079632</gazeboXYZToNED>
 
       <!-- Sensors -->
       <imuName>iris_with_standoffs::imu_link::imu_sensor</imuName>

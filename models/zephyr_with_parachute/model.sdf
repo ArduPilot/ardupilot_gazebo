@@ -203,7 +203,7 @@
         Zephyr is oriented x-left, y-back, z-up
       -->
       <modelXYZToAirplaneXForwardZDown>0 0 0 3.141593 0 -1.5707963</modelXYZToAirplaneXForwardZDown>
-      <gazeboXYZToNED>0 0 0 3.141593 0 0</gazeboXYZToNED>
+      <gazeboXYZToNED>0 0 0 3.141593 0 1.57079632</gazeboXYZToNED>
 
       <!-- Sensors -->
       <imuName>zephyr::imu_link::imu_sensor</imuName>
