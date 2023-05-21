@@ -41,11 +41,12 @@
 
     <include>
       <uri>model://runway</uri>
+      <pose degrees="true">-29 545 0 0 0 363</pose>
     </include>
 
     <include>
-      <pose>0 0 0.422 -1.5707963 0 1.5707963</pose>
       <uri>model://zephyr_with_ardupilot</uri>
+      <pose degrees="true">0 0 0.422 -90 0 180</pose>
     </include>
 
   </world>
