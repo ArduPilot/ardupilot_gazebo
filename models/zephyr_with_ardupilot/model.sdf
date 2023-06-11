@@ -152,6 +152,11 @@
       name="gz::sim::systems::ApplyJointForce">
       <joint_name>zephyr::flap_right_joint</joint_name>
     </plugin>
+    <plugin
+      filename="gz-sim-odometry-publisher-system"
+      name="gz::sim::systems::OdometryPublisher">
+      <dimensions>3</dimensions>
+    </plugin>
 
     <plugin name="ArduPilotPlugin" filename="ArduPilotPlugin">
       <!-- Port settings -->
