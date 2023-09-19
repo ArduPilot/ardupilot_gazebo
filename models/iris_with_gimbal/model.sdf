@@ -28,14 +28,6 @@
     <plugin filename="gz-sim-joint-state-publisher-system"
       name="gz::sim::systems::JointStatePublisher">
     </plugin>
-    <plugin
-      filename="gz-sim-pose-publisher-system"
-      name="gz::sim::systems::PosePublisher">
-      <publish_link_pose>true</publish_link_pose>
-      <use_pose_vector_msg>true</use_pose_vector_msg>
-      <static_publisher>true</static_publisher>
-      <static_update_frequency>1</static_update_frequency>
-    </plugin>
 
     <plugin
       filename="gz-sim-odometry-publisher-system"
@@ -44,6 +36,7 @@
       <robot_base_frame>base_link</robot_base_frame>
       <dimensions>3</dimensions>
     </plugin>
+
     <plugin filename="gz-sim-lift-drag-system"
         name="gz::sim::systems::LiftDrag">
       <a0>0.3</a0>
