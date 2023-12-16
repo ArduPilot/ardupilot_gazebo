@@ -11,8 +11,15 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <build_depend>rapidjson-dev</build_depend>  
-  <build_depend>libgz-cmake3-dev</build_depend>
-  <build_depend>libgz-sim7-dev</build_depend>
+
+  <!-- Harmonic -->
+  <depend condition="$GZ_VERSION == harmonic">gz-cmake3</depend>
+  <depend condition="$GZ_VERSION == harmonic">gz-sim8</depend>
+  <!-- Garden (default) -->
+  <depend condition="$GZ_VERSION == garden">gz-cmake3</depend>
+  <depend condition="$GZ_VERSION == garden">gz-sim7</depend>
+  <depend condition="$GZ_VERSION == ''">gz-cmake3</depend>
+  <depend condition="$GZ_VERSION == ''">gz-sim7</depend>
 
   <test_depend>ament_lint_auto</test_depend>
 
