@@ -19,13 +19,15 @@
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
 
+#include <gz/msgs/imu.pb.h>
+#include <gz/msgs/laserscan.pb.h>
+
 #include <chrono>
 #include <functional>
 #include <mutex>
 #include <string>
 #include <sstream>
 #include <vector>
-
 
 #include <gz/common/SignalHandler.hh>
 #include <gz/msgs/Utility.hh>

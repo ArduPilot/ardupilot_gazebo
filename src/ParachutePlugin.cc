@@ -17,6 +17,8 @@
 
 #include "ParachutePlugin.hh"
 
+#include <gz/msgs/entity_factory.pb.h>
+
 #include <string>
 
 #include <gz/plugin/Register.hh>

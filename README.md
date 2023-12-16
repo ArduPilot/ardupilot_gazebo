@@ -4,11 +4,11 @@
 [![ccplint](https://github.com/ArduPilot/ardupilot_gazebo/actions/workflows/ccplint.yml/badge.svg)](https://github.com/ArduPilot/ardupilot_gazebo/actions/workflows/ccplint.yml)
 [![cppcheck](https://github.com/ArduPilot/ardupilot_gazebo/actions/workflows/ccpcheck.yml/badge.svg)](https://github.com/ArduPilot/ardupilot_gazebo/actions/workflows/ccpcheck.yml)
 
-This is the official ArduPilot plugin for [Gazebo Sim](https://gazebosim.org/home).
+This is the official ArduPilot plugin for [Gazebo](https://gazebosim.org/home).
 It replaces the previous
 [`ardupilot_gazebo`](https://github.com/khancyr/ardupilot_gazebo)
-plugin and provides support for the latest release of the Gazebo simulator
-[(Gazebo Garden)](https://gazebosim.org/docs/garden/install).
+plugin and provides support for the recent releases of the Gazebo simulator
+[(Gazebo Garden)](https://gazebosim.org/docs/garden/install) and [(Gazebo Harmonic)](https://gazebosim.org/docs/harmonic/install).
 
 It also adds the following features:
 
@@ -18,19 +18,19 @@ It also adds the following features:
   the Gazebo time for debugging.
 - Improved 3D rendering using the `ogre2` rendering engine.
 
-The project comprises a Gazebo Sim plugin to connect to ArduPilot SITL
+The project comprises a Gazebo plugin to connect to ArduPilot SITL
 (Software In The Loop) and some example models and worlds.
 
 ## Prerequisites
 
-Gazebo Sim Garden is supported on Ubuntu 20.04 (Focal) and 22.04 (Jammy).
+Gazebo Garden or Harmonic is supported on Ubuntu 22.04 (Jammy).
 If you are running Ubuntu as a virtual machine you will need at least
 Ubuntu 20.04 in order to have the OpenGL support required for the
-`ogre2` render engine. Gazebo Sim and ArduPilot SITL will also run on macOS
-(Big Sur and Monterey; Intel and M1 devices).
+`ogre2` render engine. Gazebo and ArduPilot SITL will also run on macOS
+(Big Sur, Monterey and Venturua; Intel and M1 devices).
 
-Follow the instructions for a
-[binary install of Gazebo Garden](https://gazebosim.org/docs/garden/install)
+Follow the instructions for a binary install of
+[Gazebo Garden](https://gazebosim.org/docs/garden/install) or [Gazebo Harmonic](https://gazebosim.org/docs/harmonic/install)
 and verify that Gazebo is running correctly.
 
 Set up an [ArduPilot development environment](https://ardupilot.org/dev/index.html).
@@ -43,9 +43,18 @@ Install additional dependencies:
 
 ### Ubuntu
 
+Gazebo Garden:
+
 ```bash
 sudo apt update
 sudo apt install libgz-sim7-dev rapidjson-dev
+```
+
+Or Gazebo Harmonic:
+
+```bash
+sudo apt update
+sudo apt install libgz-sim8-dev rapidjson-dev
 ```
 
 ### macOS
@@ -54,6 +63,9 @@ sudo apt install libgz-sim7-dev rapidjson-dev
 brew update
 brew install rapidjson
 ```
+
+Ensure the `GZ_VERSION` environment variable is set to either
+`garden` or `harmonic`.
 
 Clone the repo and build:
 
@@ -233,4 +245,4 @@ Click on the images to see further details.
 ## Troubleshooting
 
 For issues concerning installing and running Gazebo on your platform please
-consult the Gazebo Sim documentation for [troubleshooting frequent issues](https://gazebosim.org/docs/garden/troubleshooting#ubuntu).
+consult the Gazebo documentation for [troubleshooting frequent issues](https://gazebosim.org/docs/harmonic/troubleshooting#ubuntu).
