@@ -79,9 +79,9 @@
     </link>
     <link name="rotor_0_blade_2_cp">
       <gravity>0</gravity>
-      <pose>0.13 -0.22 0.216 0 -0 0</pose>
+      <pose>0.13 -0.22 0.216 0 0 0</pose>
       <visual name='rotor_0_visual_root'>
-        <pose>0 0 0 0 -0 0</pose>
+        <pose>0 0 0 0 0 0</pose>
         <geometry>
           <sphere>
             <radius>0.01</radius>
@@ -93,7 +93,7 @@
         </material>
       </visual>
       <visual name='rotor_0_visual_tip'>
-        <pose>-0.12 0 0 0 -0 0</pose>
+        <pose>-0.12 0 0 0 0 0</pose>
         <geometry>
           <sphere>
             <radius>0.01</radius>
@@ -105,7 +105,7 @@
         </material>
       </visual>
       <visual name='rotor_0_visual_cp'>
-        <pose>-0.084 0 0 0 -0 0</pose>
+        <pose>-0.084 0 0 0 0 0</pose>
         <geometry>
           <sphere>
             <radius>0.003</radius>
@@ -117,7 +117,7 @@
         </material>
       </visual>
       <visual name='rotor_0_visual_cp_forward'>
-        <pose>-0.084 -0.02 0 0 -0 0</pose>
+        <pose>-0.084 -0.02 0 0 0 0</pose>
         <geometry>
           <sphere>
             <radius>0.003</radius>
@@ -129,7 +129,7 @@
         </material>
       </visual>
       <visual name='rotor_0_visual_cp_upward'>
-        <pose>-0.084 0 0.02 0 -0 0</pose>
+        <pose>-0.084 0 0.02 0 0 0</pose>
         <geometry>
           <sphere>
             <radius>0.003</radius>
@@ -166,9 +166,9 @@
 
     <link name="rotor_1_blade_1_cp">
       <gravity>0</gravity>
-      <pose>-0.13 0.2 0.216 0 -0 0</pose>
+      <pose>-0.13 0.2 0.216 0 0 0</pose>
       <visual name='rotor_1_visual_root'>
-        <pose>0 0 0 0 -0 0</pose>
+        <pose>0 0 0 0 0 0</pose>
         <geometry>
           <sphere>
             <radius>0.01</radius>
@@ -180,7 +180,7 @@
         </material>
       </visual>
       <visual name='rotor_1_visual_tip'>
-        <pose>0.12 0 0 0 -0 0</pose>
+        <pose>0.12 0 0 0 0 0</pose>
         <geometry>
           <sphere>
             <radius>0.01</radius>
@@ -192,7 +192,7 @@
         </material>
       </visual>
       <visual name='rotor_1_visual_cp'>
-        <pose>0.084 0 0 0 -0 0</pose>
+        <pose>0.084 0 0 0 0 0</pose>
         <geometry>
           <sphere>
             <radius>0.003</radius>
@@ -204,7 +204,7 @@
         </material>
       </visual>
       <visual name='rotor_1_visual_cp_forward'>
-        <pose>0.084 0.02 0 0 -0 0</pose>
+        <pose>0.084 0.02 0 0 0 0</pose>
         <geometry>
           <sphere>
             <radius>0.003</radius>
@@ -216,7 +216,7 @@
         </material>
       </visual>
       <visual name='rotor_1_visual_cp_upward'>
-        <pose>0.084 0 0.02 0 -0 0</pose>
+        <pose>0.084 0 0.02 0 0 0</pose>
         <geometry>
           <sphere>
             <radius>0.003</radius>
@@ -230,9 +230,9 @@
     </link>
     <link name="rotor_1_blade_2_cp">
       <gravity>0</gravity>
-      <pose>-0.13 0.2 0.216 0 -0 0</pose>
+      <pose>-0.13 0.2 0.216 0 0 0</pose>
       <visual name='rotor_1_visual_root'>
-        <pose>0 0 0 0 -0 0</pose>
+        <pose>0 0 0 0 0 0</pose>
         <geometry>
           <sphere>
             <radius>0.01</radius>
@@ -244,7 +244,7 @@
         </material>
       </visual>
       <visual name='rotor_1_visual_tip'>
-        <pose>-0.12 0 0 0 -0 0</pose>
+        <pose>-0.12 0 0 0 0 0</pose>
         <geometry>
           <sphere>
             <radius>0.01</radius>
@@ -256,7 +256,7 @@
         </material>
       </visual>
       <visual name='rotor_1_visual_cp'>
-        <pose>-0.084 0 0 0 -0 0</pose>
+        <pose>-0.084 0 0 0 0 0</pose>
         <geometry>
           <sphere>
             <radius>0.003</radius>
@@ -268,7 +268,7 @@
         </material>
       </visual>
       <visual name='rotor_1_visual_cp_forward'>
-        <pose>-0.084 -0.02 0 0 -0 0</pose>
+        <pose>-0.084 -0.02 0 0 0 0</pose>
         <geometry>
           <sphere>
             <radius>0.003</radius>
@@ -280,7 +280,7 @@
         </material>
       </visual>
       <visual name='rotor_1_visual_cp_upward'>
-        <pose>-0.084 0 0.02 0 -0 0</pose>
+        <pose>-0.084 0 0.02 0 0 0</pose>
         <geometry>
           <sphere>
             <radius>0.003</radius>
@@ -317,9 +317,9 @@
 
     <link name="rotor_2_blade_1_cp">
       <gravity>0</gravity>
-      <pose>0.13 0.22 0.216 0 -0 0</pose>
+      <pose>0.13 0.22 0.216 0 0 0</pose>
       <visual name='rotor_2_visual_root'>
-        <pose>0 0 0 0 -0 0</pose>
+        <pose>0 0 0 0 0 0</pose>
         <geometry>
           <sphere>
             <radius>0.01</radius>
@@ -331,7 +331,7 @@
         </material>
       </visual>
       <visual name='rotor_2_visual_tip'>
-        <pose>0.12 0 0 0 -0 0</pose>
+        <pose>0.12 0 0 0 0 0</pose>
         <geometry>
           <sphere>
             <radius>0.01</radius>
@@ -343,7 +343,7 @@
         </material>
       </visual>
       <visual name='rotor_2_visual_cp'>
-        <pose>0.084 0 0 0 -0 0</pose>
+        <pose>0.084 0 0 0 0 0</pose>
         <geometry>
           <sphere>
             <radius>0.003</radius>
@@ -355,7 +355,7 @@
         </material>
       </visual>
       <visual name='rotor_2_visual_cp_forward'>
-        <pose>0.084 -0.02 0 0 -0 0</pose>
+        <pose>0.084 -0.02 0 0 0 0</pose>
         <geometry>
           <sphere>
             <radius>0.003</radius>
@@ -367,7 +367,7 @@
         </material>
       </visual>
       <visual name='rotor_2_visual_cp_upward'>
-        <pose>0.084 0 0.02 0 -0 0</pose>
+        <pose>0.084 0 0.02 0 0 0</pose>
         <geometry>
           <sphere>
             <radius>0.003</radius>
@@ -381,9 +381,9 @@
     </link>
     <link name="rotor_2_blade_2_cp">
       <gravity>0</gravity>
-      <pose>0.13 0.22 0.216 0 -0 0</pose>
+      <pose>0.13 0.22 0.216 0 0 0</pose>
       <visual name='rotor_2_visual_root'>
-        <pose>0 0 0 0 -0 0</pose>
+        <pose>0 0 0 0 0 0</pose>
         <geometry>
           <sphere>
             <radius>0.01</radius>
@@ -395,7 +395,7 @@
         </material>
       </visual>
       <visual name='rotor_2_visual_tip'>
-        <pose>-0.12 0 0 0 -0 0</pose>
+        <pose>-0.12 0 0 0 0 0</pose>
         <geometry>
           <sphere>
             <radius>0.01</radius>
@@ -407,7 +407,7 @@
         </material>
       </visual>
       <visual name='rotor_2_visual_cp'>
-        <pose>-0.084 0 0 0 -0 0</pose>
+        <pose>-0.084 0 0 0 0 0</pose>
         <geometry>
           <sphere>
             <radius>0.003</radius>
@@ -419,7 +419,7 @@
         </material>
       </visual>
       <visual name='rotor_2_visual_cp_forward'>
-        <pose>-0.084 0.02 0 0 -0 0</pose>
+        <pose>-0.084 0.02 0 0 0 0</pose>
         <geometry>
           <sphere>
             <radius>0.003</radius>
@@ -431,7 +431,7 @@
         </material>
       </visual>
       <visual name='rotor_2_visual_cp_upward'>
-        <pose>-0.084 0 0.02 0 -0 0</pose>
+        <pose>-0.084 0 0.02 0 0 0</pose>
         <geometry>
           <sphere>
             <radius>0.003</radius>
@@ -468,9 +468,9 @@
 
     <link name="rotor_3_blade_1_cp">
       <gravity>0</gravity>
-      <pose>-0.13 -0.2 0.216 0 -0 0</pose>
+      <pose>-0.13 -0.2 0.216 0 0 0</pose>
       <visual name='rotor_3_visual_root'>
-        <pose>0 0 0 0 -0 0</pose>
+        <pose>0 0 0 0 0 0</pose>
         <geometry>
           <sphere>
             <radius>0.01</radius>
@@ -482,7 +482,7 @@
         </material>
       </visual>
       <visual name='rotor_3_visual_tip'>
-        <pose>0.12 0 0 0 -0 0</pose>
+        <pose>0.12 0 0 0 0 0</pose>
         <geometry>
           <sphere>
             <radius>0.01</radius>
@@ -494,7 +494,7 @@
         </material>
       </visual>
       <visual name='rotor_3_visual_cp'>
-        <pose>0.084 0 0 0 -0 0</pose>
+        <pose>0.084 0 0 0 0 0</pose>
         <geometry>
           <sphere>
             <radius>0.003</radius>
@@ -506,7 +506,7 @@
         </material>
       </visual>
       <visual name='rotor_3_visual_cp_forward'>
-        <pose>0.084 -0.02 0 0 -0 0</pose>
+        <pose>0.084 -0.02 0 0 0 0</pose>
         <geometry>
           <sphere>
             <radius>0.003</radius>
@@ -518,7 +518,7 @@
         </material>
       </visual>
       <visual name='rotor_3_visual_cp_upward'>
-        <pose>0.084 0 0.02 0 -0 0</pose>
+        <pose>0.084 0 0.02 0 0 0</pose>
         <geometry>
           <sphere>
             <radius>0.003</radius>
@@ -532,9 +532,9 @@
     </link>
     <link name="rotor_3_blade_2_cp">
       <gravity>0</gravity>
-      <pose>-0.13 -0.2 0.216 0 -0 0</pose>
+      <pose>-0.13 -0.2 0.216 0 0 0</pose>
       <visual name='rotor_3_visual_root'>
-        <pose>0 0 0 0 -0 0</pose>
+        <pose>0 0 0 0 0 0</pose>
         <geometry>
           <sphere>
             <radius>0.01</radius>
@@ -546,7 +546,7 @@
         </material>
       </visual>
       <visual name='rotor_3_visual_tip'>
-        <pose>-0.12 0 0 0 -0 0</pose>
+        <pose>-0.12 0 0 0 0 0</pose>
         <geometry>
           <sphere>
             <radius>0.01</radius>
@@ -558,7 +558,7 @@
         </material>
       </visual>
       <visual name='rotor_3_visual_cp'>
-        <pose>-0.084 0 0 0 -0 0</pose>
+        <pose>-0.084 0 0 0 0 0</pose>
         <geometry>
           <sphere>
             <radius>0.003</radius>
@@ -570,7 +570,7 @@
         </material>
       </visual>
       <visual name='rotor_3_visual_cp_forward'>
-        <pose>-0.084 0.02 0 0 -0 0</pose>
+        <pose>-0.084 0.02 0 0 0 0</pose>
         <geometry>
           <sphere>
             <radius>0.003</radius>
@@ -582,7 +582,7 @@
         </material>
       </visual>
       <visual name='rotor_3_visual_cp_upward'>
-        <pose>-0.084 0 0.02 0 -0 0</pose>
+        <pose>-0.084 0 0.02 0 0 0</pose>
         <geometry>
           <sphere>
             <radius>0.003</radius>
@@ -791,8 +791,8 @@
       <!-- Frame conventions
         Require by ArduPilot: change model and gazebo from XYZ to XY-Z coordinates
       -->
-      <modelXYZToAirplaneXForwardZDown>0 0 0 3.141593 0 0</modelXYZToAirplaneXForwardZDown>
-      <gazeboXYZToNED>0 0 0 3.141593 0 1.57079632</gazeboXYZToNED>
+      <modelXYZToAirplaneXForwardZDown degrees="true">0 0 0 180 0 0</modelXYZToAirplaneXForwardZDown>
+      <gazeboXYZToNED degrees="true">0 0 0 180 0 90</gazeboXYZToNED>
 
       <!-- Sensors -->
       <imuName>iris_with_standoffs::imu_link::imu_sensor</imuName>
