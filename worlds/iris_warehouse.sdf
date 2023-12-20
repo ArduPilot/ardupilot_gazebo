@@ -267,44 +267,44 @@
         <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/fog emitter</uri>
     </include>
 
-    <!-- missing table (see below)
-    <include>
+    <!-- missing table (see below) -->
+    <!-- <include>
         <pose>-9.0 -1.8 1.038 0 0 0</pose>
         <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Panda with Ignition position controller model</uri>
     </include> -->
 
-    <!-- model has incorrect fuel server details
-    <include>
-        <pose>-9.0 -2.4 0 0 0 1.57</pose>
+    <!-- model has incorrect fuel server details -->
+    <!-- <include>
+        <pose degrees="true">-9.0 -2.4 0 0 0 90</pose>
         <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Reflective table</uri>
     </include> -->
 
-    <!-- model has incorrect fuel server details
-    <include>
-        <pose>-13.2 -6.0 0 0 0 1.57</pose>
+    <!-- model has incorrect fuel server details -->
+    <!-- <include>
+        <pose degrees="true">-13.2 -6.0 0 0 0 90</pose>
         <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Rescue Randy Sitting</uri>
     </include> -->
 
     <include>
-        <pose>-9.0 -6.21 5.0 0 0.9 -3.14</pose>
+        <pose degrees="true">-9.0 -6.21 5.0 0 51.5 -180</pose>
         <static>true</static>
         <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/16-Bit Thermal Camera</uri>
     </include>
 
     <include>
-        <pose>-9.0 -5.95 5.0 0 0.9 -3.14</pose>
+        <pose degrees="true">-9.0 -5.95 5.0 0 51.5 -180</pose>
         <static>true</static>
         <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/8-Bit Thermal Camera</uri>
     </include>
 
     <include>
-        <pose>-9.075 -6.15 4.995 0 0.9 -3.14</pose>
+        <pose degrees="true">-9.075 -6.15 4.995 0 51.5 -180</pose>
         <static>true</static>
         <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Camera</uri>
     </include>
 
-    <include>
-        <pose>-9.04 -6.04 4.97 0 0.9 -3.14</pose>
+    <include degrees="true">
+        <pose>-9.04 -6.04 4.97 0 51.5 -180</pose>
         <static>true</static>
         <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Depth Camera</uri>
     </include>

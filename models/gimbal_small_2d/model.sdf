@@ -144,7 +144,7 @@
         </geometry>
       </collision>
       <sensor name="camera" type="camera">
-        <pose>0 0 0 -1.57 -1.57 0</pose>
+        <pose degrees="true">0 0 0 -90 -90 0</pose>
         <camera>
           <horizontal_fov>2.0</horizontal_fov>
           <image>

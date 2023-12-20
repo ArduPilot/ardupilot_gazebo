@@ -10,7 +10,7 @@
 
   SITL
 
-  sim_vehicle.py -D -v Rover -f JSON -/-console -/-map
+  sim_vehicle.py -D -v Rover -/-model JSON -/-console -/-map
 
   MANUAL> param set WNDVN_TYPE 11
   MANUAL> param set WNDVN_SPEED_TYPE 11
@@ -289,8 +289,8 @@
         <fdm_port_in>9002</fdm_port_in>
         <connectionTimeoutMaxCount>5</connectionTimeoutMaxCount>
         <lock_step>1</lock_step>
-        <gazeboXYZToNED>0 0 0 3.141593 0 1.57079632</gazeboXYZToNED>
-        <modelXYZToAirplaneXForwardZDown>0 0 0 3.141593 0 0</modelXYZToAirplaneXForwardZDown>
+        <gazeboXYZToNED degrees="true">0 0 0 180 0 90</gazeboXYZToNED>
+        <modelXYZToAirplaneXForwardZDown degrees="true">0 0 0 180 0 0</modelXYZToAirplaneXForwardZDown>
         <imuName>imu_link::imu_sensor</imuName>
         <anemometer>anemometer_link::anemometer</anemometer>
       </plugin>
