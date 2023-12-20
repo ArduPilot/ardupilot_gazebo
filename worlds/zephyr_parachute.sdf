@@ -78,7 +78,7 @@
   SITL
   ====
 
-  sim_vehicle.py -D -v ArduPlane -f gazebo-zephyr \-\-model JSON \-\-map \-\-console
+  sim_vehicle.py -D -v ArduPlane -f gazebo-zephyr -\-model JSON -\-map -\-console
 
   MAVProxy
   ========
@@ -110,12 +110,31 @@
     <plugin filename="gz-sim-imu-system"
       name="gz::sim::systems::Imu">
     </plugin>
+    <plugin filename="gz-sim-navsat-system"
+      name="gz::sim::systems::NavSat">
+    </plugin>
 
     <scene>
       <ambient>1.0 1.0 1.0</ambient>
       <background>0.8 0.8 0.8</background>
       <sky></sky>
     </scene>
+
+    <spherical_coordinates>
+      <latitude_deg>-35.363262</latitude_deg>
+      <longitude_deg>149.165237</longitude_deg>
+      <elevation>584</elevation>
+      <heading_deg>0</heading_deg>
+      <surface_model>EARTH_WGS84</surface_model>
+    </spherical_coordinates>
+
+    <spherical_coordinates>
+      <latitude_deg>-35.363262</latitude_deg>
+      <longitude_deg>149.165237</longitude_deg>
+      <elevation>584</elevation>
+      <heading_deg>0</heading_deg>
+      <surface_model>EARTH_WGS84</surface_model>
+    </spherical_coordinates>
 
     <light type="directional" name="sun">
       <cast_shadows>true</cast_shadows>
@@ -139,7 +158,7 @@
       <pose>0 0 0.422 -1.5707963 0 1.5707963</pose>
       <uri>model://zephyr_with_parachute</uri>
 
-      <plugin filename="libParachutePlugin.so" name="ParachutePlugin">
+      <plugin name="ParachutePlugin" filename="ParachutePlugin">
         <parent_link>parachute_attachment_link</parent_link>
         <child_model>parachute_small</child_model>
         <child_link>chute</child_link>

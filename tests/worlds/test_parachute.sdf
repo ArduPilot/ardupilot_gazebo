@@ -55,10 +55,11 @@
 
     <include>
       <uri>model://runway</uri>
+      <pose degrees="true">-29 545 0 0 0 363</pose>
     </include>
 
     <model name="payload">
-      <pose>0 0 50 0 0 0</pose>
+      <pose degrees="true">0 0 50 0 0 90</pose>
       <link name="base_link">
         <inertial>
           <mass>0.25</mass>
@@ -129,7 +130,7 @@
         <parent>base_link</parent>
       </joint>
 
-      <plugin filename="libParachutePlugin.so" name="ParachutePlugin">
+      <plugin filename="ParachutePlugin" name="ParachutePlugin">
         <parent_link>attachment_link</parent_link>
         <child_model>parachute_small</child_model>
         <child_link>chute</child_link>

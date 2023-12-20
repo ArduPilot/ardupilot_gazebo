@@ -9,7 +9,7 @@
     <include merge="true">
       <uri>package://ardupilot_gazebo/models/gimbal_small_2d</uri>
       <name>gimbal</name>
-      <pose>0 -0.01 -0.11 1.57 0 1.57</pose>
+      <pose degrees="true">0 -0.01 -0.124923 90 0 90</pose>    
     </include>
 
     <joint name="gimbal_joint" type="revolute">
@@ -228,8 +228,12 @@
       <fdm_port_in>9002</fdm_port_in>
       <connectionTimeoutMaxCount>5</connectionTimeoutMaxCount>
       <lock_step>1</lock_step>
-      <modelXYZToAirplaneXForwardZDown>0 0 0 3.141593 0 0</modelXYZToAirplaneXForwardZDown>
-      <gazeboXYZToNED>0 0 0 3.141593 0 1.57079632</gazeboXYZToNED>
+
+      <!-- Frame conventions
+        Require by ArduPilot: change model and gazebo from XYZ to XY-Z coordinates
+      -->
+      <modelXYZToAirplaneXForwardZDown degrees="true">0 0 0 180 0 0</modelXYZToAirplaneXForwardZDown>
+      <gazeboXYZToNED degrees="true">0 0 0 180 0 90</gazeboXYZToNED>
 
       <!-- Sensors -->
       <imuName>imu_link::imu_sensor</imuName>

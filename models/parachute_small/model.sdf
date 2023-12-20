@@ -47,8 +47,8 @@
         </material>
       </visual>
     </link>
-    <plugin filename="libgz-sim-lift-drag-system.so"
-        name="gz::sim::systems::LiftDrag">
+    <plugin name="gz::sim::systems::LiftDrag"
+        filename="gz-sim-lift-drag-system">
       <a0>0</a0>
       <cla>0</cla>
       <cda>1.75</cda>  <!-- Such that Cd = 1.75 at alpha = 90deg (= upright parachute) -->

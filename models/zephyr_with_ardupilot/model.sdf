@@ -19,7 +19,7 @@
       <alpha_stall>0.3391428111</alpha_stall>
       <cla_stall>-3.85</cla_stall>
       <cda_stall>-0.9233984055</cda_stall>
-      <cma_stall>0</cma_stall>
+      <cma_stall>0.0</cma_stall>
       <cp>0 -0.1 0</cp>
       <area>0.50</area>
       <air_density>1.2041</air_density>
@@ -37,7 +37,7 @@
       <alpha_stall>0.6391428111</alpha_stall>
       <cla_stall>-3.85</cla_stall>
       <cda_stall>-0.9233984055</cda_stall>
-      <cma_stall>0</cma_stall>
+      <cma_stall>0.0</cma_stall>
       <cp>0.7 0.20 0</cp>
       <area>0.10</area>
       <air_density>1.2041</air_density>
@@ -57,7 +57,7 @@
       <alpha_stall>0.6391428111</alpha_stall>
       <cla_stall>-3.85</cla_stall>
       <cda_stall>-0.9233984055</cda_stall>
-      <cma_stall>0</cma_stall>
+      <cma_stall>0.0</cma_stall>
       <cp>-0.7 0.20 0</cp>
       <area>0.10</area>
       <air_density>1.2041</air_density>
@@ -77,7 +77,7 @@
       <alpha_stall>0.3391428111</alpha_stall>
       <cla_stall>-3.85</cla_stall>
       <cda_stall>-0.9233984055</cda_stall>
-      <cma_stall>0</cma_stall>
+      <cma_stall>0.0</cma_stall>
       <cp>-0.76 0.30 0.025</cp>
       <area>0.12</area>
       <air_density>1.2041</air_density>
@@ -95,7 +95,7 @@
       <alpha_stall>0.3391428111</alpha_stall>
       <cla_stall>-3.85</cla_stall>
       <cda_stall>-0.9233984055</cda_stall>
-      <cma_stall>0</cma_stall>
+      <cma_stall>0.0</cma_stall>
       <cp>0.76 0.30 0.025</cp>
       <area>0.12</area>
       <air_density>1.2041</air_density>
@@ -170,8 +170,8 @@
 
         Zephyr is oriented x-left, y-back, z-up
       -->
-      <modelXYZToAirplaneXForwardZDown>0 0 0 3.141593 0 -1.5707963</modelXYZToAirplaneXForwardZDown>
-      <gazeboXYZToNED>0 0 0 3.141593 0 0</gazeboXYZToNED>
+      <modelXYZToAirplaneXForwardZDown degrees="true">0 0 0 180 0 -90</modelXYZToAirplaneXForwardZDown>
+      <gazeboXYZToNED degrees="true">0 0 0 180 0 90</gazeboXYZToNED>
 
       <!-- Sensors -->
       <imuName>zephyr::imu_link::imu_sensor</imuName>

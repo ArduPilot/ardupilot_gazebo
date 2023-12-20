@@ -1,7 +1,7 @@
 <?xml version='1.0'?>
 <sdf version='1.9'>
   <model name='iris_with_standoffs'>
-    <!-- <pose>0 0 0.194923 0 0 0</pose> -->
+    <pose>0 0 0 0 0 0</pose>
     <link name='base_link'>
       <velocity_decay>
         <linear>0.0</linear>
@@ -178,7 +178,7 @@
         </inertia>
       </inertial>
       <sensor name="imu_sensor" type="imu">
-        <pose>0 0 0 3.141593 0 0</pose>
+        <pose degrees="true">0 0 0 180 0 0</pose>
         <always_on>1</always_on>
         <update_rate>1000.0</update_rate>
       </sensor>
@@ -200,9 +200,9 @@
       </axis>
     </joint>
     <link name='rotor_0'>
-      <pose>0.13 -0.22 0.023 0 -0 0</pose>
+      <pose>0.13 -0.22 0.023 0 0 0</pose>
       <inertial>
-        <pose>0 0 0 0 -0 0</pose>
+        <pose>0 0 0 0 0 0</pose>
         <mass>0.025</mass>
         <inertia>
           <ixx>9.75e-06</ixx>
@@ -214,7 +214,7 @@
         </inertia>
       </inertial>
       <collision name='rotor_0_collision'>
-        <pose>0 0 0 0 -0 0</pose>
+        <pose>0 0 0 0 0 0</pose>
         <geometry>
           <cylinder>
             <length>0.005</length>
@@ -231,7 +231,7 @@
         </surface>
       </collision>
       <visual name='rotor_0_visual'>
-        <pose>0 0 0 0 -0 0</pose>
+        <pose>0 0 0 0 0 0</pose>
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
@@ -274,9 +274,9 @@
       </physics>
     </joint>
     <link name='rotor_1'>
-      <pose>-0.13 0.2 0.023 0 -0 0</pose>
+      <pose>-0.13 0.2 0.023 0 0 0</pose>
       <inertial>
-        <pose>0 0 0 0 -0 0</pose>
+        <pose>0 0 0 0 0 0</pose>
         <mass>0.025</mass>
         <inertia>
           <ixx>9.75e-06</ixx>
@@ -288,7 +288,7 @@
         </inertia>
       </inertial>
       <collision name='rotor_1_collision'>
-        <pose>0 0 0 0 -0 0</pose>
+        <pose>0 0 0 0 0 0</pose>
         <geometry>
           <cylinder>
             <length>0.005</length>
@@ -305,7 +305,7 @@
         </surface>
       </collision>
       <visual name='rotor_1_visual'>
-        <pose>0 0 0 0 -0 0</pose>
+        <pose>0 0 0 0 0 0</pose>
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
@@ -348,9 +348,9 @@
       </physics>
     </joint>
     <link name='rotor_2'>
-      <pose>0.13 0.22 0.023 0 -0 0</pose>
+      <pose>0.13 0.22 0.023 0 0 0</pose>
       <inertial>
-        <pose>0 0 0 0 -0 0</pose>
+        <pose>0 0 0 0 0 0</pose>
         <mass>0.025</mass>
         <inertia>
           <ixx>9.75e-06</ixx>
@@ -362,7 +362,7 @@
         </inertia>
       </inertial>
       <collision name='rotor_2_collision'>
-        <pose>0 0 0 0 -0 0</pose>
+        <pose>0 0 0 0 0 0</pose>
         <geometry>
           <cylinder>
             <length>0.005</length>
@@ -379,7 +379,7 @@
         </surface>
       </collision>
       <visual name='rotor_2_visual'>
-        <pose>0 0 0 0 -0 0</pose>
+        <pose>0 0 0 0 0 0</pose>
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
@@ -422,9 +422,9 @@
       </physics>
     </joint>
     <link name='rotor_3'>
-      <pose>-0.13 -0.2 0.023 0 -0 0</pose>
+      <pose>-0.13 -0.2 0.023 0 0 0</pose>
       <inertial>
-        <pose>0 0 0 0 -0 0</pose>
+        <pose>0 0 0 0 0 0</pose>
         <mass>0.025</mass>
         <inertia>
           <ixx>9.75e-06</ixx>
@@ -436,7 +436,7 @@
         </inertia>
       </inertial>
       <collision name='rotor_3_collision'>
-        <pose>0 0 0 0 -0 0</pose>
+        <pose>0 0 0 0 0 0</pose>
         <geometry>
           <cylinder>
             <length>0.005</length>
@@ -453,7 +453,7 @@
         </surface>
       </collision>
       <visual name='rotor_3_visual'>
-        <pose>0 0 0 0 -0 0</pose>
+        <pose>0 0 0 0 0 0</pose>
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
