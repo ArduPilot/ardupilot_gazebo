@@ -45,6 +45,7 @@
 
     <include>
       <uri>model://runway</uri>
+      <pose degrees="true">-29 545 0 0 0 363</pose>
     </include>
 
     <!-- gimbal  -->
@@ -117,7 +118,7 @@
       <include>
         <uri>model://gimbal_small_2d</uri>
         <name>gimbal</name>
-        <pose>0 0 0.61 -1.57 0 1.57</pose>
+        <pose degrees="true">0 0 0.61 -90 0 -90</pose>
       </include>
       <joint name="gimbal_joint" type="revolute">
         <parent>base_link</parent>

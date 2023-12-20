@@ -10,7 +10,7 @@
 
   SITL
 
-  sim_vehicle.py -D -v Rover -f JSON -/-console -/-map
+  sim_vehicle.py -D -v Rover -/-model JSON -/-console -/-map
 
   MANUAL> param set WNDVN_TYPE 11
   MANUAL> param set WNDVN_SPEED_TYPE 11
@@ -39,11 +39,14 @@
     <plugin filename="gz-sim-user-commands-system"
         name="gz::sim::systems::UserCommands">
     </plugin>
+    <plugin filename="asv_sim2-anemometer-system"
+      name="gz::sim::systems::Anemometer">
+    </plugin>
     <plugin filename="gz-sim-imu-system"
         name="gz::sim::systems::Imu">
     </plugin>
-    <plugin filename="asv_sim2-anemometer-system"
-      name="gz::sim::systems::Anemometer">
+    <plugin filename="gz-sim-navsat-system"
+      name="gz::sim::systems::NavSat">
     </plugin>
 
     <scene>
@@ -53,9 +56,9 @@
     </scene>
 
     <spherical_coordinates>
-      <latitude_deg>51.56991349023042</latitude_deg>
-      <longitude_deg>-4.033693921107272</longitude_deg>
-      <elevation>10.0</elevation>
+      <latitude_deg>-35.363262</latitude_deg>
+      <longitude_deg>149.165237</longitude_deg>
+      <elevation>584</elevation>
       <heading_deg>0</heading_deg>
       <surface_model>EARTH_WGS84</surface_model>
     </spherical_coordinates>
@@ -85,10 +88,10 @@
             </box>
           </geometry>
           <material>
-            <ambient>1 0 0 1</ambient>
-            <diffuse>1 0 0 1</diffuse>
-            <emissive>1 0 0 1</emissive>
-            <specular>0.5 0.5 0.5 1</specular>
+            <ambient>1 0 0 0.8</ambient>
+            <diffuse>1 0 0 0.8</diffuse>
+            <emissive>1 0 0 0.8</emissive>
+            <specular>0.5 0.5 0.5 0.8</specular>
           </material>
         </visual>
         <visual name="g">
@@ -100,10 +103,10 @@
             </box>
           </geometry>
           <material>
-            <ambient>0 1 0 1</ambient>
-            <diffuse>0 1 0 1</diffuse>
-            <emissive>0 1 0 1</emissive>
-            <specular>0.5 0.5 0.5 1</specular>
+            <ambient>0 1 0 0.8</ambient>
+            <diffuse>0 1 0 0.8</diffuse>
+            <emissive>0 1 0 0.8</emissive>
+            <specular>0.5 0.5 0.5 0.8</specular>
           </material>
         </visual>
         <visual name="b">
@@ -115,12 +118,16 @@
             </box>
           </geometry>
           <material>
-            <ambient>0 0 1 1</ambient>
-            <diffuse>0 0 1 1</diffuse>
-            <emissive>0 0 1 1</emissive>
-            <specular>0.5 0.5 0.5 1</specular>
+            <ambient>0 0 1 0.8</ambient>
+            <diffuse>0 0 1 0.8</diffuse>
+            <emissive>0 0 1 0.8</emissive>
+            <specular>0.5 0.5 0.5 0.8</specular>
           </material>
         </visual>
+        <sensor name="navsat_sensor" type="navsat">
+          <always_on>1</always_on>
+          <update_rate>1</update_rate>
+        </sensor>
       </link>
     </model>
 
@@ -152,7 +159,7 @@
     </model>
 
     <model name="anemometer">
-      <pose>0 0 0.5 0 0 1.57079632</pose>
+      <pose degrees="true">0 0 0.5 0 0 90</pose>
       <link name="base_link">
         <inertial>
           <mass>10</mass>
@@ -213,7 +220,7 @@
           </inertia>
         </inertial>
         <sensor name="imu_sensor" type="imu">
-          <pose>0 0 0 3.141593 0 0</pose>
+          <pose degrees="true">0 0 0 180 0 0</pose>
           <always_on>1</always_on>
           <update_rate>1000.0</update_rate>
         </sensor>
@@ -282,8 +289,8 @@
         <fdm_port_in>9002</fdm_port_in>
         <connectionTimeoutMaxCount>5</connectionTimeoutMaxCount>
         <lock_step>1</lock_step>
-        <gazeboXYZToNED>0 0 0 3.141593 0 1.57079632</gazeboXYZToNED>
-        <modelXYZToAirplaneXForwardZDown>0 0 0 3.141593 0 0</modelXYZToAirplaneXForwardZDown>
+        <gazeboXYZToNED degrees="true">0 0 0 180 0 90</gazeboXYZToNED>
+        <modelXYZToAirplaneXForwardZDown degrees="true">0 0 0 180 0 0</modelXYZToAirplaneXForwardZDown>
         <imuName>imu_link::imu_sensor</imuName>
         <anemometer>anemometer_link::anemometer</anemometer>
       </plugin>

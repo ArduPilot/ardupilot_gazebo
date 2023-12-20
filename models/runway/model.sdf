@@ -11,7 +11,7 @@
         </geometry>
       </collision>
       <visual name="runway">
-        <pose>0 0 0 0 0 3.141592653589793</pose>
+        <pose degrees="true">0 0 0 0 0 90</pose>
         <cast_shadows>false</cast_shadows>
         <geometry>
           <plane>
