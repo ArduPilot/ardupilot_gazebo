@@ -48,12 +48,15 @@
           </mesh>
         </geometry>
         <material>
-          <!--script>
-            <name>Gazebo/DarkGrey</name>
-          </script-->
-          <ambient>.175 .175 .175  1.0</ambient>
-          <diffuse>.175 .175 .175  1.0</diffuse>
-          <specular>.175 .175 .175 1.000000</specular>
+          <ambient>0.05 0.05 0.05</ambient>
+          <diffuse>0.05 0.05 0.05</diffuse>
+          <specular>1 1 1 1</specular>
+          <pbr>
+            <metal>
+              <metalness>0.5</metalness>
+              <roughness>0.5</roughness>
+            </metal>
+          </pbr>
         </material>
       </visual>
 
@@ -66,13 +69,15 @@
           </cylinder>
         </geometry>
         <material>
-          <!--script>
-            <name>Gazebo/FlatBlack</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script-->
-          <ambient>0.1 0.1 0.1</ambient>
-          <diffuse>0.1 0.1 0.1</diffuse>
+          <ambient>0.05 0.05 0.05</ambient>
+          <diffuse>0.05 0.05 0.05</diffuse>
           <specular>0.01 0.01 0.01 1.0</specular>
+          <pbr>
+            <metal>
+              <metalness>0.5</metalness>
+              <roughness>0.5</roughness>
+            </metal>
+          </pbr>
         </material>
       </visual>
       <visual name='front_right_leg_visual'>
@@ -84,13 +89,15 @@
           </cylinder>
         </geometry>
         <material>
-          <!--script>
-            <name>Gazebo/FlatBlack</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script-->
-          <ambient>0.1 0.1 0.1</ambient>
-          <diffuse>0.1 0.1 0.1</diffuse>
+          <ambient>0.05 0.05 0.05</ambient>
+          <diffuse>0.05 0.05 0.05</diffuse>
           <specular>0.01 0.01 0.01 1.0</specular>
+          <pbr>
+            <metal>
+              <metalness>0.5</metalness>
+              <roughness>0.5</roughness>
+            </metal>
+          </pbr>
         </material>
       </visual>
       <visual name='rear_left_leg_visual'>
@@ -102,13 +109,15 @@
           </cylinder>
         </geometry>
         <material>
-          <!--script>
-            <name>Gazebo/FlatBlack</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script-->
-          <ambient>0.1 0.1 0.1</ambient>
-          <diffuse>0.1 0.1 0.1</diffuse>
+          <ambient>0.05 0.05 0.05</ambient>
+          <diffuse>0.05 0.05 0.05</diffuse>
           <specular>0.01 0.01 0.01 1.0</specular>
+          <pbr>
+            <metal>
+              <metalness>0.5</metalness>
+              <roughness>0.5</roughness>
+            </metal>
+          </pbr>
         </material>
       </visual>
       <visual name='rear_right_leg_visual'>
@@ -120,13 +129,15 @@
           </cylinder>
         </geometry>
         <material>
-          <!--script>
-            <name>Gazebo/FlatBlack</name>
-            <uri>file://media/materials/scripts/gazebo.material</uri>
-          </script-->
-          <ambient>0.1 0.1 0.1</ambient>
-          <diffuse>0.1 0.1 0.1</diffuse>
+          <ambient>0.05 0.05 0.05</ambient>
+          <diffuse>0.05 0.05 0.05</diffuse>
           <specular>0.01 0.01 0.01 1.0</specular>
+          <pbr>
+            <metal>
+              <metalness>0.5</metalness>
+              <roughness>0.5</roughness>
+            </metal>
+          </pbr>
         </material>
       </visual>
  
@@ -228,13 +239,15 @@
           </mesh>
         </geometry>
         <material>
-          <!--script>
-            <name>Gazebo/Blue</name>
-            <uri>__default__</uri>
-          </script-->
-          <ambient>0 0 1 1</ambient>
-          <diffuse>0 0 1 1</diffuse>
-          <specular>0.1 0.1 0.1 1</specular>
+          <ambient>0 0 1</ambient>
+          <diffuse>0 0 1</diffuse>
+          <specular>1 1 1 1</specular>
+          <pbr>
+            <metal>
+              <metalness>0.5</metalness>
+              <roughness>0.5</roughness>
+            </metal>
+          </pbr>
         </material>
       </visual>
       <gravity>1</gravity>
@@ -300,13 +313,15 @@
           </mesh>
         </geometry>
         <material>
-          <!--script>
-            <name>Gazebo/Blue</name>
-            <uri>__default__</uri>
-          </script-->
           <ambient>0 0 1 1</ambient>
           <diffuse>0 0 1 1</diffuse>
-          <specular>0.1 0.1 0.1 1</specular>
+          <specular>1 1 1 1</specular>
+          <pbr>
+            <metal>
+              <metalness>0.5</metalness>
+              <roughness>0.5</roughness>
+            </metal>
+          </pbr>
         </material>
       </visual>
       <gravity>1</gravity>
@@ -372,13 +387,15 @@
           </mesh>
         </geometry>
         <material>
-          <!--script>
-            <name>Gazebo/Green</name>
-            <uri>__default__</uri>
-          </script-->
-          <ambient>0 1 0 1</ambient>
-          <diffuse>0 1 0 1</diffuse>
-          <specular>0.1 0.1 0.1 1</specular>
+          <ambient>0 1 0</ambient>
+          <diffuse>0 1 0</diffuse>
+          <specular>1 1 1 1</specular>
+          <pbr>
+            <metal>
+              <metalness>0.5</metalness>
+              <roughness>0.5</roughness>
+            </metal>
+          </pbr>
         </material>
       </visual>
       <gravity>1</gravity>
@@ -444,13 +461,15 @@
           </mesh>
         </geometry>
         <material>
-          <!--script>
-            <name>Gazebo/Green</name>
-            <uri>__default__</uri>
-          </script-->
-          <ambient>0 1 0 1</ambient>
-          <diffuse>0 1 0 1</diffuse>
-          <specular>0.1 0.1 0.1 1</specular>
+          <ambient>0 1 0</ambient>
+          <diffuse>0 1 0</diffuse>
+          <specular>1 1 1 1</specular>
+          <pbr>
+            <metal>
+              <metalness>0.5</metalness>
+              <roughness>0.5</roughness>
+            </metal>
+          </pbr>
         </material>
       </visual>
       <gravity>1</gravity>
