@@ -628,7 +628,7 @@
       <alpha_stall>1.4</alpha_stall>
       <cla>4.2500</cla>
       <cda>0.10</cda>
-      <cma>0.00</cma>
+      <cma>0.0</cma>
       <cla_stall>-0.025</cla_stall>
       <cda_stall>0.0</cda_stall>
       <cma_stall>0.0</cma_stall>
@@ -645,7 +645,7 @@
       <alpha_stall>1.4</alpha_stall>
       <cla>4.2500</cla>
       <cda>0.10</cda>
-      <cma>0.00</cma>
+      <cma>0.0</cma>
       <cla_stall>-0.025</cla_stall>
       <cda_stall>0.0</cda_stall>
       <cma_stall>0.0</cma_stall>
@@ -663,7 +663,7 @@
       <alpha_stall>1.4</alpha_stall>
       <cla>4.2500</cla>
       <cda>0.10</cda>
-      <cma>0.00</cma>
+      <cma>0.0</cma>
       <cla_stall>-0.025</cla_stall>
       <cda_stall>0.0</cda_stall>
       <cma_stall>0.0</cma_stall>
@@ -680,7 +680,7 @@
       <alpha_stall>1.4</alpha_stall>
       <cla>4.2500</cla>
       <cda>0.10</cda>
-      <cma>0.00</cma>
+      <cma>0.0</cma>
       <cla_stall>-0.025</cla_stall>
       <cda_stall>0.0</cda_stall>
       <cma_stall>0.0</cma_stall>
@@ -698,7 +698,7 @@
       <alpha_stall>1.4</alpha_stall>
       <cla>4.2500</cla>
       <cda>0.10</cda>
-      <cma>0.00</cma>
+      <cma>0.0</cma>
       <cla_stall>-0.025</cla_stall>
       <cda_stall>0.0</cda_stall>
       <cma_stall>0.0</cma_stall>
@@ -715,7 +715,7 @@
       <alpha_stall>1.4</alpha_stall>
       <cla>4.2500</cla>
       <cda>0.10</cda>
-      <cma>0.00</cma>
+      <cma>0.0</cma>
       <cla_stall>-0.025</cla_stall>
       <cda_stall>0.0</cda_stall>
       <cma_stall>0.0</cma_stall>
@@ -733,7 +733,7 @@
       <alpha_stall>1.4</alpha_stall>
       <cla>4.2500</cla>
       <cda>0.10</cda>
-      <cma>0.00</cma>
+      <cma>0.0</cma>
       <cla_stall>-0.025</cla_stall>
       <cda_stall>0.0</cda_stall>
       <cma_stall>0.0</cma_stall>
@@ -750,7 +750,7 @@
       <alpha_stall>1.4</alpha_stall>
       <cla>4.2500</cla>
       <cda>0.10</cda>
-      <cma>0.00</cma>
+      <cma>0.0</cma>
       <cla_stall>-0.025</cla_stall>
       <cda_stall>0.0</cda_stall>
       <cma_stall>0.0</cma_stall>
