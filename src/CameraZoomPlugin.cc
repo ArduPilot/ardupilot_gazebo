@@ -165,13 +165,19 @@ void CameraZoomPlugin::Impl::OnZoom(const msgs::Double &_msg)
 void CameraZoomPlugin::Impl::InitialiseCamera()
 {
   // Wait for render engine to be available.
-  if (rendering::loadedEngines().empty())
+  if (rendering::loadedEngines().empty()) {
     return;
+  }
 
   // Get scene.
   if (!this->scene)
   {
     this->scene = rendering::sceneFromFirstRenderEngine();
+    if (!this->scene) {
+      gzerr << "Failed to get scene in InitialiseCamera()!\n";
+      return;
+    }
+
   }
 
   // Return if scene not ready or no sensors available.
