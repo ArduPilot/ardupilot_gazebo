@@ -17,7 +17,10 @@
 
 #include "CameraZoomPlugin.hh"
 
+#include <algorithm>
 #include <atomic>
+#include <cmath>
+#include <limits>
 #include <mutex>
 #include <string>
 
@@ -124,13 +127,20 @@ class CameraZoomPlugin::Impl
   public: std::atomic<double> zoomCommand{1.0};
 
   /// \brief Current horizontal field of view (radians).
-  public: double hfov{2.0};
+  public: double curHfov{2.0};
 
-  /// \brief Zoom factor.
-  public: double zoom{1.0};
+  /// \brief Goal horizontal field of view (radians).
+  public: std::atomic<double> goalHfov{2.0};
+
+  /// \brief Current zoom factor.
+  public: double curZoom{1.0};
 
   /// \brief Maximum zoom factor.
   public: double maxZoom{10.0};
+
+  /// \brief Slew rate (meters change in focal length per second).
+  ///        Default: infinity, which causes instant changes in focal length.
+  public: double slewRate{std::numeric_limits<double>::infinity()};
 
   /// \brief Minimum zoom factor == 1.0.
   public: static constexpr double minZoom{1.0};
@@ -153,6 +163,32 @@ class CameraZoomPlugin::Impl
   /// \brief Pointer to the rendering camera
   public: rendering::CameraPtr camera;
 };
+
+/// \brief Convert from focal length to FOV for a rectilinear lens
+/// \ref https://en.wikipedia.org/wiki/Focal_length
+/// @param sensorWidth Diagonal sensor width [meter]
+/// @param focalLength The focal length [meter]
+/// @return The field of view [rad]
+[[nodiscard]] static double FocalLengthToFov(
+  const double& sensorWidth,
+  const double& focalLength);
+
+/// \brief Convert from FOV to focal length for a rectilinear lens
+/// \ref https://en.wikipedia.org/wiki/Focal_length
+/// @param sensorWidth Diagonal sensor width [meter]
+/// @param fov The field of view [rad]
+/// @return The focal length [meter]
+[[nodiscard]] static double FovToFocalLength(
+  const double& sensorWidth,
+  const double& fov);
+
+/// @brief Compute diagonal sensor width given focal length and FOV
+/// @param focalLength Focal length [meter]
+/// @param fov Field of view [rad]
+/// @return Sensor width [m]
+[[nodiscard]] static double SensorWidth(
+  const double& focalLength,
+  const double& fov);
 
 //////////////////////////////////////////////////
 void CameraZoomPlugin::Impl::OnZoom(const msgs::Double &_msg)
@@ -203,6 +239,7 @@ void CameraZoomPlugin::Impl::InitialiseCamera()
       return;
     }
   }
+  // Todo compute camera sensor width here once rather than every PreUpdate()
 }
 
 //////////////////////////////////////////////////
@@ -294,6 +331,10 @@ void CameraZoomPlugin::Configure(
   {
     this->impl->maxZoom = _sdf->Get<double>("max_zoom");
   }
+  if (_sdf->HasElement("slew_rate"))
+  {
+    this->impl->slewRate = _sdf->Get<double>("slew_rate");
+  }
 
   // Configure zoom command topic.
   {
@@ -330,7 +371,7 @@ void CameraZoomPlugin::Configure(
 
 //////////////////////////////////////////////////
 void CameraZoomPlugin::PreUpdate(
-    const UpdateInfo &/*_info*/,
+    const UpdateInfo &_info,
     EntityComponentManager &_ecm)
 {
   GZ_PROFILE("CameraZoomPlugin::PreUpdate");
@@ -352,31 +393,91 @@ void CameraZoomPlugin::PreUpdate(
   if (!comp)
     return;
 
-  if (!this->impl->zoomChanged)
+  if (this->impl->zoomChanged) {
+    // Only calculate goal once each time zoom is changed.
+    const auto requestedZoomCmd = this->impl->zoomCommand.load();
+    const auto clampedZoomCmd = std::clamp(requestedZoomCmd,
+      this->impl->minZoom, this->impl->maxZoom);
+    if (std::abs(requestedZoomCmd - clampedZoomCmd) >
+      std::numeric_limits<double>::epsilon())
+    {
+      gzwarn << "Requested zoom command of " << requestedZoomCmd
+        << " has been clamped to " << clampedZoomCmd << ".\n";
+    }
+    this->impl->goalHfov =  this->impl->curHfov / clampedZoomCmd;
+    this->impl->zoomChanged = false;
+  }
+
+  // Goal is achieved, nothing to update.
+  if (std::abs(this->impl->goalHfov - this->impl->curHfov) <
+    std::numeric_limits<double>::epsilon())
     return;
 
   // Update component.
   sdf::Sensor &sensor = comp->Data();
   sdf::Camera *cameraSdf = sensor.CameraSensor();
+  assert(cameraSdf);  // Halt on debug mode intentionally.
+  if (!cameraSdf) {
+    // In release mode, return before a nullptr dereference.
+    return;
+  }
 
-  this->impl->zoom = std::max(std::min(this->impl->zoomCommand.load(),
-      this->impl->maxZoom), this->impl->minZoom);
-  math::Angle oldHfov = cameraSdf->HorizontalFov();
-  math::Angle newHfov = this->impl->hfov / this->impl->zoom;
+  const auto oldHfov = cameraSdf->HorizontalFov().Radian();
 
+  // This is the amount of time passed since the last update.
+  const auto dt = _info.dt;
+  // How many meters the focal length could change per update loop
+  const auto maxFocalLengthChange = this->impl->slewRate *
+    std::chrono::duration<double>(dt).count();
+  const auto curFocalLength = cameraSdf->LensFocalLength();
+
+  // This value should be static every iteration.
+  const auto sensorWidth = SensorWidth(curFocalLength, oldHfov);
+
+  const auto goalFocalLength = FovToFocalLength(
+    sensorWidth, this->impl->goalHfov);
+  // How many meters the focal length should change this iteration
+  const auto deltaFL = std::min(maxFocalLengthChange,
+    std::abs(curFocalLength - goalFocalLength));
+
+
+
+  // Update rendering camera with the latest focal length.
+  double newHfov;
+  if (goalFocalLength > curFocalLength) {
+    const auto newFocalLength =  curFocalLength + deltaFL;
+    newHfov = FocalLengthToFov(sensorWidth, newFocalLength);
+
+  } else {
+    const auto newFocalLength =  curFocalLength  - deltaFL;
+    newHfov = FocalLengthToFov(sensorWidth, newFocalLength);
+  }
   cameraSdf->SetHorizontalFov(newHfov);
   _ecm.SetChanged(cameraEntity, components::Camera::typeId,
-        ComponentState::OneTimeChange);
+    ComponentState::OneTimeChange);
 
   // Update rendering camera.
   this->impl->camera->SetHFOV(newHfov);
+}
 
-  gzdbg << "CameraZoomPlugin:\n"
-        << "Zoom:     " << this->impl->zoom << "\n"
-        << "Old HFOV: " << oldHfov << " rad\n"
-        << "New HFOV: " << newHfov << " rad\n";
+//////////////////////////////////////////////////
+double FocalLengthToFov(
+  const double& sensorWidth, const double& focalLength)
+{
+  return 2 * std::atan2( sensorWidth,  2 * focalLength);
+}
 
-  this->impl->zoomChanged = false;
+//////////////////////////////////////////////////
+double FovToFocalLength(
+  const double& sensorWidth, const double& fov)
+{
+  // This is derived from FocalLengthToFov.
+  return sensorWidth / ( 2 * std::tan(fov / 2));
+}
+
+double SensorWidth(const double& focalLength, const double& fov){
+  // This is derived from FocalLengthToFov.
+  return 2 * std::tan(fov / 2) * focalLength;
 }
 
 //////////////////////////////////////////////////
