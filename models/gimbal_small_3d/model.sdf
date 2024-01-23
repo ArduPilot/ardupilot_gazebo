@@ -207,7 +207,8 @@
 
         <plugin filename="CameraZoomPlugin"
             name="CameraZoomPlugin">
-          <max_zoom>15.0</max_zoom>
+          <max_zoom>125.0</max_zoom>
+          <slew_rate>0.42514285714</slew_rate>
         </plugin>
 
       </sensor>
