@@ -440,36 +440,41 @@ void CameraZoomPlugin::PreUpdate(
     std::numeric_limits<double>::epsilon())
     return;
 
-  // This is the amount of time passed since the last update.
-  const auto dt = _info.dt;
-  // How many meters the focal length could change per update loop
-  const auto maxFocalLengthChange = this->impl->slewRate *
-    std::chrono::duration<double>(dt).count();
   const auto curFocalLength = cameraSdf->LensFocalLength();
 
   // This value should be static every iteration.
   const auto sensorWidth = CameraZoomPlugin::Impl::SensorWidth(
-      curFocalLength, oldHfov);
-
+    curFocalLength, oldHfov);
   const auto goalFocalLength = CameraZoomPlugin::Impl::FovToFocalLength(
-      sensorWidth, this->impl->goalHfov);
-  // How many meters the focal length should change this iteration
-  const auto deltaFL = std::min(maxFocalLengthChange,
-    std::abs(curFocalLength - goalFocalLength));
+    sensorWidth, this->impl->goalHfov);
 
-  // Update rendering camera with the latest focal length.
   double newFocalLength;
-  if (goalFocalLength > curFocalLength)
-  {
-    newFocalLength = curFocalLength + deltaFL;
-  }
-  else
-  {
-    newFocalLength = curFocalLength - deltaFL;
+  if (std::isfinite(this->impl->slewRate)) {
+    // This is the amount of time passed since the last update.
+    const auto dt = _info.dt;
+    // How many meters the focal length could change per update loop
+    const auto maxFocalLengthChange = this->impl->slewRate *
+      std::chrono::duration<double>(dt).count();
+
+    // How many meters the focal length should change this iteration
+    const auto deltaFL = std::min(maxFocalLengthChange,
+      std::abs(curFocalLength - goalFocalLength));
+
+    if (goalFocalLength > curFocalLength)
+    {
+      newFocalLength = curFocalLength + deltaFL;
+    }
+    else
+    {
+      newFocalLength = curFocalLength - deltaFL;
+    }
+  } else {
+    newFocalLength = goalFocalLength;
   }
 
   const auto newHfov = CameraZoomPlugin::Impl::FocalLengthToFov(
       sensorWidth, newFocalLength);
+  // Update rendering camera with the latest focal length.
   cameraSdf->SetHorizontalFov(newHfov);
   _ecm.SetChanged(cameraEntity, components::Camera::typeId,
     ComponentState::OneTimeChange);
