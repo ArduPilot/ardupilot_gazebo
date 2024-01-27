@@ -235,7 +235,6 @@ void CameraZoomPlugin::Impl::InitialiseCamera()
       return;
     }
   }
-  // Todo compute camera sensor width here once rather than every PreUpdate()
 }
 
 //////////////////////////////////////////////////
@@ -424,7 +423,7 @@ void CameraZoomPlugin::PreUpdate(
       gzwarn << "Requested zoom command of " << requestedZoomCmd
         << " has been clamped to " << clampedZoomCmd << ".\n";
     }
-    this->impl->goalHfov =  this->impl->refHfov / clampedZoomCmd;
+    this->impl->goalHfov = this->impl->refHfov / clampedZoomCmd;
     this->impl->zoomChanged = false;
   }
 
@@ -462,11 +461,11 @@ void CameraZoomPlugin::PreUpdate(
   double newFocalLength;
   if (goalFocalLength > curFocalLength)
   {
-    newFocalLength =  curFocalLength + deltaFL;
+    newFocalLength = curFocalLength + deltaFL;
   }
   else
   {
-    newFocalLength =  curFocalLength  - deltaFL;
+    newFocalLength = curFocalLength - deltaFL;
   }
 
   const auto newHfov = CameraZoomPlugin::Impl::FocalLengthToFov(
