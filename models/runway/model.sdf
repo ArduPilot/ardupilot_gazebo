@@ -20,7 +20,6 @@
           </plane>
         </geometry>
         <material>
-          <render_order>10</render_order>
           <ambient>0.8 0.8 0.8 1</ambient>
           <diffuse>0.8 0.8 0.8 1</diffuse>
           <specular>0.1 0.1 0.1 1</specular>
