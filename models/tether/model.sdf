@@ -1,8 +1,6 @@
 <?xml version="1.0"?>
-<!-- This model was built manually. Use the jinja generated one instead. -->
 <sdf version="1.9">
   <model name="tether">
-    <!-- <pose>-1.81 -4.23 0.055 0 0 0</pose> -->
     <link name="link_00">
       <gravity>true</gravity>
       <pose>-0.1 0 0 0 0 0</pose>
