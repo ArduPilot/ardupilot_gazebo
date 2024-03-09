@@ -6,7 +6,7 @@
     </include>
 
     <include>
-      <uri>model://gimbal_small_2d</uri>
+      <uri>model://gimbal_small_3d</uri>
       <name>gimbal</name>
       <pose degrees="true">0 -0.01 -0.124923 90 0 90</pose>    
     </include>
@@ -292,13 +292,24 @@
       </control>
 
       <control channel="5">
-        <jointName>gimbal::tilt_joint</jointName>
+        <jointName>gimbal::pitch_joint</jointName>
         <multiplier>3.14159265</multiplier>
         <offset>-0.5</offset>
         <servo_min>1100</servo_min>
         <servo_max>1900</servo_max>
         <type>COMMAND</type>
-        <cmd_topic>/gimbal/cmd_tilt</cmd_topic>
+        <cmd_topic>/gimbal/cmd_pitch</cmd_topic>
+        <p_gain>3</p_gain>
+      </control>
+
+      <control channel="6">
+        <jointName>gimbal::yaw_joint</jointName>
+        <multiplier>3.14159265</multiplier>
+        <offset>-0.5</offset>
+        <servo_min>1100</servo_min>
+        <servo_max>1900</servo_max>
+        <type>COMMAND</type>
+        <cmd_topic>/gimbal/cmd_yaw</cmd_topic>
         <p_gain>3</p_gain>
       </control>
 
@@ -314,8 +325,15 @@
     <plugin
       filename="gz-sim-joint-position-controller-system"
       name="gz::sim::systems::JointPositionController">
-      <joint_name>gimbal::tilt_joint</joint_name>
-      <topic>/gimbal/cmd_tilt</topic>
+      <joint_name>gimbal::pitch_joint</joint_name>
+      <topic>/gimbal/cmd_pitch</topic>
+      <p_gain>2</p_gain>
+    </plugin>
+    <plugin
+      filename="gz-sim-joint-position-controller-system"
+      name="gz::sim::systems::JointPositionController">
+      <joint_name>gimbal::yaw_joint</joint_name>
+      <topic>/gimbal/cmd_yaw</topic>
       <p_gain>2</p_gain>
     </plugin>
 
