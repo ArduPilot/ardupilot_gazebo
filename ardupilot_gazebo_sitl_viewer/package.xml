@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>ardupilot_gazebo_sitl_viewer</name>
+  <version>0.0.0</version>
+  <description>Simulation Adapter for ArduPilot SITL FDM to ve vizualized in Gazebo using ROS</description>
+  <maintainer email="ryanfriedman5410+github@gmail.com">Ryan Friedman</maintainer>
+  <license>GPL-3.0</license>
+  <author>Ryan Friedman</author>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>rclcpp</depend>
+  <depend>sensor_msgs</depend>
+
+
+  <!-- Harmonic -->
+  <depend condition="$GZ_VERSION == harmonic">gz-cmake3</depend>
+  <depend condition="$GZ_VERSION == harmonic">gz-sim8</depend>
+  <depend condition="$GZ_VERSION == harmonic">gz-transport13</depend>
+  <!-- Garden (default) -->
+  <depend condition="$GZ_VERSION == garden">gz-cmake3</depend>
+  <depend condition="$GZ_VERSION == garden">gz-sim7</depend>
+  <depend condition="$GZ_VERSION == ''">gz-cmake3</depend>
+  <depend condition="$GZ_VERSION == ''">gz-sim7</depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

@@ -1,16 +1,18 @@
-# ArduPilot Gazebo Plugin
+# ArduPilot Gazebo
 
 [![ubuntu-build](https://github.com/ArduPilot/ardupilot_gazebo/actions/workflows/ubuntu-build.yml/badge.svg)](https://github.com/ArduPilot/ardupilot_gazebo/actions/workflows/ubuntu-build.yml)
 [![ccplint](https://github.com/ArduPilot/ardupilot_gazebo/actions/workflows/ccplint.yml/badge.svg)](https://github.com/ArduPilot/ardupilot_gazebo/actions/workflows/ccplint.yml)
 [![cppcheck](https://github.com/ArduPilot/ardupilot_gazebo/actions/workflows/ccpcheck.yml/badge.svg)](https://github.com/ArduPilot/ardupilot_gazebo/actions/workflows/ccpcheck.yml)
 
-This is the official ArduPilot plugin for [Gazebo](https://gazebosim.org/home).
+This the official ArduPilot plugin for [Gazebo](https://gazebosim.org/home).
 It replaces the previous
 [`ardupilot_gazebo`](https://github.com/khancyr/ardupilot_gazebo)
 plugin and provides support for the recent releases of the Gazebo simulator
 [(Gazebo Garden)](https://gazebosim.org/docs/garden/install) and [(Gazebo Harmonic)](https://gazebosim.org/docs/harmonic/install).
 
-It also adds the following features:
+## Ardupilot Gazebo Plugin
+
+`ardupilot_gazebo` plugin adds the following features:
 
 - More flexible data exchange between SITL and Gazebo using JSON.
 - Additional sensors supported.
@@ -20,6 +22,14 @@ It also adds the following features:
 
 The project comprises a Gazebo plugin to connect to ArduPilot SITL
 (Software In The Loop) and some example models and worlds.
+
+ArduPilot SITL outpus servo signals to Gazebo.
+Gazebo runs the FDM and outputs the vehicle state back to ArduPilot.
+The FDM in Gazebo replaces the minimal FDM that ArduPilot SITL normally runs.
+
+## Ardupilot Gazebo SITL Viewer
+
+See [Ardupilot Gazebo SITL Viewer](./ardupilot_gazebo_sitl_viewer/README.md)
 
 ## Prerequisites
 
@@ -88,7 +98,7 @@ Assuming that you have cloned the repository to `$HOME/ardupilot_gazebo`:
 
 ```bash
 export GZ_SIM_SYSTEM_PLUGIN_PATH=$HOME/ardupilot_gazebo/ardupilot_gazebo/build:$GZ_SIM_SYSTEM_PLUGIN_PATH
-export GZ_SIM_RESOURCE_PATH=$HOME/ardupilot_gazebo/models:$HOME/ardupilot_gazebo/worlds:$GZ_SIM_RESOURCE_PATH
+export GZ_SIM_RESOURCE_PATH=$HOME/ardupilot_gazebo/ardupilot_gazebo/models:$HOME/ardupilot_gazebo/ardupilot_gazebo/worlds:$GZ_SIM_RESOURCE_PATH
 ```
 
 #### .bashrc or .zshrc
@@ -96,8 +106,8 @@ export GZ_SIM_RESOURCE_PATH=$HOME/ardupilot_gazebo/models:$HOME/ardupilot_gazebo
 Assuming that you have cloned the repository to `$HOME/ardupilot_gazebo`:
 
 ```bash
-echo 'export GZ_SIM_SYSTEM_PLUGIN_PATH=$HOME/ardupilot_gazebo/build:${GZ_SIM_SYSTEM_PLUGIN_PATH}' >> ~/.bashrc
-echo 'export GZ_SIM_RESOURCE_PATH=$HOME/ardupilot_gazebo/models:$HOME/ardupilot_gazebo/worlds:${GZ_SIM_RESOURCE_PATH}' >> ~/.bashrc
+echo 'export GZ_SIM_SYSTEM_PLUGIN_PATH=$HOME/ardupilot_gazebo/ardupilot_gazebo/build:${GZ_SIM_SYSTEM_PLUGIN_PATH}' >> ~/.bashrc
+echo 'export GZ_SIM_RESOURCE_PATH=$HOME/ardupilot_gazebo/ardupilot_gazebo/models:$HOME/ardupilot_gazebo/ardupilot_gazebo/worlds:${GZ_SIM_RESOURCE_PATH}' >> ~/.bashrc
 ```
 
 Reload your terminal with `source ~/.bashrc` (or `source ~/.zshrc` on macOS).
