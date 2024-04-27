@@ -24,6 +24,7 @@ The project comprises a Gazebo plugin to connect to ArduPilot SITL
 ## Prerequisites
 
 Gazebo Garden or Harmonic is supported on Ubuntu 22.04 (Jammy).
+Harmonic is recommended.
 If you are running Ubuntu as a virtual machine you will need at least
 Ubuntu 20.04 in order to have the OpenGL support required for the
 `ogre2` render engine. Gazebo and ArduPilot SITL will also run on macOS
@@ -43,14 +44,27 @@ Install additional dependencies:
 
 ### Ubuntu
 
-Gazebo Garden:
+Recommended - Use rosdep with
+[osrf's rosdep rules](https://github.com/osrf/osrf-rosdep?tab=readme-ov-file#1-use-rosdep-to-resolve-gazebo-libraries)
+to manage all dependencies. This is driven off of the environment variable `GZ_VERSION`.
+
+```bash
+export GZ_VERSION=harmonic # or garden
+sudo bash -c 'wget https://raw.githubusercontent.com/osrf/osrf-rosdep/master/gz/00-gazebo.list -O /etc/ros/rosdep/sources.list.d/00-gazebo.list'
+rosdep update
+rosdep resolve gz-harmonic
+# Navigate to your ROS workspace before the next command.
+rosdep install --from-paths src --ignore-src -y
+```
+
+Manual - Gazebo Garden Dependencies:
 
 ```bash
 sudo apt update
 sudo apt install libgz-sim7-dev rapidjson-dev
 ```
 
-Or Gazebo Harmonic:
+Manual - Gazebo Harmonic Dependencies:
 
 ```bash
 sudo apt update
