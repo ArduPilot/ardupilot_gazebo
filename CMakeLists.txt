@@ -18,7 +18,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Find gz-sim and dependencies.
 
 # Harmonic
-if("$ENV{GZ_VERSION}" STREQUAL "harmonic")
+if("$ENV{GZ_VERSION}" STREQUAL "harmonic" OR NOT DEFINED "ENV{GZ_VERSION}")
   find_package(gz-cmake3 REQUIRED)
   set(GZ_CMAKE_VER ${gz-cmake3_VERSION_MAJOR})
 
@@ -33,7 +33,7 @@ if("$ENV{GZ_VERSION}" STREQUAL "harmonic")
 
   message(STATUS "Compiling against Gazebo Harmonic")
 # Garden (default)
-elseif("$ENV{GZ_VERSION}" STREQUAL "garden" OR NOT DEFINED "ENV{GZ_VERSION}")
+elseif("$ENV{GZ_VERSION}" STREQUAL "garden")
   find_package(gz-cmake3 REQUIRED)
   set(GZ_CMAKE_VER ${gz-cmake3_VERSION_MAJOR})
 
