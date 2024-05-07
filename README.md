@@ -44,18 +44,7 @@ Install additional dependencies:
 
 ### Ubuntu
 
-Recommended - Use rosdep with
-[osrf's rosdep rules](https://github.com/osrf/osrf-rosdep?tab=readme-ov-file#1-use-rosdep-to-resolve-gazebo-libraries)
-to manage all dependencies. This is driven off of the environment variable `GZ_VERSION`.
-
-```bash
-export GZ_VERSION=harmonic # or garden
-sudo bash -c 'wget https://raw.githubusercontent.com/osrf/osrf-rosdep/master/gz/00-gazebo.list -O /etc/ros/rosdep/sources.list.d/00-gazebo.list'
-rosdep update
-rosdep resolve gz-harmonic
-# Navigate to your ROS workspace before the next command.
-rosdep install --from-paths src --ignore-src -y
-```
+#### Garden (apt)
 
 Manual - Gazebo Garden Dependencies:
 
@@ -64,11 +53,28 @@ sudo apt update
 sudo apt install libgz-sim7-dev rapidjson-dev
 ```
 
+#### Harmonic (apt)
+
 Manual - Gazebo Harmonic Dependencies:
 
 ```bash
 sudo apt update
 sudo apt install libgz-sim8-dev rapidjson-dev
+```
+
+#### Rosdep
+
+Use rosdep with
+[osrf's rosdep rules](https://github.com/osrf/osrf-rosdep?tab=readme-ov-file#1-use-rosdep-to-resolve-gazebo-libraries)
+to manage all dependencies. This is driven off of the environment variable `GZ_VERSION`.
+
+```bash
+export GZ_VERSION=harmonic # or garden
+sudo bash -c 'wget https://raw.githubusercontent.com/osrf/osrf-rosdep/master/gz/00-gazebo.list -O /etc/ros/rosdep/sources.list.d/00-gazebo.list'
+rosdep update
+rosdep resolve gz-harmonic # or gz-garden
+# Navigate to your ROS workspace before the next command.
+rosdep install --from-paths src --ignore-src -y
 ```
 
 ### macOS
