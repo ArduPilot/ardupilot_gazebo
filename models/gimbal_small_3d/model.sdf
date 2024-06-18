@@ -210,6 +210,14 @@
           <max_zoom>125.0</max_zoom>
           <slew_rate>0.42514285714</slew_rate>
         </plugin>
+        
+        <plugin filename="GstCameraPlugin"
+            name="GstCameraPlugin">
+            <udpHost>127.0.0.1</udpHost>
+            <udpPort>5600</udpPort>
+            <imageTopic>/world/iris_runway/model/iris_with_gimbal/model/gimbal/link/pitch_link/sensor/camera/image</imageTopic>
+            <enableTopic>/enable_video_stream</enableTopic>
+        </plugin>
 
       </sensor>
     </link>
