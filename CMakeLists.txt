@@ -52,8 +52,11 @@ else()
 endif()
 
 # --------------------------------------------------------------------------- #
-# Find RapidJSON.
 find_package(RapidJSON REQUIRED)
+find_package(OpenCV REQUIRED)
+
+pkg_check_modules(GST REQUIRED gstreamer-1.0 gstreamer-app-1.0)
+
 
 # --------------------------------------------------------------------------- #
 # Build plugin.
@@ -95,6 +98,21 @@ target_link_libraries(CameraZoomPlugin PRIVATE
   gz-sim${GZ_SIM_VER}::gz-sim${GZ_SIM_VER}
 )
 
+add_library(GstCameraPlugin
+  SHARED
+  src/GstCameraPlugin.cc
+)
+target_include_directories(GstCameraPlugin PRIVATE
+  include
+  ${OpenCV_INCLUDE_DIRS}
+  ${GST_INCLUDE_DIRS}
+)
+target_link_libraries(GstCameraPlugin PRIVATE
+  gz-sim${GZ_SIM_VER}::gz-sim${GZ_SIM_VER}
+  ${OpenCV_LIBS}
+  ${GST_LINK_LIBRARIES}
+)
+
 # --------------------------------------------------------------------------- #
 # Install.
 
@@ -103,6 +121,7 @@ install(
   ArduPilotPlugin
   ParachutePlugin
   CameraZoomPlugin
+  GstCameraPlugin
   DESTINATION lib/${PROJECT_NAME}
 )
 
