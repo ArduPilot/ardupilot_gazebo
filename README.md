@@ -51,6 +51,7 @@ Manual - Gazebo Garden Dependencies:
 ```bash
 sudo apt update
 sudo apt install libgz-sim7-dev rapidjson-dev
+sudo apt install libopencv-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-plugins-bad gstreamer1.0-libav gstreamer1.0-gl
 ```
 
 #### Harmonic (apt)
@@ -60,6 +61,7 @@ Manual - Gazebo Harmonic Dependencies:
 ```bash
 sudo apt update
 sudo apt install libgz-sim8-dev rapidjson-dev
+sudo apt install libopencv-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-plugins-bad gstreamer1.0-libav gstreamer1.0-gl
 ```
 
 #### Rosdep
@@ -82,6 +84,7 @@ rosdep install --from-paths src --ignore-src -y
 ```bash
 brew update
 brew install rapidjson
+brew install opencv gstreamer
 ```
 
 Ensure the `GZ_VERSION` environment variable is set to either
