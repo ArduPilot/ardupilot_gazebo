@@ -211,12 +211,12 @@
           <slew_rate>0.42514285714</slew_rate>
         </plugin>
         
-        <plugin filename="GstCameraPlugin"
-            name="GstCameraPlugin">
-            <udpHost>127.0.0.1</udpHost>
-            <udpPort>5600</udpPort>
-            <imageTopic>/world/iris_runway/model/iris_with_gimbal/model/gimbal/link/pitch_link/sensor/camera/image</imageTopic>
-            <enableTopic>/enable_video_stream</enableTopic>
+        <plugin name="GstCameraPlugin"
+            filename="GstCameraPlugin">
+          <udp_host>127.0.0.1</udp_host>
+          <udp_port>5600</udp_port>
+          <use_basic_pipeline>true</use_basic_pipeline>
+          <use_cuda>false</use_cuda>
         </plugin>
 
       </sensor>
