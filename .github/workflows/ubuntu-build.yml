@@ -10,7 +10,7 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     name: ubuntu-build
     steps:
       - name: Checkout
@@ -34,7 +34,7 @@ jobs:
           sudo wget https://packages.osrfoundation.org/gazebo.gpg -O /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg
           echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
           sudo apt update && sudo apt install --no-install-recommends -y \
-          rapidjson-dev gz-garden
+          rapidjson-dev gz-harmonic
 
       # Put ccache into github cache for faster build
       - name: Prepare ccache timestamp
