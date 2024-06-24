@@ -34,7 +34,15 @@ jobs:
           sudo wget https://packages.osrfoundation.org/gazebo.gpg -O /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg
           echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
           sudo apt update && sudo apt install --no-install-recommends -y \
-          rapidjson-dev gz-harmonic
+          rapidjson-dev \
+          libopencv-dev \
+          libunwind-dev \
+          libgstreamer1.0-dev \
+          libgstreamer-plugins-base1.0-dev \
+          gstreamer1.0-plugins-bad \
+          gstreamer1.0-libav \
+          gstreamer1.0-gl \
+          gz-harmonic
 
       # Put ccache into github cache for faster build
       - name: Prepare ccache timestamp

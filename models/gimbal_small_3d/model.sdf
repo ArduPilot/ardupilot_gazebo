@@ -210,6 +210,14 @@
           <max_zoom>125.0</max_zoom>
           <slew_rate>0.42514285714</slew_rate>
         </plugin>
+        
+        <plugin name="GstCameraPlugin"
+            filename="GstCameraPlugin">
+          <udp_host>127.0.0.1</udp_host>
+          <udp_port>5600</udp_port>
+          <use_basic_pipeline>true</use_basic_pipeline>
+          <use_cuda>false</use_cuda>
+        </plugin>
 
       </sensor>
     </link>

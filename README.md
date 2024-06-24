@@ -51,6 +51,7 @@ Manual - Gazebo Garden Dependencies:
 ```bash
 sudo apt update
 sudo apt install libgz-sim7-dev rapidjson-dev
+sudo apt install libopencv-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-plugins-bad gstreamer1.0-libav gstreamer1.0-gl
 ```
 
 #### Harmonic (apt)
@@ -60,6 +61,7 @@ Manual - Gazebo Harmonic Dependencies:
 ```bash
 sudo apt update
 sudo apt install libgz-sim8-dev rapidjson-dev
+sudo apt install libopencv-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-plugins-bad gstreamer1.0-libav gstreamer1.0-gl
 ```
 
 #### Rosdep
@@ -82,6 +84,7 @@ rosdep install --from-paths src --ignore-src -y
 ```bash
 brew update
 brew install rapidjson
+brew install opencv gstreamer
 ```
 
 Ensure the `GZ_VERSION` environment variable is set to either
@@ -195,6 +198,38 @@ greater than one:
 
 ```bash
 MANUAL> param set SIM_SPEEDUP 10
+```
+
+### 3. Streaming camera video
+
+Images from camera sensors may be streamed with GStreamer using
+the `GstCameraPlugin` sensor plugin. The example gimbal models include the
+plugin element:
+
+```xml
+<plugin name="GstCameraPlugin"
+    filename="GstCameraPlugin">
+  <udp_host>127.0.0.1</udp_host>
+  <udp_port>5600</udp_port>
+  <use_basic_pipeline>true</use_basic_pipeline>
+  <use_cuda>false</use_cuda>
+</plugin>
+```
+
+The `<image_topic>` and `<enable_topic>` parameters are deduced from the
+topic name for the camera sensor, but may be overriden if required.
+
+The `gimbal.sdf` world includes a 3 degrees of freedom gimbal with a
+zoomable camera. To start streaming:
+
+```bash
+gz topic -t /world/gimbal/model/mount/model/gimbal/link/pitch_link/sensor/camera/image/enable_streaming -m gz.msgs.Boolean -p "data: 1"
+```
+
+Display the streamed video:
+
+```bash
+gst-launch-1.0 -v udpsrc port=5600 caps='application/x-rtp, media=(string)video, clock-rate=(int)90000, encoding-name=(string)H264' ! rtph264depay ! avdec_h264 ! videoconvert ! autovideosink sync=false
 ```
 
 ## Models
