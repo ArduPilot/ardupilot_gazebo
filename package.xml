@@ -5,7 +5,7 @@
   <version>0.0.0</version>
   <description>Plugins and models for vehicle simulation in Gazebo Sim with ArduPilot SITL controllers</description>
   <maintainer email="rhys.mainwaring@me.com">Rhys Mainwaring</maintainer>
-  <license>GPL-3.0</license>
+  <license>LGPL-3.0</license>
   <author>Rhys Mainwaring</author>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
