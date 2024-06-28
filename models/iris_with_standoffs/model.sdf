@@ -20,11 +20,10 @@
         </inertia>
       </inertial>
       <collision name='base_collision'>
-        <pose>0 0 -0.08 0 0 0</pose>
         <geometry>
-          <box>
-            <size>0.47 0.47 0.23</size>
-          </box>
+          <mesh>
+            <uri>model://iris_with_standoffs/meshes/iris.dae</uri>
+          </mesh>
         </geometry>
         <surface>
           <contact>
@@ -41,6 +40,43 @@
           </friction>
         </surface>
       </collision>
+      <collision name='front_left_leg_collision'>
+        <pose>0.123 0.22 -0.11 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.005</radius>
+            <length>0.17</length>
+          </cylinder>
+        </geometry>
+      </collision>
+      <collision name='front_right_leg_collision'>
+        <pose>0.123 -0.22 -0.11 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.005</radius>
+            <length>0.17</length>
+          </cylinder>
+        </geometry>
+      </collision>
+      <collision name='rear_left_leg_collision'>
+        <pose>-0.140 0.21 -0.11 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.005</radius>
+            <length>0.17</length>
+          </cylinder>
+        </geometry>
+      </collision>
+      <collision name='rear_right_leg_collision'>
+        <pose>-0.140 -0.21 -0.11 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.005</radius>
+            <length>0.17</length>
+          </cylinder>
+        </geometry>
+      </collision>
+
       <visual name='base_visual'>
         <geometry>
           <mesh>
