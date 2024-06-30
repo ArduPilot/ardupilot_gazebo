@@ -25,10 +25,6 @@ RC7_OPTION       213         # Mount1 Pitch
 RC8_MAX          1900
 RC8_MIN          1100
 RC8_OPTION       214         # Mount1 Yaw
-RC8_REVERSED     0           # Normal
-RC9_MAX          1900
-RC9_MIN          1100
-RC9_OPTION       0           # Do Nothing
 
 # Gimbal servo out
 SERVO9_FUNCTION  8           # Mount1Roll
