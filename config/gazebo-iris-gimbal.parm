@@ -14,17 +14,21 @@ RNGFND1_SCALING  10
 RNGFND1_PIN      0
 RNGFND1_MAX_CM   5000
 
-# Gimbal on mount 1 has 2 DOF
+# Gimbal on mount 1 has 3 DOF
 MNT1_PITCH_MAX   90
 MNT1_PITCH_MIN   -90
 MNT1_ROLL_MAX    90
 MNT1_ROLL_MIN    -90
+MNT1_YAW_MAX    90
+MNT1_YAW_MIN    -90
 MNT1_TYPE        1
 
-# Gimbal roll and pitch RC
-RC9_OPTION       212
-RC10_OPTION      213
+# Gimbal roll, pitch and yaw RC
+RC6_OPTION      212
+RC7_OPTION      213
+RC8_OPTION      214
 
-# Gimbal roll and pitch servos
-SERVO5_FUNCTION  8
-SERVO6_FUNCTION  7
+# Gimbal roll, pitch and yaw servos
+SERVO9_FUNCTION  8
+SERVO10_FUNCTION  7
+SERVO11_FUNCTION  6
