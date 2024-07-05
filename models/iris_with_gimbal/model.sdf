@@ -280,9 +280,10 @@
         <controlVelocitySlowdownSim>1</controlVelocitySlowdownSim>
       </control>
 
+      <!-- roll range is -30 to +30 deg -->
       <control channel="8">
         <jointName>gimbal::roll_joint</jointName>
-        <multiplier>3.14159265</multiplier>
+        <multiplier>1.047197551196</multiplier>
         <offset>-0.5</offset>
         <servo_min>1100</servo_min>
         <servo_max>1900</servo_max>
@@ -291,10 +292,11 @@
         <p_gain>2</p_gain>
       </control>
 
+      <!-- pitch range is -135 to +45 deg -->
       <control channel="9">
         <jointName>gimbal::pitch_joint</jointName>
         <multiplier>-3.14159265</multiplier>
-        <offset>-0.5</offset>
+        <offset>-0.75</offset>
         <servo_min>1100</servo_min>
         <servo_max>1900</servo_max>
         <type>COMMAND</type>
@@ -302,9 +304,10 @@
         <p_gain>2</p_gain>
       </control>
 
+      <!-- yaw range is -160 to +160 deg -->
       <control channel="10">
         <jointName>gimbal::yaw_joint</jointName>
-        <multiplier>-3.14159265</multiplier>
+        <multiplier>-5.5850536</multiplier>
         <offset>-0.5</offset>
         <servo_min>1100</servo_min>
         <servo_max>1900</servo_max>
