@@ -2,29 +2,35 @@
 FRAME_CLASS	     1
 FRAME_TYPE	     1
 
-# IRLOCK FEATURE
-RC8_OPTION       39
-PLND_ENABLED     1
-PLND_TYPE        3
+# Match servo out for motors
+MOT_PWM_MIN      1100
+MOT_PWM_MAX      1900
 
-# SONAR FOR IRLOCK
-SIM_SONAR_SCALE  10
-RNGFND1_TYPE     1
-RNGFND1_SCALING  10
-RNGFND1_PIN      0
-RNGFND1_MAX_CM   5000
+# Gimbal on mount 1 has 3 DOF
+MNT1_TYPE        1           # Servo
+MNT1_PITCH_MAX   45
+MNT1_PITCH_MIN   -135
+MNT1_ROLL_MAX    30
+MNT1_ROLL_MIN    -30
+MNT1_YAW_MAX     160
+MNT1_YAW_MIN     -160
 
-# Gimbal on mount 1 has 2 DOF
-MNT1_PITCH_MAX   90
-MNT1_PITCH_MIN   -90
-MNT1_ROLL_MAX    90
-MNT1_ROLL_MIN    -90
-MNT1_TYPE        1
+# Gimbal RC in
+RC6_MAX          1900
+RC6_MIN          1100
+RC6_OPTION       212         # Mount1 Roll
+RC7_MAX          1900
+RC7_MIN          1100
+RC7_OPTION       213         # Mount1 Pitch
+RC8_MAX          1900
+RC8_MIN          1100
+RC8_OPTION       214         # Mount1 Yaw
+RC8_REVERSED     0           # Normal
+RC9_MAX          1900
+RC9_MIN          1100
+RC9_OPTION       0           # Do Nothing
 
-# Gimbal roll and pitch RC
-RC9_OPTION       212
-RC10_OPTION      213
-
-# Gimbal roll and pitch servos
-SERVO5_FUNCTION  8
-SERVO6_FUNCTION  7
+# Gimbal servo out
+SERVO9_FUNCTION  8           # Mount1Roll
+SERVO10_FUNCTION 7           # Mount1Pitch
+SERVO11_FUNCTION 6           # Mount1Yaw
