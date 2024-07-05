@@ -79,8 +79,8 @@
           <damping>0.5</damping>
         </dynamics>
         <limit>
-          <lower>-1.57079632</lower>
-          <upper>1.57079632</upper>
+          <lower>-3.1415926</lower>
+          <upper>3.1415926</upper>
         </limit>
       </axis>
       <pose>0.01 0 -0.04 0 0 0</pose>
@@ -179,8 +179,8 @@
           <damping>0.5</damping>
         </dynamics>
         <limit>
-          <lower>-1.57079632</lower>
-          <upper>1.57079632</upper>
+          <lower>-3.1415926</lower>
+          <upper>3.1415926</upper>
         </limit>
       </axis>
       <pose>0 0 0.02 0 0 0</pose>
