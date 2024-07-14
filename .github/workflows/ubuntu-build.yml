@@ -18,21 +18,21 @@ jobs:
         with:
           submodules: 'recursive'
 
+      - name: Setup Gazebo
+        uses: gazebo-tooling/setup-gazebo@v0.3.0
+        with:
+          required-gazebo-distributions: harmonic
+
       - name: Install Build Dependencies
         shell: bash
         run: |
           sudo apt update && sudo apt install --no-install-recommends -y \
-          lsb-release \
-          sudo \
           software-properties-common \
-          wget \
           make \
           cmake \
           ccache \
           g++ \
           git
-          sudo wget https://packages.osrfoundation.org/gazebo.gpg -O /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg
-          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
           sudo apt update && sudo apt install --no-install-recommends -y \
           rapidjson-dev \
           libopencv-dev \
@@ -41,8 +41,7 @@ jobs:
           libgstreamer-plugins-base1.0-dev \
           gstreamer1.0-plugins-bad \
           gstreamer1.0-libav \
-          gstreamer1.0-gl \
-          gz-harmonic
+          gstreamer1.0-gl
 
       # Put ccache into github cache for faster build
       - name: Prepare ccache timestamp
