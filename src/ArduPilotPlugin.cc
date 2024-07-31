@@ -382,7 +382,7 @@ gz::sim::systems::ArduPilotPlugin::ArduPilotPlugin()
 
 
 /////////////////////////////////////////////////
-void gz::sim::systems::ArduPilotPlugin::Reset(const UpdateInfo &_info,
+void gz::sim::systems::ArduPilotPlugin::Reset(const UpdateInfo &/*_info*/,
                                               EntityComponentManager &_ecm)
 {
   if (!_ecm.EntityHasComponentType(this->dataPtr->imuLink,
