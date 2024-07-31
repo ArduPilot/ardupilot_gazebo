@@ -1464,12 +1464,12 @@ bool gz::sim::systems::ArduPilotPlugin::ReceiveServoPacket()
     // 16 / 32 channel compatibility
     uint16_t pkt_magic{0};
     uint16_t pkt_frame_rate{0};
-    uint16_t pkt_frame_count{0};
-    std::array<uint16_t, 32> pkt_pwm;
+    uint32_t pkt_frame_count{0};
+    std::array<uint16_t, 32> pkt_pwm{};
     ssize_t recvSize{-1};
     if (this->dataPtr->have32Channels)
     {
-      servo_packet_32 pkt;
+      servo_packet_32 pkt{};
       recvSize = getServoPacket(
           this->dataPtr->sock,
           this->dataPtr->fcu_address,
@@ -1484,7 +1484,7 @@ bool gz::sim::systems::ArduPilotPlugin::ReceiveServoPacket()
     }
     else
     {
-      servo_packet_16 pkt;
+      servo_packet_16 pkt{};
       recvSize = getServoPacket(
           this->dataPtr->sock,
           this->dataPtr->fcu_address,
