@@ -91,7 +91,7 @@ class Control
     this->pid.Init(0.1, 0, 0, 0, 0, 1.0, -1.0);
   }
 
-  public: ~Control() {}
+  public: ~Control() = default;
 
   /// \brief The PWM channel used to command this control
   public: int channel = 0;
