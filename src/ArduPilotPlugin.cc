@@ -57,7 +57,7 @@
 
 #include <sdf/sdf.hh>
 
-#include "Socket.h"
+#include "SocketUDP.hh"
 #include "Util.hh"
 
 #define DEBUG_JSON_IO 0
@@ -219,7 +219,7 @@ class gz::sim::systems::ArduPilotPluginPrivate
   public: std::mutex mutex;
 
   /// \brief Socket manager
-  public: SocketAPM sock = SocketAPM(true);
+  public: SocketUDP sock = SocketUDP(true, true);
 
   /// \brief The address for the flight dynamics model (i.e. this plugin)
   public: std::string fdm_address{"127.0.0.1"};
@@ -1253,10 +1253,6 @@ void gz::sim::systems::ArduPilotPlugin::ResetPIDs()
 /////////////////////////////////////////////////
 bool gz::sim::systems::ArduPilotPlugin::InitSockets(sdf::ElementPtr _sdf) const
 {
-    // configure port
-    this->dataPtr->sock.set_blocking(false);
-    this->dataPtr->sock.reuseaddress();
-
     // get the fdm address if provided, otherwise default to localhost
     this->dataPtr->fdm_address =
         _sdf->Get("fdm_addr", static_cast<std::string>("127.0.0.1")).first;
@@ -1407,7 +1403,7 @@ namespace
 /// \brief Get a servo packet. Templated for 16 or 32 channel packets.
 template<typename TServoPacket>
 ssize_t getServoPacket(
-  SocketAPM &_sock,
+  SocketUDP &_sock,
   const char *&_fcu_address,
   uint16_t &_fcu_port_out,
   uint32_t _waitMs,
@@ -1417,7 +1413,7 @@ ssize_t getServoPacket(
 {
     ssize_t recvSize = _sock.recv(&_pkt, sizeof(TServoPacket), _waitMs);
 
-    _sock.last_recv_address(_fcu_address, _fcu_port_out);
+    _sock.get_client_address(_fcu_address, _fcu_port_out);
 
     // drain the socket in the case we're backed up
     int counter = 0;
