@@ -551,7 +551,7 @@ void gz::sim::systems::ArduPilotPlugin::LoadControlChannels(
     }
     else
     {
-      control.channel = this->dataPtr->controls.size();
+      control.channel = static_cast<int>(this->dataPtr->controls.size());
       gzwarn << "[" << this->dataPtr->modelName << "] "
              <<  "id/channel attribute not specified, use order parsed ["
              << control.channel << "].\n";
@@ -1254,7 +1254,8 @@ bool gz::sim::systems::ArduPilotPlugin::InitSockets(
         _sdf->Get("fdm_addr", static_cast<std::string>("127.0.0.1")).first;
 
     this->dataPtr->fdm_port_in =
-        _sdf->Get("fdm_port_in", static_cast<uint32_t>(9002)).first;
+            static_cast<uint16_t>(_sdf->Get("fdm_port_in",
+                                            static_cast<uint32_t>(9002)).first);
 
     // output port configuration is automatic
     if (_sdf->HasElement("listen_addr")) {
