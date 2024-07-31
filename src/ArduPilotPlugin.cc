@@ -517,7 +517,7 @@ void gz::sim::systems::ArduPilotPlugin::Configure(
 
 /////////////////////////////////////////////////
 void gz::sim::systems::ArduPilotPlugin::LoadControlChannels(
-    sdf::ElementPtr _sdf,
+    const sdf::ElementPtr& _sdf,
     gz::sim::EntityComponentManager &_ecm)
 {
   // per control channel
@@ -789,7 +789,7 @@ void gz::sim::systems::ArduPilotPlugin::LoadControlChannels(
 
 /////////////////////////////////////////////////
 void gz::sim::systems::ArduPilotPlugin::LoadImuSensors(
-    sdf::ElementPtr _sdf,
+    const sdf::ElementPtr &_sdf,
     gz::sim::EntityComponentManager &/*_ecm*/)
 {
     this->dataPtr->imuName =
@@ -798,7 +798,7 @@ void gz::sim::systems::ArduPilotPlugin::LoadImuSensors(
 
 /////////////////////////////////////////////////
 void gz::sim::systems::ArduPilotPlugin::LoadGpsSensors(
-    sdf::ElementPtr /*_sdf*/,
+    const sdf::ElementPtr &/*_sdf*/,
     gz::sim::EntityComponentManager &/*_ecm*/)
 {
   /*
@@ -871,7 +871,7 @@ void gz::sim::systems::ArduPilotPlugin::LoadGpsSensors(
 
 /////////////////////////////////////////////////
 void gz::sim::systems::ArduPilotPlugin::LoadRangeSensors(
-    sdf::ElementPtr _sdf,
+    const sdf::ElementPtr &_sdf,
     gz::sim::EntityComponentManager &/*_ecm*/)
 {
     struct SensorIdentifier
@@ -987,7 +987,7 @@ void gz::sim::systems::ArduPilotPlugin::LoadRangeSensors(
 
 /////////////////////////////////////////////////
 void gz::sim::systems::ArduPilotPlugin::LoadWindSensors(
-    sdf::ElementPtr _sdf,
+    const sdf::ElementPtr &_sdf,
     gz::sim::EntityComponentManager &/*_ecm*/)
 {
     this->dataPtr->anemometerName =
@@ -1247,8 +1247,8 @@ void gz::sim::systems::ArduPilotPlugin::ResetPIDs()
 }
 
 /////////////////////////////////////////////////
-bool gz::sim::systems::ArduPilotPlugin::InitSockets(sdf::ElementPtr _sdf) const
-{
+bool gz::sim::systems::ArduPilotPlugin::InitSockets(
+        const sdf::ElementPtr &_sdf) const {
     // get the fdm address if provided, otherwise default to localhost
     this->dataPtr->fdm_address =
         _sdf->Get("fdm_addr", static_cast<std::string>("127.0.0.1")).first;
