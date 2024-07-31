@@ -1855,11 +1855,11 @@ void gz::sim::systems::ArduPilotPlugin::CreateStateJSON(
         windSpdBdyA = std::sqrt(windXBdyA * windXBdyA + windYBdyA * windYBdyA);
         windDirBdyA = atan2(windYBdyA, windXBdyA);
 
-        double windXSnsG = windVelSnsG.X();
-        double windYSnsG = windVelSnsG.Y();
-        auto windSpdSnsG = std::sqrt(
-            windXSnsG * windXSnsG + windYSnsG * windYSnsG);
-        auto windDirSnsG = atan2(windYSnsG, windXSnsG);
+//        double windXSnsG = windVelSnsG.X();
+//        double windYSnsG = windVelSnsG.Y();
+//        auto windSpdSnsG = std::sqrt(
+//            windXSnsG * windXSnsG + windYSnsG * windYSnsG);
+//        auto windDirSnsG = atan2(windYSnsG, windXSnsG);
 
         // gzdbg << "\nEuler angles:\n"
         //       << "bdyAToBdyG:  " << bdyAToBdyG.Rot().Euler() << "\n"
