@@ -96,7 +96,7 @@ class GZ_SIM_VISIBLE ArduPilotPlugin final:
   public: ArduPilotPlugin();
 
   /// \brief Destructor.
-  public: ~ArduPilotPlugin();
+  public: ~ArduPilotPlugin() final = default;
 
   public: void Reset(const UpdateInfo &_info,
                       EntityComponentManager &_ecm) final;

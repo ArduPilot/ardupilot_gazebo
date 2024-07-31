@@ -380,10 +380,6 @@ gz::sim::systems::ArduPilotPlugin::ArduPilotPlugin()
 {
 }
 
-/////////////////////////////////////////////////
-gz::sim::systems::ArduPilotPlugin::~ArduPilotPlugin()
-{
-}
 
 /////////////////////////////////////////////////
 void gz::sim::systems::ArduPilotPlugin::Reset(const UpdateInfo &_info,
