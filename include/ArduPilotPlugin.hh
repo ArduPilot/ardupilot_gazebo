@@ -47,7 +47,6 @@ struct servo_packet_32 {
 };
 
 // Forward declare private data class
-class ArduPilotSocketPrivate;
 class ArduPilotPluginPrivate;
 
 /// \brief Interface ArduPilot from ardupilot stack
