@@ -184,7 +184,7 @@ void GstCameraPlugin::Configure(
             std::bind(&GstCameraPlugin::Impl::OnRenderTeardown, impl.get())));
 }
 
-void GstCameraPlugin::PreUpdate(const UpdateInfo &_info,
+void GstCameraPlugin::PreUpdate(const UpdateInfo &/*_info*/,
     EntityComponentManager &_ecm)
 {
     if (impl->cameraName.empty())
