@@ -285,12 +285,12 @@ class gz::sim::systems::ArduPilotPluginPrivate
   {
     // Extract data
     double range_max = _msg.range_max();
-    auto&& ranges = _msg.ranges();
-    auto&& intensities = _msg.intensities();
+    auto&& m_ranges = _msg.ranges();
+    // auto&& intensities = _msg.intensities();  // unused
 
     // If there is no return, the range should be greater than range_max
     double sample_min = 2.0 * range_max;
-    for (auto&& range : ranges)
+    for (auto&& range : m_ranges)
     {
       sample_min = std::min(
           sample_min, std::isinf(range) ? 2.0 * range_max : range);
