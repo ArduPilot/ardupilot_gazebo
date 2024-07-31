@@ -84,9 +84,9 @@ class Control
   public: Control()
   {
     // most of these coefficients are not used yet.
-    this->rotorVelocitySlowdownSim = this->kDefaultRotorVelocitySlowdownSim;
-    this->frequencyCutoff = this->kDefaultFrequencyCutoff;
-    this->samplingRate = this->kDefaultSamplingRate;
+    this->rotorVelocitySlowdownSim = kDefaultRotorVelocitySlowdownSim;
+    this->frequencyCutoff = kDefaultFrequencyCutoff;
+    this->samplingRate = kDefaultSamplingRate;
 
     this->pid.Init(0.1, 0, 0, 0, 0, 1.0, -1.0);
   }
