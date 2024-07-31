@@ -64,7 +64,7 @@ pkg_check_modules(GST REQUIRED gstreamer-1.0 gstreamer-app-1.0)
 add_library(ArduPilotPlugin
     SHARED
     src/ArduPilotPlugin.cc
-    src/Socket.cpp
+    src/SocketUDP.cc
     src/Util.cc
 )
 target_include_directories(ArduPilotPlugin PRIVATE
