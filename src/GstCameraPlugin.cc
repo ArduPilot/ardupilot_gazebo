@@ -293,7 +293,7 @@ void GstCameraPlugin::Impl::StartStreaming()
 
 void *GstCameraPlugin::Impl::StartThread(void *param)
 {
-    GstCameraPlugin::Impl *impl = (GstCameraPlugin::Impl *)param;
+    GstCameraPlugin::Impl *impl = static_cast<GstCameraPlugin::Impl *>(param);
     impl->StartGstThread();
     return nullptr;
 }
@@ -351,7 +351,7 @@ void GstCameraPlugin::Impl::StartGstThread()
     if (ret != GST_STATE_CHANGE_SUCCESS)
     {
         gzmsg << "GstCameraPlugin: GStreamer element set state returned: "
-              << ret << std::endl;
+              << static_cast<int>(ret) << std::endl;
     }
 
     // this call blocks until the main_loop is killed
@@ -501,8 +501,8 @@ void GstCameraPlugin::Impl::OnImage(const msgs::Image &msg)
     if (!isGstMainLoopActive) return;
 
     // Alloc buffer
-    const guint size = width * height * 1.5;
-    GstBuffer *buffer = gst_buffer_new_allocate(NULL, size, NULL);
+    const auto size = static_cast<guint>(width * height * 1.5);
+    GstBuffer *buffer = gst_buffer_new_allocate(nullptr, size, nullptr);
 
     if (!buffer)
     {
@@ -520,8 +520,10 @@ void GstCameraPlugin::Impl::OnImage(const msgs::Image &msg)
     }
 
     // Color Conversion from RGB to YUV
-    cv::Mat frame = cv::Mat(height, width, CV_8UC3);
-    cv::Mat frameYUV = cv::Mat(height, width, CV_8UC3);
+    cv::Mat frame = cv::Mat(static_cast<int>(height), static_cast<int>(width),
+                            CV_8UC3);
+    cv::Mat frameYUV = cv::Mat(static_cast<int>(height),
+                               static_cast<int>(width), CV_8UC3);
     frame.data = reinterpret_cast<unsigned char *>(
         const_cast<char *>(msg.data().c_str()));
 
@@ -568,7 +570,7 @@ void GstCameraPlugin::Impl::StopStreaming()
     {
         StopGstThread();
 
-        pthread_join(threadId, NULL);
+        pthread_join(threadId, nullptr);
         isGstMainLoopActive = false;
     }
 }
