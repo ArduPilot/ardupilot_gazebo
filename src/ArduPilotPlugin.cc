@@ -355,7 +355,7 @@ class gz::sim::systems::ArduPilotPluginPrivate
   public: uint16_t fcu_frame_rate;
 
   /// \brief Last received frame count from the ArduPilot controller
-  public: uint32_t fcu_frame_count = -1;
+  public: uint32_t fcu_frame_count = UINT32_MAX;
 
   /// \brief Last sent JSON string, so we can resend if needed.
   public: std::string json_str;
