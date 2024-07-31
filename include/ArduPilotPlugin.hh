@@ -85,7 +85,7 @@ class ArduPilotPluginPrivate;
 ///                             controller synchronization
 /// <have_32_channels>    set true if 32 channels are enabled
 ///
-class GZ_SIM_VISIBLE ArduPilotPlugin:
+class GZ_SIM_VISIBLE ArduPilotPlugin final:
   public gz::sim::System,
   public gz::sim::ISystemConfigure,
   public gz::sim::ISystemPostUpdate,
