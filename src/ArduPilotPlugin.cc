@@ -1934,21 +1934,27 @@ void gz::sim::systems::ArduPilotPlugin::CreateStateJSON(
       case 6:
           writer.Key("rng_6");
           writer.Double(this->dataPtr->ranges[5]);
+          [[fallthrough]];  // Intentional fall-through
       case 5:
           writer.Key("rng_5");
           writer.Double(this->dataPtr->ranges[4]);
+          [[fallthrough]];  // Intentional fall-through
       case 4:
           writer.Key("rng_4");
           writer.Double(this->dataPtr->ranges[3]);
+          [[fallthrough]];  // Intentional fall-through
       case 3:
           writer.Key("rng_3");
           writer.Double(this->dataPtr->ranges[2]);
+          [[fallthrough]];  // Intentional fall-through
       case 2:
           writer.Key("rng_2");
           writer.Double(this->dataPtr->ranges[1]);
+          [[fallthrough]];  // Intentional fall-through
       case 1:
           writer.Key("rng_1");
           writer.Double(this->dataPtr->ranges[0]);
+          break;
       default:
           break;
       }
