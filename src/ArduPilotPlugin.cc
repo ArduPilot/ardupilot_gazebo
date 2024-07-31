@@ -877,7 +877,7 @@ void gz::sim::systems::ArduPilotPlugin::LoadRangeSensors(
     struct SensorIdentifier
     {
         std::string type;
-        int index;
+        int index{};
         std::string topic;
     };
     std::vector<SensorIdentifier> sensorIds;
@@ -1416,7 +1416,7 @@ ssize_t getServoPacket(
     int counter = 0;
     while (true)
     {
-        TServoPacket last_pkt;
+        TServoPacket last_pkt{};
         auto recvSize_last = _sock.recv(&last_pkt, sizeof(TServoPacket), 0ul);
         if (recvSize_last == -1)
         {
