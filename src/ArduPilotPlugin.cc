@@ -964,8 +964,8 @@ void gz::sim::systems::ArduPilotPlugin::LoadRangeSensors(
                 };
 
         // Wrap the std::function so we can register the callback
-        auto callbackWrapper = RangeOnMessageWrapperPtr(
-            new OnMessageWrapper<gz::msgs::LaserScan>(fn));
+        auto callbackWrapper =
+                std::make_shared<OnMessageWrapper<gz::msgs::LaserScan>>(fn);
 
         auto callback = &OnMessageWrapper<gz::msgs::LaserScan>::OnMessage;
 
