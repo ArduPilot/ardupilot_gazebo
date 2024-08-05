@@ -169,8 +169,8 @@ class OnMessageWrapper
   public: callback_t callback;
 
   /// \brief Constructor
-  public: OnMessageWrapper(const callback_t &_callback)
-    : callback(_callback)
+  public: explicit OnMessageWrapper(callback_t _callback)
+    : callback(std::move(_callback))
   {
   }
 
