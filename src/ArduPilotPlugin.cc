@@ -505,11 +505,10 @@ void gz::sim::systems::ArduPilotPlugin::Configure(
     sdfClone->Get("have_32_channels", false).first;
 
   // Add the signal handler
-  this->dataPtr->sigHandler.AddCallback(
-      std::bind(
-        &gz::sim::systems::ArduPilotPluginPrivate::OnSignal,
-        this->dataPtr.get(),
-        std::placeholders::_1));
+    this->dataPtr->sigHandler.AddCallback(
+            [capture0 = this->dataPtr.get()](auto &&PH1) {
+                capture0->OnSignal(std::forward<decltype(PH1)>(PH1));
+            });
 
   gzlog << "[" << this->dataPtr->modelName << "] "
         << "ArduPilot ready to fly. The force will be with you" << "\n";
@@ -958,11 +957,11 @@ void gz::sim::systems::ArduPilotPlugin::LoadRangeSensors(
         // Bind the sensor index to the callback function
         // (adjust from unit to zero offset)
         OnMessageWrapper<gz::msgs::LaserScan>::callback_t fn =
-            std::bind(
-                &gz::sim::systems::ArduPilotPluginPrivate::RangeCb,
-                this->dataPtr.get(),
-                std::placeholders::_1,
-                sensorId.index - 1);
+                [capture0 = this->dataPtr.get(), capture1 = sensorId.index - 1](
+                        auto &&PH1) {
+                    capture0->RangeCb(std::forward<decltype(PH1)>(PH1),
+                                      capture1);
+                };
 
         // Wrap the std::function so we can register the callback
         auto callbackWrapper = RangeOnMessageWrapperPtr(
