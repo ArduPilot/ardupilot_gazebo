@@ -24,9 +24,11 @@
 
 #include <chrono>
 #include <functional>
+#include <memory>
 #include <mutex>
 #include <string>
 #include <sstream>
+#include <utility>
 #include <vector>
 
 #include <gz/common/SignalHandler.hh>
@@ -121,7 +123,7 @@ class Control
   public: std::string cmdTopic;
 
   /// \brief The joint being controlled
-  public: gz::sim::Entity joint;
+  public: gz::sim::Entity joint{gz::sim::kNullEntity};
 
   /// \brief A multiplier to scale the raw input command
   public: double multiplier = 1.0;
@@ -231,7 +233,7 @@ class gz::sim::systems::ArduPilotPluginPrivate
   public: uint16_t fdm_port_in{9002};
 
   /// \brief The port for the SITL flight controller - auto detected
-  public: uint16_t fcu_port_out;
+  public: uint16_t fcu_port_out{0};
 
   /// \brief The name of the IMU sensor
   public: std::string imuName;
@@ -343,7 +345,7 @@ class gz::sim::systems::ArduPilotPluginPrivate
 
   /// \brief Max number of consecutive missed ArduPilot controller
   ///        messages before timeout
-  public: int connectionTimeoutMaxCount;
+  public: int connectionTimeoutMaxCount{};
 
   /// \brief Transform from model orientation to x-forward and z-up
   public: gz::math::Pose3d modelXYZToAirplaneXForwardZDown;
@@ -352,7 +354,7 @@ class gz::sim::systems::ArduPilotPluginPrivate
   public: gz::math::Pose3d gazeboXYZToNED;
 
   /// \brief Last received frame rate from the ArduPilot controller
-  public: uint16_t fcu_frame_rate;
+  public: uint16_t fcu_frame_rate{};
 
   /// \brief Last received frame count from the ArduPilot controller
   public: uint32_t fcu_frame_count = UINT32_MAX;
@@ -1461,9 +1463,9 @@ bool gz::sim::systems::ArduPilotPlugin::ReceiveServoPacket()
     }
 
     // 16 / 32 channel compatibility
-    uint16_t pkt_magic{0};
-    uint16_t pkt_frame_rate{0};
-    uint32_t pkt_frame_count{0};
+    uint16_t pkt_magic{};
+    uint16_t pkt_frame_rate{};
+    uint32_t pkt_frame_count{};
     std::array<uint16_t, 32> pkt_pwm{};
     ssize_t recvSize{-1};
     if (this->dataPtr->have32Channels)
