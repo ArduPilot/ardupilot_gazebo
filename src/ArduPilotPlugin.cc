@@ -298,7 +298,7 @@ class gz::sim::systems::ArduPilotPluginPrivate
 
     // Aquire lock and update the range data
     std::lock_guard<std::mutex> lock(this->rangeMsgMutex);
-    this->ranges[_sensorIndex] = sample_min;
+    this->ranges[static_cast<uint64_t>(_sensorIndex)] = sample_min;
   }
 
   // Anemometer
@@ -1628,7 +1628,8 @@ void gz::sim::systems::ArduPilotPlugin::UpdateMotorCommands(
             {
                 // convert pwm to raw cmd: [servo_min, servo_max] => [0, 1],
                 // default is: [1000, 2000] => [0, 1]
-                const double pwm = _pwm[this->dataPtr->controls[i].channel];
+                const double pwm = _pwm[static_cast<uint64_t>(
+                        this->dataPtr->controls[i].channel)];
                 const double pwm_min = this->dataPtr->controls[i].servo_min;
                 const double pwm_max = this->dataPtr->controls[i].servo_max;
                 const double multiplier = this->dataPtr->controls[i].multiplier;
