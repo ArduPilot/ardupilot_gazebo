@@ -1239,9 +1239,9 @@ void gz::sim::systems::ArduPilotPlugin::PostUpdate(
 void gz::sim::systems::ArduPilotPlugin::ResetPIDs()
 {
   // Reset velocity PID for controls
-  for (size_t i = 0; i < this->dataPtr->controls.size(); ++i)
+  for (auto & control : this->dataPtr->controls)
   {
-    this->dataPtr->controls[i].cmd = 0;
+    control.cmd = 0;
     // this->dataPtr->controls[i].pid.Reset();
   }
 }
