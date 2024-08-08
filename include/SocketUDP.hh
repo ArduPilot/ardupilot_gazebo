@@ -20,16 +20,19 @@
 
 #include <fcntl.h>
 #include <unistd.h>
+
 #ifdef _WIN32
-    #include <winsock2.h>
-    #include <Ws2tcpip.h>
+#include <winsock2.h>
+#include <Ws2tcpip.h>
 #else
-    #include <sys/ioctl.h>
-    #include <sys/socket.h>
-    #include <netinet/in.h>
-    #include <netinet/tcp.h>
-    #include <arpa/inet.h>
-    #include <sys/select.h>
+
+#include <sys/ioctl.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
+#include <arpa/inet.h>
+#include <sys/select.h>
+
 #endif
 
 /// \brief Simple UDP socket handling class.
@@ -51,7 +54,8 @@ public:
     bool set_blocking(bool blocking);
 
     /// \brief Send data to address and port.
-    ssize_t sendto(const void *buf, size_t size, const char *address, uint16_t port);
+    ssize_t
+    sendto(const void *buf, size_t size, const char *address, uint16_t port);
 
     /// \brief Receive data.
     ssize_t recv(void *pkt, size_t size, uint32_t timeout_ms);
@@ -61,7 +65,7 @@ public:
 
 private:
     /// \brief File descriptor.
-    struct sockaddr_in in_addr {};
+    struct sockaddr_in in_addr{};
 
     /// \brief File descriptor.
     int fd = -1;
@@ -70,6 +74,8 @@ private:
     bool pollin(uint32_t timeout_ms);
 
     /// \brief Make a sockaddr_in struct from address and port.
-    void make_sockaddr(const char *address, uint16_t port, struct sockaddr_in &sockaddr);
+    void make_sockaddr(const char *address, uint16_t port,
+                       struct sockaddr_in &sockaddr);
 };
+
 #endif  // SOCKETUDP_HH_

@@ -55,7 +55,8 @@ bool SocketUDP::bind(const char *address, uint16_t port) {
     struct sockaddr_in server_addr{};
     make_sockaddr(address, port, server_addr);
 
-    if (::bind(fd, reinterpret_cast<sockaddr *>(&server_addr), sizeof(server_addr)) != 0) {
+    if (::bind(fd, reinterpret_cast<sockaddr *>(&server_addr),
+               sizeof(server_addr)) != 0) {
         perror("SocketUDP Bind failed");
 #ifdef _WIN32
         closesocket(fd);
@@ -90,11 +91,14 @@ bool SocketUDP::set_blocking(bool blocking) {
 }
 
 
-ssize_t SocketUDP::sendto(const void *buf, size_t size, const char *address, uint16_t port) {
+ssize_t SocketUDP::sendto(const void *buf, size_t size, const char *address,
+                          uint16_t port) {
     struct sockaddr_in sockaddr_out{};
     make_sockaddr(address, port, sockaddr_out);
 
-    return ::sendto(fd, buf, size, 0, reinterpret_cast<sockaddr *>(&sockaddr_out), sizeof(sockaddr_out));
+    return ::sendto(fd, buf, size, 0,
+                    reinterpret_cast<sockaddr *>(&sockaddr_out),
+                    sizeof(sockaddr_out));
 }
 
 /*
@@ -105,7 +109,8 @@ ssize_t SocketUDP::recv(void *buf, size_t size, uint32_t timeout_ms) {
         return -1;
     }
     socklen_t len = sizeof(in_addr);
-    return ::recvfrom(fd, buf, size, MSG_DONTWAIT, reinterpret_cast<sockaddr *>(&in_addr), &len);
+    return ::recvfrom(fd, buf, size, MSG_DONTWAIT,
+                      reinterpret_cast<sockaddr *>(&in_addr), &len);
 }
 
 
@@ -131,8 +136,8 @@ bool SocketUDP::pollin(uint32_t timeout_ms) {
     return true;
 }
 
-void SocketUDP::make_sockaddr(const char *address, uint16_t port, struct sockaddr_in &sockaddr)
-{
+void SocketUDP::make_sockaddr(const char *address, uint16_t port,
+                              struct sockaddr_in &sockaddr) {
     sockaddr = {};
 
     sockaddr.sin_family = AF_INET;
