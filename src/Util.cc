@@ -17,6 +17,10 @@
 
 #include "Util.hh"
 
+#include <string>
+#include <unordered_set>
+#include <vector>
+
 #include <gz/sim/components/Joint.hh>
 #include <gz/sim/components/JointVelocity.hh>
 #include <gz/sim/components/Name.hh>
