@@ -19,7 +19,9 @@
 
 #include <gz/msgs/entity_factory.pb.h>
 
+#include <memory>
 #include <string>
+#include <vector>
 
 #include <gz/plugin/Register.hh>
 #include <gz/common/Profiler.hh>

@@ -21,8 +21,10 @@
 #include <atomic>
 #include <cmath>
 #include <limits>
+#include <memory>
 #include <mutex>
 #include <string>
+#include <vector>
 
 #include <gz/common/Profiler.hh>
 

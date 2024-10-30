@@ -22,8 +22,10 @@
 #include <gz/msgs/imu.pb.h>
 #include <gz/msgs/laserscan.pb.h>
 
+#include <algorithm>
 #include <chrono>
 #include <functional>
+#include <memory>
 #include <mutex>
 #include <string>
 #include <sstream>
