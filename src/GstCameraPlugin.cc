@@ -21,8 +21,10 @@
 #include <gst/gst.h>
 
 #include <iostream>
+#include <memory>
 #include <string>
 #include <thread>
+#include <vector>
 
 #include <gz/plugin/Register.hh>
 #include <gz/rendering/Camera.hh>
