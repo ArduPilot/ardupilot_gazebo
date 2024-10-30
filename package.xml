@@ -11,6 +11,12 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <build_depend>rapidjson-dev</build_depend>  
+  <build_depend>libopencv-dev</build_depend>  
+  <build_depend>libgstreamer1.0-dev</build_depend>  
+  <build_depend>libgstreamer-plugins-base1.0-dev</build_depend>  
+  <build_depend>gstreamer1.0-plugins-bad</build_depend>  
+  <build_depend>gstreamer1.0-libav</build_depend>  
+  <build_depend>gstreamer1.0-gl</build_depend>  
 
   <!-- Harmonic (default) -->
   <depend condition="$GZ_VERSION == harmonic">gz-cmake3</depend>
