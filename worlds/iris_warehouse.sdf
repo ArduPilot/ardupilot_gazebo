@@ -250,7 +250,7 @@
 
     <include>
         <pose>-6 0 0.25 0 0 0</pose>
-        <uri>model://iris_with_ardupilot</uri>
+        <uri>model://iris_with_gimbal</uri>
     </include>
 
     <include>
