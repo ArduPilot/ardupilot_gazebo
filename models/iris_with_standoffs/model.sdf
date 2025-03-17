@@ -178,6 +178,7 @@
         </inertia>
       </inertial>
       <sensor name="imu_sensor" type="imu">
+        <gz_frame_id>imu_link</gz_frame_id>
         <pose degrees="true">0 0 0 180 0 0</pose>
         <always_on>1</always_on>
         <update_rate>1000.0</update_rate>
