@@ -202,7 +202,7 @@
           </clip>
         </camera>
         <always_on>1</always_on>
-        <update_rate>10</update_rate>
+        <update_rate>30</update_rate>
         <visualize>1</visualize>
 
         <plugin filename="CameraZoomPlugin"

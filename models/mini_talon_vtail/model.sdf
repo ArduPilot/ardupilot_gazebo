@@ -1,0 +1,1172 @@
+<?xml version="1.0"?>
+<sdf version="1.9">
+  <!--
+    Mini-talon dimensions
+
+    wing
+    chord root: 0.248 m
+    chord tip:  0.211 m
+    span:       0.570 m
+    area:       0.131 m^2
+
+    aileron
+    chord root: 0.0533 m
+    chord tip:  0.0533 m
+    span:       0.229 m
+    area:       0.0122 m^2
+
+    v-tail
+    chord root: 0.1385 m
+    chord tip:  0.0864 m
+    span:       0.2 m
+    area:       0.0225 m^2
+  
+    ruddervator
+    chord root: 0.0479 m
+    chord tip:  0.0349 m
+    span:       0.147 m
+    area:       0.061 m^2
+
+
+  -->
+  <model name="mini_talon_vtail">
+
+    <link name="base_link">
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>1.8</mass>
+        <inertia>
+          <ixx>0.024607948</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.086155637</iyy>
+          <iyz>0</iyz>
+          <izz>0.103828985</izz>
+        </inertia>
+      </inertial>
+
+      <collision name="fuselage_collision">
+        <pose degrees="true">0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://mini_talon_vtail/meshes/mini_talon_fuselage_collision.stl</uri>
+          </mesh>
+        </geometry>
+      </collision>
+
+      <collision name="left_wing_collision">
+        <pose degrees="true">0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://mini_talon_vtail/meshes/mini_talon_left_wing_collision.stl</uri>
+          </mesh>
+        </geometry>
+      </collision>
+
+      <collision name="right_wing_collision">
+        <pose degrees="true">0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://mini_talon_vtail/meshes/mini_talon_right_wing_collision.stl</uri>
+          </mesh>
+        </geometry>
+      </collision>
+
+      <collision name="left_tail_collision">
+        <pose degrees="true">0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://mini_talon_vtail/meshes/mini_talon_left_tail_collision.stl</uri>
+          </mesh>
+        </geometry>
+      </collision>
+
+      <collision name="right_tail_collision">
+        <pose degrees="true">0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://mini_talon_vtail/meshes/mini_talon_right_tail_collision.stl</uri>
+          </mesh>
+        </geometry>
+      </collision>
+
+      <visual name="fuselage_visual">
+        <pose degrees="true">0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://mini_talon_vtail/meshes/mini_talon_fuselage.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <diffuse>1.0 1.0 1.0</diffuse>
+          <specular>1.0 1.0 1.0</specular>
+          <pbr>
+            <metal>
+                <metalness>0.1</metalness>
+            </metal>
+          </pbr>
+        </material>
+      </visual>
+
+      <visual name="fuselage_logos_visual">
+        <pose degrees="true">0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://mini_talon_vtail/meshes/mini_talon_fuselage_logos.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <diffuse>1.0 1.0 1.0</diffuse>
+          <specular>1.0 1.0 1.0</specular>
+          <pbr>
+            <metal>
+                <albedo_map>model://mini_talon_vtail/meshes/ardupilot_logo.png</albedo_map>
+                <metalness>0.1</metalness>
+            </metal>
+          </pbr>
+        </material>
+      </visual>
+
+      <visual name="forward_deck_visual">
+        <pose degrees="true">0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://mini_talon_vtail/meshes/mini_talon_forward_deck.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <diffuse>1.0 1.0 1.0</diffuse>
+          <specular>1.0 1.0 1.0</specular>
+          <pbr>
+            <metal>
+                <metalness>0.1</metalness>
+            </metal>
+          </pbr>
+        </material>
+      </visual>
+
+      <visual name="left_wing_visual">
+        <pose degrees="true">0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://mini_talon_vtail/meshes/mini_talon_left_wing.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <diffuse>1.0 1.0 1.0</diffuse>
+          <specular>1.0 1.0 1.0</specular>
+          <pbr>
+            <metal>
+                <metalness>0.1</metalness>
+            </metal>
+          </pbr>
+        </material>
+      </visual>
+
+      <visual name="left_wing_logo_visual">
+        <pose degrees="true">0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://mini_talon_vtail/meshes/mini_talon_left_wing_logo.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <diffuse>1.0 1.0 1.0</diffuse>
+          <specular>1.0 1.0 1.0</specular>
+          <pbr>
+            <metal>
+                <albedo_map>model://mini_talon_vtail/meshes/ardupilot_logo.png</albedo_map>
+                <metalness>0.1</metalness>
+            </metal>
+          </pbr>
+        </material>
+      </visual>
+
+      <visual name="right_wing_visual">
+        <pose degrees="true">0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://mini_talon_vtail/meshes/mini_talon_right_wing.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <diffuse>1.0 1.0 1.0</diffuse>
+          <specular>1.0 1.0 1.0</specular>
+          <pbr>
+            <metal>
+                <metalness>0.1</metalness>
+            </metal>
+          </pbr>
+        </material>
+      </visual>
+
+      <visual name="left_tail_visual">
+        <pose degrees="true">0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://mini_talon_vtail/meshes/mini_talon_left_tail.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <diffuse>1.0 1.0 1.0</diffuse>
+          <specular>1.0 1.0 1.0</specular>
+          <pbr>
+            <metal>
+                <metalness>0.1</metalness>
+            </metal>
+          </pbr>
+        </material>
+      </visual>
+
+      <visual name="right_tail_visual">
+        <pose degrees="true">0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://mini_talon_vtail/meshes/mini_talon_right_tail.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <diffuse>1.0 1.0 1.0</diffuse>
+          <specular>1.0 1.0 1.0</specular>
+          <pbr>
+            <metal>
+                <metalness>0.1</metalness>
+            </metal>
+          </pbr>
+        </material>
+      </visual>
+
+      <visual name="motor_plate_visual">
+        <pose degrees="true">-0.41 0 -0.03 0 90 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://mini_talon_vtail/meshes/propdrive_3536_frontplate.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <diffuse>1.0 1.0 1.0</diffuse>
+          <specular>1.0 1.0 1.0</specular>
+          <pbr>
+            <metal>
+                <metalness>0.1</metalness>
+            </metal>
+          </pbr>
+        </material>
+      </visual>
+
+      <!-- leave for debugging lift-drag CoP -->
+      <!-- <visual name="cp_left_wing_visual">
+        <pose degrees="true">0 0.27 0.029 0 0 0</pose>
+        <geometry>
+          <sphere>
+            <radius>0.015</radius>
+          </sphere>
+        </geometry>
+        <material>
+          <ambient>1 0 0 1</ambient>
+          <diffuse>1 0 0 1</diffuse>
+          <specular>0.1 0.1 0.1 1</specular>
+        </material>
+      </visual>
+
+      <visual name="cp_right_wing_visual">
+        <pose degrees="true">0 -0.27 0.029 0 0 0</pose>
+        <geometry>
+          <sphere>
+            <radius>0.015</radius>
+          </sphere>
+        </geometry>
+        <material>
+          <ambient>0 1 0 1</ambient>
+          <diffuse>0 1 0 1</diffuse>
+          <specular>0.1 0.1 0.1 1</specular>
+        </material>
+      </visual>
+
+      <visual name="cp_left_vtail_visual">
+        <pose degrees="true">-0.33 0.08 0.051 0 0 0</pose>
+        <geometry>
+          <sphere>
+            <radius>0.01</radius>
+          </sphere>
+        </geometry>
+        <material>
+          <ambient>1 0 0 1</ambient>
+          <diffuse>1 0 0 1</diffuse>
+          <specular>0.1 0.1 0.1 1</specular>
+        </material>
+      </visual>
+
+      <visual name="cp_right_vtail_visual">
+        <pose degrees="true">-0.33 -0.08 0.051 0 0 0</pose>
+        <geometry>
+          <sphere>
+            <radius>0.01</radius>
+          </sphere>
+        </geometry>
+        <material>
+          <ambient>0 1 0 1</ambient>
+          <diffuse>0 1 0 1</diffuse>
+          <specular>0.1 0.1 0.1 1</specular>
+        </material>
+      </visual> -->
+
+      <!-- Sensors. -->
+      <sensor name="imu_sensor" type="imu">
+        <pose degrees="true">0 0 0 180 0 0</pose>
+        <always_on>1</always_on>
+        <update_rate>1000.0</update_rate>
+      </sensor>
+      <sensor name="navsat_sensor" type="navsat">
+        <always_on>1</always_on>
+        <update_rate>1</update_rate>
+      </sensor>
+    </link>
+
+    <link name="main_wheel_link">
+      <pose degrees="true">0.302018 0 -0.097974 90 0 0</pose>
+      <inertial>
+        <mass>0.01</mass>
+        <inertia>
+          <ixx>1.01896E-06</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1.01896E-06</iyy>
+          <iyz>0</iyz>
+          <izz>1.71125E-06</izz>
+        </inertia>
+      </inertial>
+      <collision name="main_wheel_collision">
+        <geometry>
+          <mesh>
+            <uri>model://mini_talon_vtail/meshes/mini_talon_main_wheel_collision.stl</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name="main_wheel_visual">
+        <geometry>
+          <mesh>
+            <uri>model://mini_talon_vtail/meshes/mini_talon_main_wheel.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <diffuse>0.01 0.01 0.01</diffuse>
+          <specular>0.01 0.01 0.01</specular>
+          <pbr>
+            <metal>
+                <metalness>0.1</metalness>
+                <roughness>0.8</roughness>
+            </metal>
+          </pbr>
+        </material>
+      </visual>
+    </link>
+
+    <include merge='true'>
+      <uri>model://OakD-Lite</uri>
+      <pose>.12 .03 .242 0 0 0</pose>
+    </include>
+    <joint name="CameraJoint" type="fixed">
+      <parent>base_link</parent>
+      <child>camera_link</child>
+      <pose relative_to="base_link">.12 .03 .242 0 0 0</pose>
+    </joint>
+
+    <joint name="main_wheel_joint" type="revolute">
+      <pose degrees="true">0 0 0 0 0 0</pose>
+      <parent>base_link</parent>
+      <child>main_wheel_link</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1.0e-16</lower>
+          <upper>1.0e+16</upper>
+        </limit>
+        <dynamics>
+          <damping>0.0001</damping>
+        </dynamics>
+      </axis>
+    </joint>
+
+    <link name="left_aileron_link">
+      <pose degrees="true">-0.107 0.371 0.0174 0 0 0</pose>
+      <inertial>
+        <mass>0.01</mass>
+        <inertia>
+          <ixx>4.68283E-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>2.54167E-06</iyy>
+          <iyz>0</iyz>
+          <izz>4.93283E-05</izz>
+        </inertia>
+      </inertial>
+      <collision name="left_aileron_collision">
+        <geometry>
+          <mesh>
+            <uri>model://mini_talon_vtail/meshes/mini_talon_left_aileron.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name="left_aileron_visual">
+        <geometry>
+          <mesh>
+            <uri>model://mini_talon_vtail/meshes/mini_talon_left_aileron.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <diffuse>1.0 1.0 1.0</diffuse>
+          <specular>1.0 1.0 1.0</specular>
+          <pbr>
+            <metal>
+                <metalness>0.1</metalness>
+            </metal>
+          </pbr>
+        </material>
+      </visual>
+      <!-- leave for debugging lift-drag CoP -->
+      <!-- <visual name="cp_left_aileron_visual">
+        <geometry>
+          <sphere>
+            <radius>0.01</radius>
+          </sphere>
+        </geometry>
+        <material>
+          <ambient>1 0 1 1</ambient>
+          <diffuse>1 0 1 1</diffuse>
+          <specular>0.1 0.1 0.1 1</specular>
+        </material>
+      </visual> -->
+    </link>
+    <joint name="left_aileron_joint" type="revolute">
+      <pose degrees="true">0.015 0 0 0 0 0</pose>
+      <parent>base_link</parent>
+      <child>left_aileron_link</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-0.523599</lower>
+          <upper>0.523599</upper>
+        </limit>
+        <dynamics>
+          <damping>0.01</damping>
+        </dynamics>
+      </axis>
+    </joint>
+
+    <link name="right_aileron_link">
+      <pose degrees="true">-0.107 -0.371 0.0174 0 0 0</pose>
+      <inertial>
+        <mass>0.01</mass>
+        <inertia>
+          <ixx>4.68283E-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>2.54167E-06</iyy>
+          <iyz>0</iyz>
+          <izz>4.93283E-05</izz>
+        </inertia>
+      </inertial>
+      <collision name="right_aileron_collision">
+        <pose degrees="true">0.005 -0.002 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://mini_talon_vtail/meshes/mini_talon_right_aileron.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name="right_aileron_visual">
+        <pose degrees="true">0.005 -0.002 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://mini_talon_vtail/meshes/mini_talon_right_aileron.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <diffuse>1.0 1.0 1.0</diffuse>
+          <specular>1.0 1.0 1.0</specular>
+          <pbr>
+            <metal>
+                <metalness>0.1</metalness>
+            </metal>
+          </pbr>
+        </material>
+      </visual>
+      <!-- leave for debugging lift-drag CoP -->
+      <!-- <visual name="cp_right_aileron_visual">
+        <geometry>
+          <sphere>
+            <radius>0.01</radius>
+          </sphere>
+        </geometry>
+        <material>
+          <ambient>1 0 1 1</ambient>
+          <diffuse>1 0 1 1</diffuse>
+          <specular>0.1 0.1 0.1 1</specular>
+        </material>
+      </visual> -->
+    </link>
+    <joint name="right_aileron_joint" type="revolute">
+      <pose degrees="true">0.015 0 0 0 0 0</pose>
+      <parent>base_link</parent>
+      <child>right_aileron_link</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-0.523599</lower>
+          <upper>0.523599</upper>
+        </limit>
+        <dynamics>
+          <damping>0.01</damping>
+        </dynamics>
+      </axis>
+    </joint>
+
+    <link name="left_ruddervator_link">
+      <pose degrees="true">-0.365 0.077 0.045 45 -10 6</pose>
+      <inertial>
+        <mass>0.01</mass>
+        <inertia>
+          <ixx>1.97842E-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>3.02083E-06</iyy>
+          <iyz>0</iyz>
+          <izz>2.27633E-05</izz>
+        </inertia>
+      </inertial>
+      <collision name="left_ruddervator_collision">
+        <geometry>
+          <mesh>
+            <uri>model://mini_talon_vtail/meshes/mini_talon_left_ruddervator.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name="left_ruddervator_visual">
+        <geometry>
+          <mesh>
+            <uri>model://mini_talon_vtail/meshes/mini_talon_left_ruddervator.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <diffuse>1.0 1.0 1.0</diffuse>
+          <specular>1.0 1.0 1.0</specular>
+          <pbr>
+            <metal>
+                <metalness>0.1</metalness>
+            </metal>
+          </pbr>
+        </material>
+      </visual>
+      <!-- leave for debugging lift-drag CoP -->
+      <!-- <visual name="cp_left_ruddervator_visual">
+        <geometry>
+          <sphere>
+            <radius>0.01</radius>
+          </sphere>
+        </geometry>
+        <material>
+          <ambient>1 0 1 1</ambient>
+          <diffuse>1 0 1 1</diffuse>
+          <specular>0.1 0.1 0.1 1</specular>
+        </material>
+      </visual> -->
+    </link>
+    <joint name="left_ruddervator_joint" type="revolute">
+      <pose degrees="true">0.01 0 0 0 0 0</pose>
+      <parent>base_link</parent>
+      <child>left_ruddervator_link</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-0.523599</lower>
+          <upper>0.523599</upper>
+        </limit>
+        <dynamics>
+          <damping>0.01</damping>
+        </dynamics>
+      </axis>
+    </joint>
+
+    <link name="right_ruddervator_link">
+      <pose degrees="true">-0.365 -0.077 0.045 -45 -10 -6</pose>
+      <inertial>
+        <mass>0.01</mass>
+        <inertia>
+          <ixx>1.97842E-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>3.02083E-06</iyy>
+          <iyz>0</iyz>
+          <izz>2.27633E-05</izz>
+        </inertia>
+      </inertial>
+      <collision name="right_ruddervator_collision">
+        <geometry>
+          <mesh>
+            <uri>model://mini_talon_vtail/meshes/mini_talon_right_ruddervator.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name="right_ruddervator_visual">
+        <geometry>
+          <mesh>
+            <uri>model://mini_talon_vtail/meshes/mini_talon_right_ruddervator.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <diffuse>1.0 1.0 1.0</diffuse>
+          <specular>1.0 1.0 1.0</specular>
+          <pbr>
+            <metal>
+                <metalness>0.1</metalness>
+            </metal>
+          </pbr>
+        </material>
+      </visual>
+      <!-- leave for debugging lift-drag CoP -->
+      <!-- <visual name="cp_right_ruddervator_visual">
+        <geometry>
+          <sphere>
+            <radius>0.01</radius>
+          </sphere>
+        </geometry>
+        <material>
+          <ambient>1 0 1 1</ambient>
+          <diffuse>1 0 1 1</diffuse>
+          <specular>0.1 0.1 0.1 1</specular>
+        </material>
+      </visual> -->
+    </link>
+    <joint name="right_ruddervator_joint" type="revolute">
+      <pose degrees="true">0.01 0 0 0 0 0</pose>
+      <parent>base_link</parent>
+      <child>right_ruddervator_link</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-0.523599</lower>
+          <upper>0.523599</upper>
+        </limit>
+        <dynamics>
+          <damping>0.01</damping>
+        </dynamics>
+      </axis>
+    </joint>
+
+    <link name="motor_link">
+      <pose degrees="true">-0.41 0 -0.03 0 90 0</pose>
+      <inertial>
+        <!-- <mass>0.106</mass>
+        <inertia>
+          <ixx>1.95636E-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1.95636E-05</iyy>
+          <iyz>0</iyz>
+          <izz>1.62313E-05</izz>
+        </inertia> -->
+        <mass>0.025</mass>
+        <inertia>
+          <ixx>9.75e-06</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.000166704</iyy>
+          <iyz>0</iyz>
+          <izz>0.000167604</izz>
+        </inertia>
+      </inertial>
+
+      <collision name="motor_collision">
+        <pose degrees="true">0 0 0.018 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.0175</radius>
+            <length>0.036</length>
+          </cylinder>
+        </geometry>
+      </collision>
+      <collision name="propeller_collision">
+        <pose degrees="true">0 0 -0.005 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.1</radius>
+            <length>0.005</length>
+          </cylinder>
+        </geometry>
+      </collision>
+      <visual name="motor_visual">
+        <geometry>
+          <mesh>
+            <uri>model://mini_talon_vtail/meshes/propdrive_3536_motor_can.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name="propeller_visual">
+        <pose degrees="true">0 0 -0.005 0 180 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://mini_talon_vtail/meshes/iris_prop_cw.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.01 0.01 0.01 1</ambient>
+          <diffuse>0.01 0.01 0.01 1</diffuse>
+          <specular>0.01 0.01 0.01 1</specular>
+        </material>
+      </visual>
+    </link>
+    <joint name="motor_joint" type="revolute">
+      <pose degrees="true">0 0 0 0 180 0</pose>
+      <parent>base_link</parent>
+      <child>motor_link</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1.0e-16</lower>
+          <upper>1.0e+16</upper>
+        </limit>
+        <dynamics>
+          <damping>0.004</damping>
+        </dynamics>
+      </axis>
+    </joint>
+
+    <include>
+      <uri>model://gimbal_small_3d</uri>
+      <name>gimbal</name>
+      <pose degrees="true">0 -0.01 -0.124923 90 0 90</pose>    
+    </include>
+
+    <joint name="gimbal_joint" type="revolute">
+      <parent>base_link</parent>
+      <child>gimbal::base_link</child>
+      <axis>
+        <limit>
+          <lower>0</lower>
+          <upper>0</upper>
+        </limit>
+        <xyz>0 0 1</xyz>
+      </axis>
+    </joint>
+
+    <!-- System plugins. -->
+    <plugin filename="gz-sim-joint-state-publisher-system"
+      name="gz::sim::systems::JointStatePublisher">
+    </plugin>
+
+    <!-- Positive is up. -->
+    <plugin
+      filename="gz-sim-joint-position-controller-system"
+      name="gz::sim::systems::JointPositionController">
+      <joint_name>left_aileron_joint</joint_name>
+      <initial_position>0.0</initial_position>
+      <topic>/left_aileron_joint/cmd_pos</topic>
+      <p_gain>10</p_gain>
+      <i_gain>0.0</i_gain>
+      <d_gain>0.0</d_gain>
+      <i_max>1</i_max>
+      <i_min>-1</i_min>
+      <cmd_max>5</cmd_max>
+      <cmd_min>-5</cmd_min>
+    </plugin>
+
+    <!-- Positive is up. -->
+    <plugin
+      filename="gz-sim-joint-position-controller-system"
+      name="gz::sim::systems::JointPositionController">
+      <joint_name>right_aileron_joint</joint_name>
+      <initial_position>0.0</initial_position>
+      <topic>/right_aileron_joint/cmd_pos</topic>
+      <p_gain>10</p_gain>
+      <i_gain>0.0</i_gain>
+      <d_gain>0.0</d_gain>
+      <i_max>1</i_max>
+      <i_min>-1</i_min>
+      <cmd_max>5</cmd_max>
+      <cmd_min>-5</cmd_min>
+    </plugin>
+
+    <!-- Positive is up. -->
+    <plugin
+      filename="gz-sim-joint-position-controller-system"
+      name="gz::sim::systems::JointPositionController">
+      <joint_name>left_ruddervator_joint</joint_name>
+      <initial_position>0.0</initial_position>
+      <topic>/left_ruddervator_joint/cmd_pos</topic>
+      <p_gain>10</p_gain>
+      <i_gain>0.0</i_gain>
+      <d_gain>0.0</d_gain>
+      <i_max>1</i_max>
+      <i_min>-1</i_min>
+      <cmd_max>5</cmd_max>
+      <cmd_min>-5</cmd_min>
+    </plugin>
+
+    <!-- Positive is up. -->
+    <plugin
+      filename="gz-sim-joint-position-controller-system"
+      name="gz::sim::systems::JointPositionController">
+      <joint_name>right_ruddervator_joint</joint_name>
+      <initial_position>0.0</initial_position>
+      <topic>/right_ruddervator_joint/cmd_pos</topic>
+      <p_gain>10</p_gain>
+      <i_gain>0.0</i_gain>
+      <d_gain>0.0</d_gain>
+      <i_max>1</i_max>
+      <i_min>-1</i_min>
+      <cmd_max>5</cmd_max>
+      <cmd_min>-5</cmd_min>
+    </plugin>
+
+    <!-- motor_joint cw -->
+    <plugin filename="gz-sim-lift-drag-system"
+        name="gz::sim::systems::LiftDrag">
+      <a0>0.3</a0>
+      <alpha_stall>1.4</alpha_stall>
+      <cla>4.25</cla>
+      <cda>0.10</cda>
+      <cma>0.00</cma>
+      <cla_stall>-0.025</cla_stall>
+      <cda_stall>0.0</cda_stall>
+      <cma_stall>0.0</cma_stall>
+      <area>0.02</area>
+      <air_density>1.2041</air_density>
+      <cp>0.084 0 0</cp>
+      <forward>0 -1 0</forward>
+      <upward>0 0 1</upward>
+      <link_name>motor_link</link_name>
+    </plugin>
+    <plugin filename="gz-sim-lift-drag-system"
+        name="gz::sim::systems::LiftDrag">
+      <a0>0.3</a0>
+      <alpha_stall>1.4</alpha_stall>
+      <cla>4.25</cla>
+      <cda>0.10</cda>
+      <cma>0.00</cma>
+      <cla_stall>-0.025</cla_stall>
+      <cda_stall>0.0</cda_stall>
+      <cma_stall>0.0</cma_stall>
+      <area>0.02</area>
+      <air_density>1.2041</air_density>
+      <cp>-0.084 0 0</cp>
+      <forward>0 1 0</forward>
+      <upward>0 0 1</upward>
+      <link_name>motor_link</link_name>
+    </plugin>
+
+    <!-- left wing -->
+    <plugin filename="gz-sim-lift-drag-system"
+        name="gz::sim::systems::LiftDrag">
+      <a0>0.13</a0>
+      <cla>3.7</cla>
+      <cda>0.06417112299</cda>
+      <cma>0</cma>
+      <alpha_stall>0.3391428111</alpha_stall>
+      <cla_stall>-3.85</cla_stall>
+      <cda_stall>-0.9233984055</cda_stall>
+      <cma_stall>0</cma_stall>
+      <cp>0 0.27 0.029</cp>
+      <area>0.16</area>
+      <air_density>1.2041</air_density>
+      <forward>1 0 0</forward>
+      <upward>0 0 1</upward>
+      <link_name>base_link</link_name>
+      <control_joint_name>left_aileron_joint</control_joint_name>
+      <control_joint_rad_to_cl>-0.75</control_joint_rad_to_cl>
+    </plugin>
+
+    <!-- right wing -->
+    <plugin filename="gz-sim-lift-drag-system"
+        name="gz::sim::systems::LiftDrag">
+      <a0>0.13</a0>
+      <cla>3.7</cla>
+      <cda>0.06417112299</cda>
+      <cma>0</cma>
+      <alpha_stall>0.3391428111</alpha_stall>
+      <cla_stall>-3.85</cla_stall>
+      <cda_stall>-0.9233984055</cda_stall>
+      <cma_stall>0</cma_stall>
+      <cp>0 -0.27 0.029</cp>
+      <area>0.16</area>
+      <air_density>1.2041</air_density>
+      <forward>1 0 0</forward>
+      <upward>0 0 1</upward>
+      <link_name>base_link</link_name>
+      <control_joint_name>right_aileron_joint</control_joint_name>
+      <control_joint_rad_to_cl>-0.75</control_joint_rad_to_cl>
+    </plugin>
+
+    <!-- left v-tail -->
+    <plugin filename="gz-sim-lift-drag-system"
+        name="gz::sim::systems::LiftDrag">
+      <a0>0.13</a0>
+      <cla>3.7</cla>
+      <cda>0.06417112299</cda>
+      <cma>0</cma>
+      <alpha_stall>0.3391428111</alpha_stall>
+      <cla_stall>-3.85</cla_stall>
+      <cda_stall>-0.9233984055</cda_stall>
+      <cma_stall>0</cma_stall>
+      <cp>-0.33 0.08 0.051</cp>
+      <area>0.025</area>
+      <air_density>1.2041</air_density>
+      <forward>1 0 0</forward>
+      <upward>0 1 1</upward>
+      <link_name>base_link</link_name>
+      <control_joint_name>left_ruddervator_joint</control_joint_name>
+      <control_joint_rad_to_cl>-2.0</control_joint_rad_to_cl>
+    </plugin>
+
+    <!-- right v-tail -->
+    <plugin filename="gz-sim-lift-drag-system"
+        name="gz::sim::systems::LiftDrag">
+      <a0>0.13</a0>
+      <cla>3.7</cla>
+      <cda>0.06417112299</cda>
+      <cma>0</cma>
+      <alpha_stall>0.3391428111</alpha_stall>
+      <cla_stall>-3.85</cla_stall>
+      <cda_stall>-0.9233984055</cda_stall>
+      <cma_stall>0</cma_stall>
+      <cp>-0.33 -0.08 0.051</cp>
+      <area>0.025</area>
+      <air_density>1.2041</air_density>
+      <forward>1 0 0</forward>
+      <upward>0 -1 1</upward>
+      <link_name>base_link</link_name>
+      <control_joint_name>right_ruddervator_joint</control_joint_name>
+      <control_joint_rad_to_cl>-2.0</control_joint_rad_to_cl>
+    </plugin>
+
+    <plugin name="ArduPilotPlugin"
+      filename="ArduPilotPlugin">
+      <!-- Port settings. -->
+      <fdm_addr>127.0.0.1</fdm_addr>
+      <fdm_port_in>9002</fdm_port_in>
+      <connectionTimeoutMaxCount>5</connectionTimeoutMaxCount>
+      <lock_step>1</lock_step>
+      <have_32_channels>0</have_32_channels>
+
+      <!-- Frame transforms.-->
+      <modelXYZToAirplaneXForwardZDown>0 0 0 3.141593 0 0</modelXYZToAirplaneXForwardZDown>
+      <gazeboXYZToNED>0 0 0 3.141593 0 1.57079632</gazeboXYZToNED>
+
+      <!-- Sensors. -->
+      <imuName>base_link::imu_sensor</imuName>
+
+      <!--
+          Joint range -30/+30 deg
+
+          SERVO1_FUNCTION   4 (Aileron)
+          SERVO1_MAX        2000
+          SERVO1_MIN        1000
+          SERVO1_REVERSED   0
+          SERVO1_TRIM       1500
+       -->
+      <control channel="0">
+        <jointName>left_aileron_joint</jointName>
+        <multiplier>-1.0471976</multiplier>
+        <offset>-0.5</offset>
+        <servo_min>1000</servo_min>
+        <servo_max>2000</servo_max>
+        <type>COMMAND</type>
+        <cmd_topic>/left_aileron_joint/cmd_pos</cmd_topic>
+      </control>
+
+      <control channel="0">
+        <jointName>right_aileron_joint</jointName>
+        <multiplier>1.0471976</multiplier>
+        <offset>-0.5</offset>
+        <servo_min>1000</servo_min>
+        <servo_max>2000</servo_max>
+        <type>COMMAND</type>
+        <cmd_topic>/right_aileron_joint/cmd_pos</cmd_topic>
+      </control>
+
+      <!--
+          Joint range -30/+30 deg
+
+          SERVO2_FUNCTION   79 (Left V-Tail)
+          SERVO2_MAX        2000
+          SERVO2_MIN        1000
+          SERVO2_REVERSED   0
+          SERVO2_TRIM       1500
+       -->
+      <control channel="1">
+        <jointName>left_ruddervator_joint</jointName>
+        <multiplier>1.0471976</multiplier>
+        <offset>-0.5</offset>
+        <servo_min>1000</servo_min>
+        <servo_max>2000</servo_max>
+        <type>COMMAND</type>
+        <cmd_topic>/left_ruddervator_joint/cmd_pos</cmd_topic>
+      </control>
+
+      <!--
+          SERVO3_FUNCTION   70 (Throttle)
+          SERVO3_MAX        2000
+          SERVO3_MIN        1000
+          SERVO3_REVERSED   0
+          SERVO3_TRIM       1000
+       -->
+      <control channel="2"> 
+        <jointName>motor_joint</jointName>
+        <multiplier>1000</multiplier>
+        <offset>0</offset>
+        <servo_min>1000</servo_min>
+        <servo_max>2000</servo_max>
+        <!-- <type>COMMAND</type>
+        <cmd_topic>/model/mini_talon_vtail/joint/motor_joint/cmd_vel</cmd_topic> -->
+
+        <type>VELOCITY</type>
+        <p_gain>0.20</p_gain>
+        <i_gain>0</i_gain>
+        <d_gain>0</d_gain>
+        <i_max>1</i_max>
+        <i_min>-1</i_min>
+        <cmd_max>5.0</cmd_max>
+        <cmd_min>-5.0</cmd_min>
+      </control>
+
+      <!--
+          Joint range -30/+30 deg
+
+          SERVO4_FUNCTION   80 (Right V-Tail)
+          SERVO4_MAX        2000
+          SERVO4_MIN        1000
+          SERVO4_REVERSED   0
+          SERVO4_TRIM       1500
+       -->
+      <control channel="3">
+        <jointName>right_ruddervator_joint</jointName>
+        <multiplier>1.0471976</multiplier>
+        <offset>-0.5</offset>
+        <servo_min>1000</servo_min>
+        <servo_max>2000</servo_max>
+        <type>COMMAND</type>
+        <cmd_topic>/right_ruddervator_joint/cmd_pos</cmd_topic>
+      </control>
+
+      <!-- roll range is -30 to +30 deg -->
+      <control channel="8">
+        <jointName>gimbal::roll_joint</jointName>
+        <multiplier>1.047197551196</multiplier>
+        <offset>-0.5</offset>
+        <servo_min>1100</servo_min>
+        <servo_max>1900</servo_max>
+        <type>COMMAND</type>
+        <cmd_topic>/gimbal/cmd_roll</cmd_topic>
+        <p_gain>2</p_gain>
+      </control>
+
+      <!-- pitch range is -135 to +45 deg -->
+      <control channel="9">
+        <jointName>gimbal::pitch_joint</jointName>
+        <multiplier>-3.14159265</multiplier>
+        <offset>-0.75</offset>
+        <servo_min>1100</servo_min>
+        <servo_max>1900</servo_max>
+        <type>COMMAND</type>
+        <cmd_topic>/gimbal/cmd_pitch</cmd_topic>
+        <p_gain>2</p_gain>
+      </control>
+
+      <!-- yaw range is -160 to +160 deg -->
+      <control channel="10">
+        <jointName>gimbal::yaw_joint</jointName>
+        <multiplier>-5.5850536</multiplier>
+        <offset>-0.5</offset>
+        <servo_min>1100</servo_min>
+        <servo_max>1900</servo_max>
+        <type>COMMAND</type>
+        <cmd_topic>/gimbal/cmd_yaw</cmd_topic>
+        <p_gain>2</p_gain>
+      </control>
+
+    </plugin>
+
+    <plugin
+      filename="gz-sim-joint-position-controller-system"
+      name="gz::sim::systems::JointPositionController">
+      <joint_name>gimbal::roll_joint</joint_name>
+      <topic>/gimbal/cmd_roll</topic>
+      <p_gain>2</p_gain>
+    </plugin>
+    <plugin
+      filename="gz-sim-joint-position-controller-system"
+      name="gz::sim::systems::JointPositionController">
+      <joint_name>gimbal::pitch_joint</joint_name>
+      <topic>/gimbal/cmd_pitch</topic>
+      <p_gain>2</p_gain>
+    </plugin>
+    <plugin
+      filename="gz-sim-joint-position-controller-system"
+      name="gz::sim::systems::JointPositionController">
+      <joint_name>gimbal::yaw_joint</joint_name>
+      <topic>/gimbal/cmd_yaw</topic>
+      <p_gain>2</p_gain>
+    </plugin>
+
+  </model>
+</sdf>
+
+<!-- 
+  Motor thrust calcs (initial estimates)
+
+  PropDrive 3536 910kV motor
+  3S battery (11.1V)
+  rpm_max = 10000
+  rpm = 8000
+  ang_max = 1057
+  ang_vel = 837
+  10x7 prop
+
+  Inertials
+
+  fuselage:
+  mass: 
+  radius: 0.16 m
+  length: 0.8 m
+
+  main wheel:
+  mass: 
+  radius: 0.0135 m
+  length: 0.014 m
+
+  L/R wing
+  mass: 
+  area: 0.65 x 0.245 = 0.16 m^2
+  cp: 
+
+  L/R aileron
+  mass:
+  area: 0.237 x 0.0477 = 0.011 m^2
+  cp: 
+
+  L/R v-tail
+  mass: 
+  area: 0.126 x 0.197 = 0.025 m^2
+  cp: 
+
+  L/R ruddervator
+  mass: 
+  area: 0.042 x 0.154 = 0.0065 m^2
+  cp: 
+
+  Position and thrust controller commands
+
+  Thrust:
+
+  gz topic -t /model/mini_talon_vtail/joint/motor_joint/cmd_vel -m gz.msgs.Double -p 'data: 1000'
+
+  Aileron:
+
+  gz topic -t /right_aileron_joint/cmd_pos -m gz.msgs.Double -p 'data: 1'
+
+  Ruddervator:
+
+  gz topic -t /left_ruddervator_joint/cmd_pos -m gz.msgs.Double -p 'data: 1'
+
+  -->
+
