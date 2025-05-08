@@ -1,0 +1,604 @@
+<sdf version='1.10'>
+  <world name='empty'>
+    <physics name='1ms' type='ignored'>
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+    </physics>
+    <plugin name='gz::sim::systems::Physics' filename='gz-sim-physics-system'/>
+    <plugin name='gz::sim::systems::UserCommands' filename='gz-sim-user-commands-system'/>
+    <plugin name='gz::sim::systems::SceneBroadcaster' filename='gz-sim-scene-broadcaster-system'/>
+    <plugin name='gz::sim::systems::Contact' filename='gz-sim-contact-system'/>
+    <plugin name='gz::sim::systems::Sensors' filename='gz-sim-sensors-system'>
+      <render_engine>ogre2</render_engine>
+    </plugin>
+    <plugin name='gz::sim::systems::Imu' filename='gz-sim-imu-system'/>
+    <plugin name='gz::sim::systems::NavSat' filename='gz-sim-navsat-system'/>
+    <gravity>0 0 -9.8000000000000007</gravity>
+    <magnetic_field>5.5644999999999998e-06 2.2875799999999999e-05 -4.2388400000000002e-05</magnetic_field>
+    <atmosphere type='adiabatic'/>
+    <scene>
+      <ambient>1 1 1 1</ambient>
+      <background>0.800000012 0.800000012 0.800000012 1</background>
+      <sky/>
+      <shadows>true</shadows>
+    </scene>
+    <spherical_coordinates>
+      <latitude_deg>-35.363261999999999</latitude_deg>
+      <longitude_deg>149.16523699999999</longitude_deg>
+      <elevation>584</elevation>
+      <heading_deg>0</heading_deg>
+      <surface_model>EARTH_WGS84</surface_model>
+    </spherical_coordinates>
+    <model name='ground_plane'>
+      <static>true</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>1000 1000</size>
+            </plane>
+          </geometry>
+          <surface>
+            <friction>
+              <ode/>
+            </friction>
+            <bounce/>
+            <contact/>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>1000 1000</size>
+            </plane>
+          </geometry>
+          <material>
+            <ambient>0.800000012 0.800000012 0.800000012 1</ambient>
+            <diffuse>0.800000012 0.800000012 0.800000012 1</diffuse>
+            <specular>0.800000012 0.800000012 0.800000012 1</specular>
+          </material>
+        </visual>
+        <pose>0 0 0 0 0 0</pose>
+        <inertial>
+          <pose>0 0 0 0 0 0</pose>
+          <mass>1</mass>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+        </inertial>
+        <enable_wind>false</enable_wind>
+      </link>
+      <pose>0 0 0 0 0 0</pose>
+      <self_collide>false</self_collide>
+    </model>
+    <model name='axes'>
+      <static>true</static>
+      <link name='link'>
+        <visual name='r'>
+          <cast_shadows>false</cast_shadows>
+          <pose>5 0 0.10000000000000001 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>10 0.01 0.01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>1 0 0 0.800000012</ambient>
+            <diffuse>1 0 0 0.800000012</diffuse>
+            <emissive>1 0 0 0.800000012</emissive>
+            <specular>0.5 0.5 0.5 0.800000012</specular>
+          </material>
+        </visual>
+        <visual name='g'>
+          <cast_shadows>false</cast_shadows>
+          <pose>0 5 0.10000000000000001 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.01 10 0.01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0 1 0 0.800000012</ambient>
+            <diffuse>0 1 0 0.800000012</diffuse>
+            <emissive>0 1 0 0.800000012</emissive>
+            <specular>0.5 0.5 0.5 0.800000012</specular>
+          </material>
+        </visual>
+        <visual name='b'>
+          <cast_shadows>false</cast_shadows>
+          <pose>0 0 5.0999999999999996 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.01 0.01 10</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0 0 1 0.800000012</ambient>
+            <diffuse>0 0 1 0.800000012</diffuse>
+            <emissive>0 0 1 0.800000012</emissive>
+            <specular>0.5 0.5 0.5 0.800000012</specular>
+          </material>
+        </visual>
+        <sensor name='navsat_sensor' type='navsat'>
+          <always_on>true</always_on>
+          <update_rate>1</update_rate>
+          <gps/>
+        </sensor>
+        <pose>0 0 0 0 0 0</pose>
+        <inertial>
+          <pose>0 0 0 0 0 0</pose>
+          <mass>1</mass>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+        </inertial>
+        <enable_wind>false</enable_wind>
+      </link>
+      <pose>0 0 0 0 0 0</pose>
+      <self_collide>false</self_collide>
+    </model>
+    <model name='polygon_walls'>
+      <link name='wall_AB'>
+        <pose>100.72799999999999 -5 0.316 0 0 0</pose>
+        <collision name='collision'>
+          <geometry>
+            <box>
+              <size>213.43299999999999 0.63200000000000001 0.63200000000000001</size>
+            </box>
+          </geometry>
+          <surface>
+            <friction>
+              <ode/>
+            </friction>
+            <bounce/>
+            <contact/>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <box>
+              <size>213.43299999999999 0.63200000000000001 0.63200000000000001</size>
+            </box>
+          </geometry>
+          <material>
+            <diffuse>0 0 0 1</diffuse>
+          </material>
+        </visual>
+        <inertial>
+          <pose>0 0 0 0 0 0</pose>
+          <mass>1</mass>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+        </inertial>
+        <enable_wind>false</enable_wind>
+      </link>
+      <link name='wall_BC'>
+        <pose>213.43299999999999 -31.405000000000001 0.316 0 0 1.5708000000000006</pose>
+        <collision name='collision'>
+          <geometry>
+            <box>
+              <size>62.822000000000003 0.63200000000000001 0.63200000000000001</size>
+            </box>
+          </geometry>
+          <surface>
+            <friction>
+              <ode/>
+            </friction>
+            <bounce/>
+            <contact/>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <box>
+              <size>62.822000000000003 0.63200000000000001 0.63200000000000001</size>
+            </box>
+          </geometry>
+          <material>
+            <diffuse>0 0 0 1</diffuse>
+          </material>
+        </visual>
+        <inertial>
+          <pose>0 0 0 0 0 0</pose>
+          <mass>1</mass>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+        </inertial>
+        <enable_wind>false</enable_wind>
+      </link>
+      <link name='wall_CD'>
+        <pose>182.30500000000001 -94.302999999999997 0.316 0 0 0.7854000000000001</pose>
+        <collision name='collision'>
+          <geometry>
+            <box>
+              <size>88.911000000000001 0.63200000000000001 0.63200000000000001</size>
+            </box>
+          </geometry>
+          <surface>
+            <friction>
+              <ode/>
+            </friction>
+            <bounce/>
+            <contact/>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <box>
+              <size>88.911000000000001 0.63200000000000001 0.63200000000000001</size>
+            </box>
+          </geometry>
+          <material>
+            <diffuse>0 0 0 1</diffuse>
+          </material>
+        </visual>
+        <inertial>
+          <pose>0 0 0 0 0 0</pose>
+          <mass>1</mass>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+        </inertial>
+        <enable_wind>false</enable_wind>
+      </link>
+      <link name='wall_DE'>
+        <pose>106.72799999999999 -125.48099999999999 0.316 0 0 0</pose>
+        <collision name='collision'>
+          <geometry>
+            <box>
+              <size>87.974999999999994 0.63200000000000001 0.63200000000000001</size>
+            </box>
+          </geometry>
+          <surface>
+            <friction>
+              <ode/>
+            </friction>
+            <bounce/>
+            <contact/>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <box>
+              <size>87.974999999999994 0.63200000000000001 0.63200000000000001</size>
+            </box>
+          </geometry>
+          <material>
+            <diffuse>0 0 0 1</diffuse>
+          </material>
+        </visual>
+        <inertial>
+          <pose>0 0 0 0 0 0</pose>
+          <mass>1</mass>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+        </inertial>
+        <enable_wind>false</enable_wind>
+      </link>
+      <link name='wall_EF'>
+        <pose>62.822000000000003 -94.302999999999997 0.316 0 0 1.5708000000000006</pose>
+        <collision name='collision'>
+          <geometry>
+            <box>
+              <size>62.822000000000003 0.63200000000000001 0.63200000000000001</size>
+            </box>
+          </geometry>
+          <surface>
+            <friction>
+              <ode/>
+            </friction>
+            <bounce/>
+            <contact/>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <box>
+              <size>62.822000000000003 0.63200000000000001 0.63200000000000001</size>
+            </box>
+          </geometry>
+          <material>
+            <diffuse>0 0 0 1</diffuse>
+          </material>
+        </visual>
+        <inertial>
+          <pose>0 0 0 0 0 0</pose>
+          <mass>1</mass>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+        </inertial>
+        <enable_wind>false</enable_wind>
+      </link>
+      <link name='wall_FG'>
+        <pose>31.405000000000001 -62.822000000000003 0.316 0 0 0</pose>
+        <collision name='collision'>
+          <geometry>
+            <box>
+              <size>62.822000000000003 0.63200000000000001 0.63200000000000001</size>
+            </box>
+          </geometry>
+          <surface>
+            <friction>
+              <ode/>
+            </friction>
+            <bounce/>
+            <contact/>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <box>
+              <size>62.822000000000003 0.63200000000000001 0.63200000000000001</size>
+            </box>
+          </geometry>
+          <material>
+            <diffuse>0 0 0 1</diffuse>
+          </material>
+        </visual>
+        <inertial>
+          <pose>0 0 0 0 0 0</pose>
+          <mass>1</mass>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+        </inertial>
+        <enable_wind>false</enable_wind>
+      </link>
+      <link name='wall_GA'>
+        <pose>0 -31.405000000000001 0.316 0 0 1.5708000000000006</pose>
+        <collision name='collision'>
+          <geometry>
+            <box>
+              <size>62.822000000000003 0.63200000000000001 0.63200000000000001</size>
+            </box>
+          </geometry>
+          <surface>
+            <friction>
+              <ode/>
+            </friction>
+            <bounce/>
+            <contact/>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <box>
+              <size>62.822000000000003 0.63200000000000001 0.63200000000000001</size>
+            </box>
+          </geometry>
+          <material>
+            <diffuse>0 0 0 1</diffuse>
+          </material>
+        </visual>
+        <inertial>
+          <pose>0 0 0 0 0 0</pose>
+          <mass>1</mass>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+        </inertial>
+        <enable_wind>false</enable_wind>
+      </link>
+      <static>true</static>
+      <pose>-104.16500000000001 0 0 0 0 0</pose>
+      <self_collide>false</self_collide>
+    </model>
+    <include>
+      <uri>model://iris_with_gimbal</uri>
+      <name>iris_with_gimbal</name>
+      <pose>0 0 0.19500000000000001 0 0 1.5707963267948963</pose>
+    </include>
+    <include>
+      <uri>model://male</uri>
+      <name>men</name>
+      <pose>94.979698181152344 -32.530712127685547 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://female</uri>
+      <name>women</name>
+      <pose>-85.694046020507812 -53.954601287841797 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://oak9</uri>
+      <name>oak4</name>
+      <pose>11.367832183837891 -86.449897766113281 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://oak8</uri>
+      <name>oak3</name>
+      <pose>94.979698181152344 -66.200477600097656 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://oak7</uri>
+      <name>oak2</name>
+      <pose>67.43658447265625 -86.449897766113281 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://oak6</uri>
+      <name>oak1</name>
+      <pose>45.27947998046875 -86.449897766113281 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://oak8</uri>
+      <name>oak3_1</name>
+      <pose>98.897341335700247 -44.918605963501264 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://oak8</uri>
+      <name>oak3_2</name>
+      <pose>-23.119031161540263 -79.388152790072283 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://oak8</uri>
+      <name>oak3_3</name>
+      <pose>-51.914070473296952 -54.458558802966692 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://oak8</uri>
+      <name>oak3_4</name>
+      <pose>-86.26996439395478 -12.563023680200384 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://oak7</uri>
+      <name>oak2_1</name>
+      <pose>69.015874399331636 -60.338039205179555 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://oak7</uri>
+      <name>oak2_2</name>
+      <pose>44.138516918706799 -106.35133938906175 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://oak7</uri>
+      <name>oak2_3</name>
+      <pose>-25.467299609209185 -120.46587134900936 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://oak7</uri>
+      <name>oak2_4</name>
+      <pose>14.41299871797505 -49.028686239654476 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://oak7</uri>
+      <name>oak2_5</name>
+      <pose>-25.046091870360712 -52.035434351459905 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://oak7</uri>
+      <name>oak2_6</name>
+      <pose>-28.800876544077962 -25.839693520776297 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://oak7</uri>
+      <name>oak2_7</name>
+      <pose>-66.924935367133017 -36.887573844980103 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://oak7</uri>
+      <name>oak2_8</name>
+      <pose>-63.120186866443149 -17.677160726514565 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://oak7</uri>
+      <name>oak2_9</name>
+      <pose>-97.12783903411362 -44.219316224103956 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://oak7</uri>
+      <name>oak2_10</name>
+      <pose>72.896922910542813 -15.4603849874674 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://oak6</uri>
+      <name>oak1_1</name>
+      <pose>74.615894847217021 -41.202037480273397 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://oak6</uri>
+      <name>oak1_2</name>
+      <pose>96.234613921045167 -12.029362204741151 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://oak6</uri>
+      <name>oak1_3</name>
+      <pose>102.26785389858225 -25.012258907582748 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://oak6</uri>
+      <name>oak1_4</name>
+      <pose>63.106827810393838 -34.323083150821674 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://oak6</uri>
+      <name>oak1_5</name>
+      <pose>54.123437628307784 -13.002263128333002 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://oak6</uri>
+      <name>oak1_6</name>
+      <pose>29.657144988297837 -12.141956707068648 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://oak6</uri>
+      <name>oak1_7</name>
+      <pose>50.301978733409697 -53.353401334427232 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://oak6</uri>
+      <name>oak1_8</name>
+      <pose>30.274543350465635 -43.263129963455064 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://oak6</uri>
+      <name>oak1_9</name>
+      <pose>2.4095426099172288 -28.855869656857948 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://oak6</uri>
+      <name>oak1_10</name>
+      <pose>-32.669652385956859 -12.22401925615544 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://male</uri>
+      <name>men_1</name>
+      <pose>34.032094348373391 -71.743365755694214 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://male</uri>
+      <name>men_2</name>
+      <pose>-4.4227266576032758 -38.496058576739713 0 0 0 0</pose>
+    </include>
+  </world>
+</sdf>

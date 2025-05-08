@@ -1,0 +1,64 @@
+<sdf version="1.7">
+    <model name="Oak tree">
+        <static>true</static>
+        <link name="link">
+            <collision name="collision">
+                <geometry>
+                    <mesh>
+                        <uri>https://fuel.gazebosim.org/1.0/openrobotics/models/oak tree/7/files/meshes/oak_tree.dae</uri>
+                        <scale>4 4 4</scale>
+                    </mesh>
+                </geometry>
+            </collision>
+            <visual name="branch">
+                <geometry>
+                    <mesh>
+                        <uri>https://fuel.gazebosim.org/1.0/openrobotics/models/oak tree/7/files/meshes/oak_tree.dae</uri>
+                        <submesh>
+                            <name>Branch</name>
+                        </submesh>
+                        <scale>4 4 4</scale>
+                    </mesh>
+                </geometry>
+                <material>
+                    <double_sided>true</double_sided>
+                    <diffuse>1.0 1.0 1.0</diffuse>
+                    <script>
+                        <uri>https://fuel.gazebosim.org/1.0/openrobotics/models/oak tree/7/files/materials/scripts/</uri>
+                        <uri>https://fuel.gazebosim.org/1.0/openrobotics/models/oak tree/7/files/materials/textures/</uri>
+                        <name>OakTree/Branch</name>
+                    </script>
+                    <pbr>
+                        <metal>
+                            <albedo_map>https://fuel.gazebosim.org/1.0/openrobotics/models/oak tree/7/files/materials/textures/branch_diffuse.png</albedo_map>
+                        </metal>
+                    </pbr>
+                </material>
+            </visual>
+            <visual name="bark">
+                <geometry>
+                    <mesh>
+                        <uri>https://fuel.gazebosim.org/1.0/openrobotics/models/oak tree/7/files/meshes/oak_tree.dae</uri>
+                        <submesh>
+                            <name>Bark</name>
+                        </submesh>
+                        <scale>4 4 4</scale>
+                    </mesh>
+                </geometry>
+                <material>
+                    <diffuse>1.0 1.0 1.0</diffuse>
+                    <script>
+                        <uri>https://fuel.gazebosim.org/1.0/openrobotics/models/oak tree/7/files/materials/scripts/</uri>
+                        <uri>https://fuel.gazebosim.org/1.0/openrobotics/models/oak tree/7/files/materials/textures/</uri>
+                        <name>OakTree/Bark</name>
+                    </script>
+                    <pbr>
+                        <metal>
+                            <albedo_map>https://fuel.gazebosim.org/1.0/openrobotics/models/oak tree/7/files/materials/textures/bark_diffuse.png</albedo_map>
+                        </metal>
+                    </pbr>
+                </material>
+            </visual>
+        </link>
+    </model>
+</sdf>
