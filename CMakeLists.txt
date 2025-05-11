@@ -17,8 +17,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # --------------------------------------------------------------------------- #
 # Find gz-sim and dependencies.
 
-# Harmonic (default)
 if("$ENV{GZ_VERSION}" STREQUAL "harmonic" OR NOT DEFINED "ENV{GZ_VERSION}")
+  # Harmonic (default)
   find_package(gz-cmake3 REQUIRED)
   set(GZ_CMAKE_VER ${gz-cmake3_VERSION_MAJOR})
 
@@ -32,8 +32,23 @@ if("$ENV{GZ_VERSION}" STREQUAL "harmonic" OR NOT DEFINED "ENV{GZ_VERSION}")
   set(GZ_SIM_VER ${gz-sim8_VERSION_MAJOR})
 
   message(STATUS "Compiling against Gazebo Harmonic")
-# Garden
+elseif("$ENV{GZ_VERSION}" STREQUAL "ionic")
+  # Ionic
+  find_package(gz-cmake4 REQUIRED)
+  set(GZ_CMAKE_VER ${gz-cmake4_VERSION_MAJOR})
+
+  gz_find_package(gz-common6 REQUIRED)
+  set(GZ_COMMON_VER ${gz-common6_VERSION_MAJOR})
+
+  gz_find_package(gz-rendering9 REQUIRED)
+  set(GZ_RENDERING_VER ${gz-rendering9_VERSION_MAJOR})
+  
+  gz_find_package(gz-sim9 REQUIRED)
+  set(GZ_SIM_VER ${gz-sim9_VERSION_MAJOR})
+
+  message(STATUS "Compiling against Gazebo Ionic")
 elseif("$ENV{GZ_VERSION}" STREQUAL "garden")
+  # Garden
   find_package(gz-cmake3 REQUIRED)
   set(GZ_CMAKE_VER ${gz-cmake3_VERSION_MAJOR})
 
