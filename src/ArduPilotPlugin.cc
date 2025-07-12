@@ -1237,7 +1237,7 @@ void gz::sim::systems::ArduPilotPlugin::PostUpdate(
                 _info.simTime).count();
         this->CreateStateJSON(t, _ecm);
         this->SendState();
-        this->dataPtr->lastControllerUpdateTime = _info.simTime;
+        // this->dataPtr->lastControllerUpdateTime = _info.simTime;
     }
 }
 
@@ -1341,6 +1341,13 @@ void gz::sim::systems::ArduPilotPlugin::ApplyMotorForces(
               this->dataPtr->controls[i].joint);
         if (vComp && !vComp->Data().empty())
         {
+            gzdbg << "Joint [" << this->dataPtr->controls[i].jointName << "]:\n"
+              // << "  PWM: " << pwm << "\n"
+              // << "  Terminal Voltage: " << terminalV << " V\n"
+              << "  Current Speed: " << vComp->Data()[0] << " rad/s \n";
+              // << "  Back-EMF: " << backEmfV << " V\n"
+              // << "  Current: " << current << " A\n"
+              // << "  Torque: " << torque << " Nm\n";
             const double vel = vComp->Data()[0];
             const double error = vel - velTarget;
             const double force = this->dataPtr->controls[i].pid.Update(
