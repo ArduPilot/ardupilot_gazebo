@@ -91,6 +91,18 @@ target_link_libraries(ArduPilotPlugin PRIVATE
 
 add_library(ParachutePlugin
   SHARED
+  src/MotorPlugin.cc
+  src/Util.cc
+)
+target_include_directories(MotorPlugin PRIVATE
+  include
+)
+target_link_libraries(MotorPlugin PRIVATE
+  gz-sim${GZ_SIM_VER}::gz-sim${GZ_SIM_VER}
+)
+
+add_library(ParachutePlugin
+  SHARED
   src/ParachutePlugin.cc
 )
 target_include_directories(ParachutePlugin PRIVATE
