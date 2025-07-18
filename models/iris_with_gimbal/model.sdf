@@ -215,7 +215,7 @@
         <offset>0</offset>
         <servo_min>1100</servo_min>
         <servo_max>1900</servo_max>
-        <type>VELOCITY</type>
+        <type>COMMAND</type>
         <p_gain>0.20</p_gain>
         <i_gain>0</i_gain>
         <d_gain>0</d_gain>
@@ -223,7 +223,7 @@
         <i_min>0</i_min>
         <cmd_max>2.5</cmd_max>
         <cmd_min>-2.5</cmd_min>
-        <!-- <cmd_topic>joint_0</cmd_topic> -->
+        <cmd_topic>joint_0</cmd_topic>
         <controlVelocitySlowdownSim>1</controlVelocitySlowdownSim>
       </control>
 
@@ -234,7 +234,7 @@
         <offset>0</offset>
         <servo_min>1100</servo_min>
         <servo_max>1900</servo_max>
-        <type>VELOCITY</type>
+        <type>COMMAND</type>
         <p_gain>0.20</p_gain>
         <i_gain>0</i_gain>
         <d_gain>0</d_gain>
@@ -242,7 +242,7 @@
         <i_min>0</i_min>
         <cmd_max>2.5</cmd_max>
         <cmd_min>-2.5</cmd_min>
-        <!-- <cmd_topic>joint_1</cmd_topic> -->
+        <cmd_topic>joint_1</cmd_topic>
         <controlVelocitySlowdownSim>1</controlVelocitySlowdownSim>
       </control>
 
@@ -253,7 +253,7 @@
         <offset>0</offset>
         <servo_min>1100</servo_min>
         <servo_max>1900</servo_max>
-        <type>VELOCITY</type>
+        <type>COMMAND</type>
         <p_gain>0.20</p_gain>
         <i_gain>0</i_gain>
         <d_gain>0</d_gain>
@@ -261,7 +261,7 @@
         <i_min>0</i_min>
         <cmd_max>2.5</cmd_max>
         <cmd_min>-2.5</cmd_min>
-        <!-- <cmd_topic>joint_2</cmd_topic> -->
+        <cmd_topic>joint_2</cmd_topic>
         <controlVelocitySlowdownSim>1</controlVelocitySlowdownSim>
       </control>
 
@@ -272,7 +272,7 @@
         <offset>0</offset>
         <servo_min>1100</servo_min>
         <servo_max>1900</servo_max>
-        <type>VELOCITY</type>
+        <type>COMMAND</type>
         <p_gain>0.20</p_gain>
         <i_gain>0</i_gain>
         <d_gain>0</d_gain>
@@ -280,7 +280,7 @@
         <i_min>0</i_min>
         <cmd_max>2.5</cmd_max>
         <cmd_min>-2.5</cmd_min>
-        <!-- <cmd_topic>joint_3</cmd_topic> -->
+        <cmd_topic>joint_3</cmd_topic>
         <controlVelocitySlowdownSim>1</controlVelocitySlowdownSim>
       </control>
 
@@ -323,7 +323,7 @@
     </plugin>
 
 <!-- //////////////////////////////////////////////// In progress-->
-    <!-- <plugin filename="MotorPlugin" name="MotorPlugin">
+    <plugin filename="MotorPlugin" name="MotorPlugin">
 
         <control channel="0">
           <jointName>iris_with_standoffs::rotor_0_joint</jointName>
@@ -332,6 +332,13 @@
           <coilResistance>0.090</coilResistance>
           <noLoadCurrent>0.5</noLoadCurrent>
           <cmd_topic>joint_0</cmd_topic>
+          <p_gain>0.20</p_gain>
+          <i_gain>0</i_gain>
+          <d_gain>0</d_gain>
+          <i_max>0</i_max>
+          <i_min>0</i_min>
+          <cmd_max>2.5</cmd_max>
+          <cmd_min>-2.5</cmd_min>
         </control>
 
         <control channel="1">
@@ -341,6 +348,13 @@
           <coilResistance>0.090</coilResistance>
           <noLoadCurrent>0.5</noLoadCurrent>
           <cmd_topic>joint_1</cmd_topic>
+          <p_gain>0.20</p_gain>
+          <i_gain>0</i_gain>
+          <d_gain>0</d_gain>
+          <i_max>0</i_max>
+          <i_min>0</i_min>
+          <cmd_max>2.5</cmd_max>
+          <cmd_min>-2.5</cmd_min>
         </control>
 
         <control channel="2">
@@ -350,6 +364,13 @@
           <coilResistance>0.090</coilResistance>
           <noLoadCurrent>0.5</noLoadCurrent>
           <cmd_topic>joint_2</cmd_topic>
+          <p_gain>0.20</p_gain>
+          <i_gain>0</i_gain>
+          <d_gain>0</d_gain>
+          <i_max>0</i_max>
+          <i_min>0</i_min>
+          <cmd_max>2.5</cmd_max>
+          <cmd_min>-2.5</cmd_min>
         </control>
 
         <control channel="3">
@@ -359,8 +380,15 @@
           <coilResistance>0.090</coilResistance>
           <noLoadCurrent>0.5</noLoadCurrent>
           <cmd_topic>joint_3</cmd_topic>
+          <p_gain>0.20</p_gain>
+          <i_gain>0</i_gain>
+          <d_gain>0</d_gain>
+          <i_max>0</i_max>
+          <i_min>0</i_min>
+          <cmd_max>2.5</cmd_max>
+          <cmd_min>-2.5</cmd_min>
         </control>
-      </plugin> -->
+      </plugin> 
 <!-- //////////////////////////////////////////////// -->
 
     <plugin
