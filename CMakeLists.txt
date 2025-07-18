@@ -89,19 +89,6 @@ target_link_libraries(ArduPilotPlugin PRIVATE
   gz-sim${GZ_SIM_VER}::gz-sim${GZ_SIM_VER}
 )
 
-add_library(MotorPlugin
-  SHARED
-  src/MotorPlugin.cc
-  src/Util.cc
-
-)
-target_include_directories(MotorPlugin PRIVATE
-  include
-)
-target_link_libraries(MotorPlugin PRIVATE
-  gz-sim${GZ_SIM_VER}::gz-sim${GZ_SIM_VER}
-)
-
 add_library(ParachutePlugin
   SHARED
   src/ParachutePlugin.cc
@@ -147,7 +134,6 @@ target_link_libraries(GstCameraPlugin PRIVATE
 install(
   TARGETS
   ArduPilotPlugin
-  MotorPlugin
   ParachutePlugin
   CameraZoomPlugin
   GstCameraPlugin
