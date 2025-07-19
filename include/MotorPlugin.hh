@@ -49,7 +49,6 @@ class MotorPlugin :
     public System,
     public ISystemConfigureParameters,
     public ISystemPreUpdate,
-    public ISystemPostUpdate,
     public ISystemConfigure
 {
   /// \brief Destructor
@@ -61,9 +60,6 @@ class MotorPlugin :
   // Documentation inherited
   public: void PreUpdate(const gz::sim::UpdateInfo &_info,
                          EntityComponentManager &_ecm) final;
-  
-  public: void PostUpdate(const gz::sim::UpdateInfo &_info,
-                          const gz::sim::EntityComponentManager &_ecm) final;
 
   // Documentation inherited
   public: void Configure(const Entity &_entity,

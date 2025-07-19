@@ -218,16 +218,12 @@ class ParameterProxy
 
 //////////////////////////////////////////////////
 class MotorPlugin::Impl
-{
-  public: Impl()
-  {
-  }
-
+{ 
   //
   public: void OnPwmMsg(const google::protobuf::Message &_msg,
                         const gz::transport::MessageInfo &_info);
   
-  //! Helper to initialise and declare a PID parameter
+                        //! Helper to initialise and declare a PID parameter
   public: template<typename Getter, typename Setter>
   void DeclareParameter(
       ParameterProxy<math::PID>& param,
@@ -300,7 +296,6 @@ class MotorPlugin::Impl
   public: ParameterProxy<math::PID> iMin{"i_min"};
   public: ParameterProxy<math::PID> cmdMax{"cmd_max"};
   public: ParameterProxy<math::PID> cmdMin{"cmd_min"};
-  public: ParameterProxy<math::PID> cmdOffset{"cmd_offset"};
 
 };
 
@@ -424,8 +419,6 @@ void MotorPlugin::ConfigureParameters(
       &math::PID::CmdMax, &math::PID::SetCmdMax, prefix);
   this->impl->DeclareParameter(this->impl->cmdMin,
       &math::PID::CmdMin, &math::PID::SetCmdMin, prefix);
-  this->impl->DeclareParameter(this->impl->cmdOffset,
-      &math::PID::CmdOffset, &math::PID::SetCmdOffset, prefix);
 }
 /////////////////////////////////////////////////
 void MotorPlugin::LoadControlChannels(
@@ -534,34 +527,24 @@ void MotorPlugin::LoadControlChannels(
       return;
     }    
     
-    double param;
-    param = controlSdf->Get("p_gain", control.pid.PGain()).first;
-    control.pid.SetPGain(param);
-
-    param = controlSdf->Get("i_gain", control.pid.IGain()).first;
-    control.pid.SetIGain(param);
-
-    param = controlSdf->Get("d_gain", control.pid.DGain()).first;
-    control.pid.SetDGain(param);
-
-    param = controlSdf->Get("i_max", control.pid.IMax()).first;
-    control.pid.SetIMax(param);
-
-    param = controlSdf->Get("i_min", control.pid.IMin()).first;
-    control.pid.SetIMin(param);
-
-    param = controlSdf->Get("cmd_max", control.pid.CmdMax()).first;
-    control.pid.SetCmdMax(param);
-
-    param = controlSdf->Get("cmd_min", control.pid.CmdMin()).first;
-    control.pid.SetCmdMin(param);
-
+    // if (controlSdf->HasElement("p_gain"))
+    // {
+    //   sdf::ElementPtr pidElem = controlSdf->GetElement("pid");
+    //   control.pid.SetPGain(pidElem->Get<double>("p", control.pid.PGain()).first);
+    //   control.pid.SetIGain(pidElem->Get<double>("i", control.pid.IGain()).first);
+    //   control.pid.SetDGain(pidElem->Get<double>("d", control.pid.DGain()).first);
+    //   control.pid.SetIMax(pidElem->Get<double>("iMax", control.pid.IMax()).first);
+    //   control.pid.SetIMin(pidElem->Get<double>("iMin", control.pid.IMin()).first);
+    //   control.pid.SetCmdMax(pidElem->Get<double>("cmdMax", control.pid.CmdMax()).first);
+    //   control.pid.SetCmdMin(pidElem->Get<double>("cmdMin", control.pid.CmdMin()).first);
+    // }
     this->impl->controls.push_back(control);
     controlSdf = controlSdf->GetNextElement("control");
   }
 
 
 }
+
 
 
 //////////////////////////////////////////////////
@@ -571,16 +554,35 @@ void MotorPlugin::PreUpdate(
 {
   GZ_PROFILE("MotorPlugin::PreUpdate");
 
-    double desVel = 0.0;
-    double torque=0.0;
+	// if (!_info.paused && _info.simTime >
+  //           this->impl->lastMotorModelUpdateTime)
+	// {
     double dt =std::chrono::duration_cast<std::chrono::duration<double> >(
-								_info.simTime - this->impl->
-					        lastMotorModelUpdateTime).count();
+									_info.simTime - this->impl->
+					lastMotorModelUpdateTime).count();
     
-
+    // gzdbg << "This is Dt:- " << dt << "\n";
 		for (size_t i = 0; i < this->impl->controls.size(); ++i)
 		{
 			auto &control = this->impl->controls[i];
+			double pwm = 0.0;
+			
+			auto joint_vel_comp = _ecm.Component<gz::sim::components::JointVelocity>(control.joint);
+			if (!joint_vel_comp)
+			{
+				gzerr << "JointVelocity component missing for joint [" << control.jointName << "]\n";
+				return;
+			}
+
+			const auto &velocities = joint_vel_comp->Data();
+			if (velocities.empty())
+			{
+				gzerr << "Empty velocities for joint [" << control.jointName << "]\n";
+				continue;
+			}
+
+			// current joint speed (rpm)
+			double currOmega = velocities[0];
 			
 			std::string topic = "/" + this->impl->topics[i];
       std::lock_guard<std::mutex> lock(this->impl->pwmMutex);
@@ -589,82 +591,104 @@ void MotorPlugin::PreUpdate(
       {
         try
         {
-          desVel = (std::stod(it->second) * 60.0) / (2.0 * M_PI);
+          pwm = std::stod(it->second);
           // gzdbg << "Pwm received for channel [" << control.channel << "] is: [" << pwm << "]\n";
         }
         catch (const std::exception &e)
         {
-          gzwarn << "Failed to convert value for topic [" << topic << "]: " << e.what() << "\n";
-          desVel = 0.0;
+          gzwarn << "Failed to convert PWM value for topic [" << topic << "]: " << e.what() << "\n";
+          pwm = 0.0;
         }
       }
-      
-      auto joint_vel_comp = _ecm.Component<gz::sim::components::JointVelocity>(control.joint);
-			if (!joint_vel_comp)
+
+			double targetOmega = pwm;
+
+
+			if (std::abs(pwm) < 1.0) 
 			{
-				gzerr << "JointVelocity component missing for joint [" << control.jointName << "]\n";
-				return;
+				// gzdbg << "Zero rad/s PWM from topic, setting torque to 0\n";
+				auto jfcComp = _ecm.Component<gz::sim::components::JointForceCmd>(control.joint);
+				if (jfcComp)
+				{
+					auto &forceCmd = jfcComp->Data();
+					if (!forceCmd.empty())
+					{
+						forceCmd[0] = 0.0;
+					}
+				}
+				continue;
 			}
 
+			double kv = (control.velocityConstant  * 60.0) / (2.0 * M_PI);
+			double velError = targetOmega - currOmega;
+			double desOmega = this->impl->controls[i].pid.Update(
+					velError, std::chrono::duration<double>(dt)); 
+			
+      // Print PID values for each control
+      // gzdbg << "PID values for joint [" << control.jointName << "]:\n"
+      //       << "  P Gain: " << control.pid.PGain() << "\n"
+      //       << "  I Gain: " << control.pid.IGain() << "\n"
+      //       << "  D Gain: " << control.pid.DGain() << "\n"
+      //       << "  I Max: " << control.pid.IMax() << "\n"
+      //       << "  I Min: " << control.pid.IMin() << "\n"
+      //       << "  Cmd Max: " << control.pid.CmdMax() << "\n"
+      //       << "  Cmd Min: " << control.pid.CmdMin() << "\n"
+      //       << "  Cmd Offset: " << control.pid.CmdOffset() << "\n";
 
-			auto jfcComp = _ecm.Component<gz::sim::components::JointForceCmd>(control.joint);
-      if (jfcComp == nullptr)
-      {
-        jfcComp = _ecm.CreateComponent(this->impl->controls[i].joint,
-            gz::sim::components::JointForceCmd({0}));
-      }
 
-      const auto &velocities = joint_vel_comp->Data();
-      if (joint_vel_comp && !velocities.empty())
-      {
-          double currVel = (velocities[0] * 60.0) / (2.0 * M_PI);
-          double err = currVel - desVel;
-          double torque = this->impl->controls[i].pid.Update(err,
-                          std::chrono::duration<double>(dt));
-          jfcComp->Data()[0] = torque;
+			// Apply Drela's motor model equations
+			
+			// Equation (4): Current as function of speed and terminal voltage
+			// i(Ω, v) = (v - Ω/KV) / R
+			// Note: velocityConstant should be KV in rad/s/Volt
 
-          // from eqn (1)
-          double current = torque * control.velocityConstant + control.noLoadCurrent;
+			double reqV = (desOmega / kv) +   
+														(control.noLoadCurrent * control.coilResistance);
+			
+			// Clamp voltage to available range
+			double terminalV = std::max(-control.maxVolts, std::min(control.maxVolts, reqV));
+			
+			double backEmfV = currOmega / kv;  // Ω/KV
+			double current = (terminalV - backEmfV) / control.coilResistance;
 
-          gzdbg << "Joint [" << control.jointName << "]: "
-						<< "  Curr Vel: " << currVel
-						<< "  Des Vel: " << desVel
-            << "  Dt: " << dt
-            << "  Current: " << current
+			// Equation (5): Qm = (i - io) / KQ
+			double torque = (current - control.noLoadCurrent) / kv;
+			
+			// Debug output
+			gzdbg << "Joint [" << control.jointName << "]:\n"
+						<< "  PWM: " << pwm << "\n"
+						<< "  Terminal Voltage: " << terminalV << " V\n"
+						<< "  Current Speed: " << currOmega << " RPM\n"
+						<< "  Desired Speed: " << desOmega << " RPM\n"
+						<< "  Back-EMF: " << backEmfV << " V\n"
+						<< "  Current: " << current << " A\n"
 						<< "  Torque: " << torque << " Nm\n";
 
-      }
+			// Apply torque to joint
+			auto jfcComp = _ecm.Component<gz::sim::components::JointForceCmd>(control.joint);
+			if (jfcComp)
+			{
+				auto &forceCmd = jfcComp->Data();
+				forceCmd[0] = torque;
+			}
+			else
+			{
+				gzerr << "JointForceCmd component missing for joint [" << control.jointName << "]\n";
+			}
+		}
 
-			// Debug output
-			// gzdbg << "Joint [" << control.jointName << "]:\n"
-			// 			<< "  PWM: " << pwm << "\n"
-			// 			<< "  Terminal Voltage: " << terminalV << " V\n"
-			// 			<< "  Current Speed: " << currOmega << " rad/s (" << (currOmega * 60.0) / (2.0 * M_PI) << " RPM)\n"
-			// 			<< "  Back-EMF: " << backEmfV << " V\n"
-			// 			<< "  Current: " << current << " A\n"
-			// 			<< "  Torque: " << torque << " Nm\n";
-
-			
-
-      // Update parameters
-      this->impl->pGain.Update();
-      this->impl->iGain.Update();
-      this->impl->dGain.Update();
-      this->impl->iMax.Update();
-      this->impl->iMin.Update();
-      this->impl->cmdMax.Update();
-      this->impl->cmdMin.Update();
-      this->impl->cmdOffset.Update();
-	}
-
-}
-
-void MotorPlugin::PostUpdate(
-    const gz::sim::UpdateInfo &_info,
-    const gz::sim::EntityComponentManager &_ecm)
-{
+    // Update parameters
+    this->impl->pGain.Update();
+    this->impl->iGain.Update();
+    this->impl->dGain.Update();
+    this->impl->iMax.Update();
+    this->impl->iMin.Update();
+    this->impl->cmdMax.Update();
+    this->impl->cmdMin.Update();
+	// }
     this->impl->lastMotorModelUpdateTime = _info.simTime;
 }
+
 
 //////////////////////////////////////////////////
 
@@ -678,8 +702,7 @@ GZ_ADD_PLUGIN(
     gz::sim::System,
     gz::sim::systems::MotorPlugin::ISystemConfigureParameters,
     gz::sim::systems::MotorPlugin::ISystemConfigure,
-    gz::sim::systems::MotorPlugin::ISystemPreUpdate,
-    gz::sim::systems::MotorPlugin::ISystemPostUpdate)
+    gz::sim::systems::MotorPlugin::ISystemPreUpdate)
 
 GZ_ADD_PLUGIN_ALIAS(
     gz::sim::systems::MotorPlugin,
