@@ -241,7 +241,7 @@
           <upper>1e+16</upper>
         </limit>
         <dynamics>
-          <damping>11.0e-5</damping>
+          <damping>1.0e-5</damping>
         </dynamics>
       </axis>
       <physics>

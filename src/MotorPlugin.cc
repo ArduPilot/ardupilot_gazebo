@@ -59,7 +59,7 @@ class Control
   /// \brief Constructor
   public: Control()
   {
-    this->pid.Init(0.2, 0, 0, 0, 0, 1.0, -1.0);
+    // this->pid.Init(0.02, 0, 0.01, 0, 0, 1.0, -1.0);
   }
 
   public: ~Control() {}
@@ -85,7 +85,7 @@ class Control
   public: double cmd = 0;
 
   /// \brief Velocity PID for motor control
-  public: gz::math::PID pid;
+  // public: gz::math::PID pid;
   
   /// \brief The controller type
   ///
@@ -124,15 +124,6 @@ class Control
   /// \brief Publisher for sending commands
   public: gz::transport::Node::Publisher pub;
 
-  /// \brief unused coefficients
-  public: double rotorVelocitySlowdownSim;
-  public: double frequencyCutoff;
-  public: double samplingRate;
-  public: gz::math::OnePole<double> filter;
-
-  public: static double kDefaultRotorVelocitySlowdownSim;
-  public: static double kDefaultFrequencyCutoff;
-  public: static double kDefaultSamplingRate;
 };
 
 //////////////////////////////////////////////////
@@ -355,10 +346,10 @@ void MotorPlugin::Configure(
   }
   this->impl->parentModelName = this->impl->parentModel.Name(_ecm);
 
-  
-
   // Load control channel params
   this->LoadControlChannels(sdfClone, _ecm);
+
+  this->impl->pid.Init(0.02, 0, 0.0, 0, 0, 1.0, -1.0);
 
   // create components and subscriptions.
   for (int i = 0; i < this->impl->controls.size(); ++i)
@@ -527,6 +518,11 @@ void MotorPlugin::LoadControlChannels(
       return;
     }    
     
+    std::string cmdTopic;
+
+    cmdTopic = control.jointName + "/current";
+    control.pub = this->impl->node.Advertise<msgs::Double>(cmdTopic);
+
     // if (controlSdf->HasElement("p_gain"))
     // {
     //   sdf::ElementPtr pidElem = controlSdf->GetElement("pid");
@@ -553,7 +549,7 @@ void MotorPlugin::PreUpdate(
     EntityComponentManager &_ecm)
 {
   GZ_PROFILE("MotorPlugin::PreUpdate");
-
+  double torque=0.0;
 	// if (!_info.paused && _info.simTime >
   //           this->impl->lastMotorModelUpdateTime)
 	// {
@@ -603,7 +599,8 @@ void MotorPlugin::PreUpdate(
 
 			double targetOmega = pwm;
 
-
+     
+      
 			if (std::abs(pwm) < 1.0) 
 			{
 				// gzdbg << "Zero rad/s PWM from topic, setting torque to 0\n";
@@ -618,51 +615,61 @@ void MotorPlugin::PreUpdate(
 				}
 				continue;
 			}
-
-			double kv = (control.velocityConstant  * 60.0) / (2.0 * M_PI);
+      
+      gzdbg << "Dt:- " << dt << "\n";
 			double velError = targetOmega - currOmega;
-			double desOmega = this->impl->controls[i].pid.Update(
-					velError, std::chrono::duration<double>(dt)); 
+			double torque = this->impl->pid.Update(
+        velError, std::chrono::duration<double>(dt)); 
 			
+
       // Print PID values for each control
-      // gzdbg << "PID values for joint [" << control.jointName << "]:\n"
-      //       << "  P Gain: " << control.pid.PGain() << "\n"
-      //       << "  I Gain: " << control.pid.IGain() << "\n"
-      //       << "  D Gain: " << control.pid.DGain() << "\n"
-      //       << "  I Max: " << control.pid.IMax() << "\n"
-      //       << "  I Min: " << control.pid.IMin() << "\n"
-      //       << "  Cmd Max: " << control.pid.CmdMax() << "\n"
-      //       << "  Cmd Min: " << control.pid.CmdMin() << "\n"
-      //       << "  Cmd Offset: " << control.pid.CmdOffset() << "\n";
+      gzdbg << "PID values for joint [" << control.jointName << "]:\n"
+            << "  P Gain: " << this->impl->pid.PGain() << "\n"
+            << "  I Gain: " << this->impl->pid.IGain() << "\n"
+            << "  D Gain: " << this->impl->pid.DGain() << "\n"
+            << "  I Max: " << this->impl->pid.IMax() << "\n"
+            << "  I Min: " << this->impl->pid.IMin() << "\n"
+            << "  Cmd Max: " << this->impl->pid.CmdMax() << "\n"
+            << "  Cmd Min: " << this->impl->pid.CmdMin() << "\n"
+            << "  Cmd Offset: " << this->impl->pid.CmdOffset() << "\n";
+
+      // outMin + (outMax - outMin) * ((value - inMin) / (inMax - inMin))
+      double kv = (control.velocityConstant * (2.0 * M_PI)) / 60.0;
+      double true_pwm = 0 + (1 - 0) * ((abs(pwm) - 0) / (838 - 0));
+      
+      if (pwm < 0)
+        true_pwm = -true_pwm;
+      
+      double voltage = control.maxVolts *  true_pwm;
+      
+			double backEmfV = currOmega / kv ;  // Ω/KV
+			double current = (voltage - backEmfV) / control.coilResistance;
+      
+      msgs::Double cmd;
+      cmd.set_data(current);
+      control.pub.Publish(cmd);
+
+      // if (current >= control.noLoadCurrent)
+      // {
+      //   torque = (current - control.noLoadCurrent) / kv;
+      // }
+      // else
+      // {
+      //   torque = (current + control.noLoadCurrent) / kv;
+      // }
+      
+      gzdbg << "Joint:- "<< control.jointName << "Torque:- " << torque << "\n";
 
 
-			// Apply Drela's motor model equations
-			
-			// Equation (4): Current as function of speed and terminal voltage
-			// i(Ω, v) = (v - Ω/KV) / R
-			// Note: velocityConstant should be KV in rad/s/Volt
 
-			double reqV = (desOmega / kv) +   
-														(control.noLoadCurrent * control.coilResistance);
-			
-			// Clamp voltage to available range
-			double terminalV = std::max(-control.maxVolts, std::min(control.maxVolts, reqV));
-			
-			double backEmfV = currOmega / kv;  // Ω/KV
-			double current = (terminalV - backEmfV) / control.coilResistance;
-
-			// Equation (5): Qm = (i - io) / KQ
-			double torque = (current - control.noLoadCurrent) / kv;
-			
-			// Debug output
-			gzdbg << "Joint [" << control.jointName << "]:\n"
-						<< "  PWM: " << pwm << "\n"
-						<< "  Terminal Voltage: " << terminalV << " V\n"
-						<< "  Current Speed: " << currOmega << " RPM\n"
-						<< "  Desired Speed: " << desOmega << " RPM\n"
-						<< "  Back-EMF: " << backEmfV << " V\n"
-						<< "  Current: " << current << " A\n"
-						<< "  Torque: " << torque << " Nm\n";
+			// gzdbg << "Joint [" << control.jointName << "]:\n"
+			// 			<< "  true_pwm: " << true_pwm << "\n"
+			// 			<< "  Voltage: " << voltage << " V\n"
+			// 			<< "  Current Speed: " << currOmega << " RPM\n"
+			// 			<< "  Desired Speed: " << desOmega << " RPM\n"
+			// 			<< "  Back-EMF: " << backEmfV << " V\n"
+			// 			<< "  Current: " << current << " A\n"
+			// 			<< "  Torque: " << torque << " Nm\n";
 
 			// Apply torque to joint
 			auto jfcComp = _ecm.Component<gz::sim::components::JointForceCmd>(control.joint);

@@ -336,8 +336,8 @@
           <d_gain>0</d_gain>
           <i_max>0</i_max>
           <i_min>0</i_min>
-          <cmd_max>2.5</cmd_max>
-          <cmd_min>-2.5</cmd_min>
+          <cmd_max>1.0</cmd_max>
+          <cmd_min>-1.0</cmd_min>
         </control>
 
         <control channel="1">
@@ -352,8 +352,8 @@
           <d_gain>0</d_gain>
           <i_max>0</i_max>
           <i_min>0</i_min>
-          <cmd_max>2.5</cmd_max>
-          <cmd_min>-2.5</cmd_min>
+          <cmd_max>1.0</cmd_max>
+          <cmd_min>-1.0</cmd_min>
         </control>
 
         <control channel="2">
@@ -368,8 +368,8 @@
           <d_gain>0</d_gain>
           <i_max>0</i_max>
           <i_min>0</i_min>
-          <cmd_max>2.5</cmd_max>
-          <cmd_min>-2.5</cmd_min>
+          <cmd_max>1.0</cmd_max>
+          <cmd_min>-1.0</cmd_min>
         </control>
 
         <control channel="3">
@@ -384,8 +384,8 @@
           <d_gain>0</d_gain>
           <i_max>0</i_max>
           <i_min>0</i_min>
-          <cmd_max>2.5</cmd_max>
-          <cmd_min>-2.5</cmd_min>
+          <cmd_max>1.0</cmd_max>
+          <cmd_min>-1.0</cmd_min>
         </control>
       </plugin>
 
