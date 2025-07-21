@@ -26,25 +26,7 @@ namespace sim {
 inline namespace GZ_SIM_VERSION_NAMESPACE {
 namespace systems {
 
-/// \brief Parachute releaase plugin which may be attached to a model.
-///
-/// ## System Parameters:
-///
-///   `<parent_link>` The link in the target model to attach the parachute.
-///   Required.
-///
-///   `<child_model>` The name of the parachute model.
-///   Required.
-///
-///   `<child_link>` The base link of the parachute model (bridle point).
-///   Required.
-///
-///   `<child_pose>` The relative pose of parent link to the child link.
-///   The default value is: `0, 0, 0, 0, 0, 0`.
-///
-///   `<cmd_topic>` The topic to receive  the parachute release command.
-///   The default value is: `/model/<model_name>/parachute/cmd_release`.
-///
+
 class MotorPlugin :
     public System,
     public ISystemConfigureParameters,
@@ -87,4 +69,4 @@ class MotorPlugin :
 }  // namespace sim
 }  // namespace gz
 
-#endif  // PARACHUTEPLUGIN_HH_
+#endif  // MOTORPLUGIN_HH_
