@@ -93,6 +93,10 @@ add_library(MotorPlugin
   SHARED
   src/MotorPlugin.cc
   src/Util.cc
+<<<<<<< HEAD
+=======
+
+>>>>>>> dev/motor_plugin
 )
 target_include_directories(MotorPlugin PRIVATE
   include
@@ -146,6 +150,7 @@ target_link_libraries(GstCameraPlugin PRIVATE
 install(
   TARGETS
   ArduPilotPlugin
+  MotorPlugin
   ParachutePlugin
   CameraZoomPlugin
   GstCameraPlugin

@@ -1237,7 +1237,7 @@ void gz::sim::systems::ArduPilotPlugin::PostUpdate(
                 _info.simTime).count();
         this->CreateStateJSON(t, _ecm);
         this->SendState();
-        this->dataPtr->lastControllerUpdateTime = _info.simTime;
+        // this->dataPtr->lastControllerUpdateTime = _info.simTime;
     }
 }
 
@@ -1642,8 +1642,12 @@ void gz::sim::systems::ArduPilotPlugin::UpdateMotorCommands(
                 // bound incoming cmd between 0 and 1
                 double raw_cmd = (pwm - pwm_min)/(pwm_max - pwm_min);
                 raw_cmd = gz::math::clamp(raw_cmd, 0.0, 1.0);
+
+                // gzdbg << "Raw Cmd:- " << raw_cmd << "\n";
+
                 this->dataPtr->controls[i].cmd =
                     multiplier * (raw_cmd + offset);
+                // gzdbg << "With offset & mult:- " << this->dataPtr->controls[i].cmd << "\n";
 
 #if 0
                 gzdbg << "apply input chan["

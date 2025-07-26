@@ -215,7 +215,7 @@
         <offset>0</offset>
         <servo_min>1100</servo_min>
         <servo_max>1900</servo_max>
-        <type>VELOCITY</type>
+        <type>COMMAND</type>
         <p_gain>0.20</p_gain>
         <i_gain>0</i_gain>
         <d_gain>0</d_gain>
@@ -223,7 +223,11 @@
         <i_min>0</i_min>
         <cmd_max>2.5</cmd_max>
         <cmd_min>-2.5</cmd_min>
+<<<<<<< HEAD
         <!-- <cmd_topic>joint_0</cmd_topic> -->
+=======
+        <cmd_topic>joint_0</cmd_topic>
+>>>>>>> dev/motor_plugin
         <controlVelocitySlowdownSim>1</controlVelocitySlowdownSim>
       </control>
 
@@ -234,7 +238,7 @@
         <offset>0</offset>
         <servo_min>1100</servo_min>
         <servo_max>1900</servo_max>
-        <type>VELOCITY</type>
+        <type>COMMAND</type>
         <p_gain>0.20</p_gain>
         <i_gain>0</i_gain>
         <d_gain>0</d_gain>
@@ -242,7 +246,11 @@
         <i_min>0</i_min>
         <cmd_max>2.5</cmd_max>
         <cmd_min>-2.5</cmd_min>
+<<<<<<< HEAD
         <!-- <cmd_topic>joint_1</cmd_topic> -->
+=======
+        <cmd_topic>joint_1</cmd_topic>
+>>>>>>> dev/motor_plugin
         <controlVelocitySlowdownSim>1</controlVelocitySlowdownSim>
       </control>
 
@@ -253,7 +261,7 @@
         <offset>0</offset>
         <servo_min>1100</servo_min>
         <servo_max>1900</servo_max>
-        <type>VELOCITY</type>
+        <type>COMMAND</type>
         <p_gain>0.20</p_gain>
         <i_gain>0</i_gain>
         <d_gain>0</d_gain>
@@ -261,7 +269,11 @@
         <i_min>0</i_min>
         <cmd_max>2.5</cmd_max>
         <cmd_min>-2.5</cmd_min>
+<<<<<<< HEAD
         <!-- <cmd_topic>joint_2</cmd_topic> -->
+=======
+        <cmd_topic>joint_2</cmd_topic>
+>>>>>>> dev/motor_plugin
         <controlVelocitySlowdownSim>1</controlVelocitySlowdownSim>
       </control>
 
@@ -272,7 +284,7 @@
         <offset>0</offset>
         <servo_min>1100</servo_min>
         <servo_max>1900</servo_max>
-        <type>VELOCITY</type>
+        <type>COMMAND</type>
         <p_gain>0.20</p_gain>
         <i_gain>0</i_gain>
         <d_gain>0</d_gain>
@@ -280,7 +292,11 @@
         <i_min>0</i_min>
         <cmd_max>2.5</cmd_max>
         <cmd_min>-2.5</cmd_min>
+<<<<<<< HEAD
         <!-- <cmd_topic>joint_3</cmd_topic> -->
+=======
+        <cmd_topic>joint_3</cmd_topic>
+>>>>>>> dev/motor_plugin
         <controlVelocitySlowdownSim>1</controlVelocitySlowdownSim>
       </control>
 
@@ -322,6 +338,7 @@
 
     </plugin>
 
+<<<<<<< HEAD
 <!-- //////////////////////////////////////////////// In progress-->
     <!-- <plugin filename="MotorPlugin" name="MotorPlugin">
 
@@ -362,6 +379,82 @@
         </control>
       </plugin> -->
 <!-- //////////////////////////////////////////////// -->
+=======
+    <plugin filename="MotorPlugin" name="MotorPlugin">
+
+        <control channel="0">
+          <joint_name>iris_with_standoffs::rotor_0_joint</joint_name>
+          <voltage_bat>16</voltage_bat>
+          <speed_constant>920</speed_constant>
+          <resistance>0.115</resistance>
+          <no_load_current>0.8</no_load_current>
+          <cmd_topic>joint_0</cmd_topic>
+          <multiplier>838</multiplier>
+          <offset>0</offset>
+          <p_gain>0.02</p_gain>
+          <i_gain>0</i_gain>
+          <d_gain>0</d_gain>
+          <i_max>0</i_max>
+          <i_min>0</i_min>
+          <cmd_max>0.18</cmd_max>
+          <cmd_min>-0.18</cmd_min>
+        </control>
+
+        <control channel="1">
+          <joint_name>iris_with_standoffs::rotor_1_joint</joint_name>
+          <voltage_bat>16</voltage_bat>
+          <speed_constant>920</speed_constant>
+          <resistance>0.115</resistance>
+          <no_load_current>0.8</no_load_current>
+          <cmd_topic>joint_1</cmd_topic>
+          <multiplier>838</multiplier>
+          <offset>0</offset>
+          <p_gain>0.02</p_gain>
+          <i_gain>0</i_gain>
+          <d_gain>0</d_gain>
+          <i_max>0</i_max>
+          <i_min>0</i_min>
+          <cmd_max>0.18</cmd_max>
+          <cmd_min>-0.18</cmd_min>
+        </control>
+
+        <control channel="2">
+          <joint_name>iris_with_standoffs::rotor_2_joint</joint_name>
+          <voltage_bat>16</voltage_bat>
+          <speed_constant>920</speed_constant>
+          <resistance>0.115</resistance>
+          <no_load_current>0.8</no_load_current>
+          <cmd_topic>joint_2</cmd_topic>
+          <multiplier>-838</multiplier>
+          <offset>0</offset>
+          <p_gain>0.02</p_gain>
+          <i_gain>0</i_gain>
+          <d_gain>0</d_gain>
+          <i_max>0</i_max>
+          <i_min>0</i_min>
+          <cmd_max>0.18</cmd_max>
+          <cmd_min>-0.18</cmd_min>
+        </control>
+
+        <control channel="3">
+          <joint_name>iris_with_standoffs::rotor_3_joint</joint_name>
+          <voltage_bat>16</voltage_bat>
+          <speed_constant>920</speed_constant>
+          <resistance>0.115</resistance>
+          <no_load_current>0.8</no_load_current>
+          <cmd_topic>joint_3</cmd_topic>
+          <multiplier>-838</multiplier>
+          <offset>0</offset>
+          <p_gain>0.02</p_gain>
+          <i_gain>0</i_gain>
+          <d_gain>0</d_gain>
+          <i_max>0</i_max>
+          <i_min>0</i_min>
+          <cmd_max>0.18</cmd_max>
+          <cmd_min>-0.18</cmd_min>
+        </control>
+      </plugin>
+>>>>>>> dev/motor_plugin
 
     <plugin
       filename="gz-sim-joint-position-controller-system"

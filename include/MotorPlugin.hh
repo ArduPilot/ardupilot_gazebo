@@ -26,6 +26,7 @@ namespace sim {
 inline namespace GZ_SIM_VERSION_NAMESPACE {
 namespace systems {
 
+<<<<<<< HEAD
 /// \brief Parachute releaase plugin which may be attached to a model.
 ///
 /// ## System Parameters:
@@ -45,11 +46,17 @@ namespace systems {
 ///   `<cmd_topic>` The topic to receive  the parachute release command.
 ///   The default value is: `/model/<model_name>/parachute/cmd_release`.
 ///
+=======
+
+>>>>>>> dev/motor_plugin
 class MotorPlugin :
     public System,
     public ISystemConfigureParameters,
     public ISystemPreUpdate,
+<<<<<<< HEAD
     public ISystemPostUpdate,
+=======
+>>>>>>> dev/motor_plugin
     public ISystemConfigure
 {
   /// \brief Destructor
@@ -62,15 +69,22 @@ class MotorPlugin :
   public: void PreUpdate(const gz::sim::UpdateInfo &_info,
                          EntityComponentManager &_ecm) final;
 
+<<<<<<< HEAD
   public: void PostUpdate(const gz::sim::UpdateInfo &_info,
                           const gz::sim::EntityComponentManager &_ecm) final;
 
+=======
+>>>>>>> dev/motor_plugin
   // Documentation inherited
   public: void Configure(const Entity &_entity,
                          const std::shared_ptr<const sdf::Element> &_sdf,
                          EntityComponentManager &_ecm,
                          EventManager &) final;
+<<<<<<< HEAD
 
+=======
+  
+>>>>>>> dev/motor_plugin
   public: void ConfigureParameters(
       gz::transport::parameters::ParametersRegistry &_registry,
       gz::sim::EntityComponentManager &_ecm) override;
@@ -79,7 +93,11 @@ class MotorPlugin :
   private: void LoadControlChannels(
     sdf::ElementPtr _sdf,
     gz::sim::EntityComponentManager &_ecm);
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> dev/motor_plugin
   /// \internal
   /// \brief Private implementation
   private: class Impl;
@@ -91,4 +109,8 @@ class MotorPlugin :
 }  // namespace sim
 }  // namespace gz
 
+<<<<<<< HEAD
 #endif  // PARACHUTEPLUGIN_HH_
+=======
+#endif  // MOTORPLUGIN_HH_
+>>>>>>> dev/motor_plugin
