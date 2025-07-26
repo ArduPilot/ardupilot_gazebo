@@ -621,7 +621,7 @@ void MotorPlugin::PreUpdate(
       
       double voltage = control.voltageBat * true_pwm;
       
-			double backEmfV = currOmega / kv ;  // Ω/KV
+			double backEmfV = std::abs(currOmega) / kv ;  // Ω/KV
 			double current = (voltage - backEmfV) / control.resistance;
       
       msgs::Double cmd;
@@ -633,19 +633,6 @@ void MotorPlugin::PreUpdate(
       cmd_v.set_data(voltage);
       control.pub_v.Publish(cmd_v);
       
-      ////////////////////////////////////////////////// -> motor model eqns.
-      // if (current >= control.noLoadCurrent)
-      // {
-      //   torque = (current - control.noLoadCurrent) / kv;
-      // }
-      // else
-      // {
-      //   torque = (current + control.noLoadCurrent) / kv;
-      // }
-      /////////////////////////////////////////////////
-
-
-      gzdbg << "True Pwm:- "<< true_pwm << " Torque:- " << torque << "Voltage:- " << voltage <<  "\n";
 
 			// Apply torque to joint
 			auto jfcComp = _ecm.Component<gz::sim::components::JointForceCmd>(control.joint);
