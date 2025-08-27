@@ -1,0 +1,20 @@
+syntax = "proto3";
+package ardupilot_gazebo.msgs;
+
+// Message to hold the status of a single motor.
+message MotorStats {
+  // Motor Id
+  int32 motor_id = 1;
+
+  // Rotational speed of the motor in revolutions per minute (RPM).
+  double rpm = 2;
+
+  // Voltage supplied to the motor in Volts.
+  double voltage = 3;
+
+  // Current drawn by the motor in Amperes.
+  double current = 4;
+
+  // Motor Temperature in Celsius.
+  double temperature = 5;
+}
