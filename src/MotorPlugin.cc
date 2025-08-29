@@ -424,7 +424,23 @@ void MotorPlugin::PreUpdate(
         double currSpeed = velocities[0];
         std::lock_guard<std::mutex> lock(this->impl->pwmMutex);
         {
-            pwm = this->impl->pwmValues[i];
+            if (this->impl->pwmValues[i] > 1.0 || this->impl->pwmValues[i] < -1.0)
+            {
+                gzerr << "PWM exceeded the input limit for joint [" << control.jointName << "]\n";
+                return;
+            }
+            else
+            {
+                // Deadzone of ±0.02 to prevent motor chattering
+                if (std::abs(this->impl->pwmValues[i]) < 0.02)
+                {
+                    pwm = 0.0;
+                }
+                else
+                {
+                    pwm = this->impl->pwmValues[i];
+                }
+            }
         }
 
         double kv = (control.speedConstant * (2.0 * M_PI)) / 60.0;
