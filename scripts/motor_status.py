@@ -4,9 +4,9 @@
 # Run this in main directory:- export PYTHONPATH=$PYTHONPATH:`pwd`/build/ardupilot_gazebo-msgs_genmsg/python/
 
 # Basic setup for dronecan:-
-# sudo modprobe vcan
-# sudo ip link add dev vcan0 type vcan
-# sudo ip link set up vcan0
+# modprobe vcan
+# ip link add dev vcan0 type vcan
+# ip link set up vcan0
 # To check:- ip link show vcan0
 
 

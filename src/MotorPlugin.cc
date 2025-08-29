@@ -42,7 +42,7 @@
 #include <gz/transport/Node.hh>
 #include <gz/transport/parameters.hh>
 #include <gz/msgs/double.pb.h>
-#include <ardupilot_gazebo/msgs/motor_stats.pb.h> 
+#include <ardupilot_gazebo/msgs/motor_status.pb.h> 
 #include <string>
 #include "Util.hh"
 
@@ -74,7 +74,7 @@ class Control
 	public: double speedConstant;
 
 	/// \brief motor internal resistance  
-	public: double internal_resistance;
+	public: double internalResistance;
 
     /// \brief dynamic motor resistance while working
     public: double resistance;
@@ -82,20 +82,14 @@ class Control
 	/// \brief no load current of motor 
 	public: double noLoadCurrent;
 
-	/// \brief A multiplier to scale the raw input command
-	public: double multiplier;
-
-	/// \brief An offset to shift the zero-point of the raw input command
-	public: double offset;
-
 	/// \brief thermal resistance of the motor
-	public: double thermal_resistance;
+	public: double thermalResistance;
 
 	/// \brief thermal capacitance of the motor
-	public: double thermal_capacitance;
+	public: double thermalCapacitance;
 
 	/// \brief ambient working temperature 
-	public: double ambient_temperature;
+	public: double ambientTemperature;
 
 	/// \brief Motor temperature 
 	public: double temperature;
@@ -104,20 +98,26 @@ class Control
 	public: gz::sim::Entity joint;
 
 	/// \brief Publisher for motor stats
-	public: gz::transport::Node::Publisher motorStatsPub;
+	public: gz::transport::Node::Publisher motorStatusPub;
 };
 
 //////////////////////////////////////////////////
 class MotorPlugin::Impl
 { 
-	/// \brief Callback for subscription for Velocity msg .
+	/// \brief Callback for subscription for Velocity msg.
 	///
-	/// \param controlIndex -> Index of the message 
+	/// \param _controlIndex -> Index of the message 
 	/// \param _msg -> message itself.
-  	/// The command message is a target Velocity.
-	public: void OnVelMsg(int controlIndex, const gz::msgs::Double &_msg);
+  	/// The command message is a PWM signal.
+	public: void OnPwmMsg(int _controlIndex, const gz::msgs::Double &_msg);
 
-	/// \brief World occupied by the parent model.
+    /// \brief Load motors
+    ///
+    /// \param _sdf -> sdf pointer
+    /// \param _ecm -> entity component manager
+    public: void LoadControlChannels(sdf::ElementPtr _sdf, gz::sim::EntityComponentManager &_ecm);
+	
+    /// \brief World occupied by the parent model.
 	public: World world{kNullEntity};
 	
 	/// \brief Name of the world entity.
@@ -135,11 +135,11 @@ class MotorPlugin::Impl
 	/// \brief Array of msg command topics.
 	public: std::vector<std::string> topics;
 
-	/// \brief Stores target velocity values.
-	public: std::vector<double> velValues;
+	/// \brief Stores target cmd values.
+	public: std::vector<double> pwmValues;
 	
-	/// \brief Mutex to protect velValues
-	public: std::mutex velMutex;
+	/// \brief Mutex to protect pwmValues
+	public: std::mutex pwmMutex;
 
 	/// \brief Check to see if the config is valid  
 	public: bool validConfig{false};
@@ -152,20 +152,19 @@ class MotorPlugin::Impl
 };
 
 //////////////////////////////////////////////////
-void MotorPlugin::Impl::OnVelMsg(int controlIndex, const gz::msgs::Double &_msg)
+void MotorPlugin::Impl::OnPwmMsg(int _controlIndex, const gz::msgs::Double &_msg)
 {
-	std::lock_guard<std::mutex> lock(this->velMutex);
-
-	// Bounds checking
-	if (controlIndex >= 0 && controlIndex < static_cast<int>(this->velValues.size()))
-	{
-		this->velValues[controlIndex] = _msg.data();
-	}
-	else
-	{
-		gzwarn << "Invalid control index " << controlIndex << " for PWM message. Expected [0, " 
-			<< (this->velValues.size() - 1) << "]" << std::endl;
-	}
+    std::lock_guard<std::mutex> lock(this->pwmMutex);
+    // Bounds checking
+    if (_controlIndex >= 0 && _controlIndex < static_cast<int>(this->pwmValues.size()))
+    {
+        this->pwmValues[_controlIndex] = _msg.data();
+    }
+    else
+    {
+        gzwarn << "Invalid control index " << _controlIndex << " for PWM message. Expected [0, " 
+        << (this->pwmValues.size() - 1) << "]" << std::endl;
+    }
 }
 
 
@@ -210,10 +209,10 @@ void MotorPlugin::Configure(
     this->impl->parentModelName = this->impl->parentModel.Name(_ecm);
 
     // Load control channel params
-    this->LoadControlChannels(sdfClone, _ecm);
+    this->impl->LoadControlChannels(sdfClone, _ecm);
 
-    // Initialize msg values vector for safety
-    this->impl->velValues.resize(this->impl->controls.size(), 0.0);
+    // Initialize pwmValues vector for safety
+    this->impl->pwmValues.resize(this->impl->controls.size(), 0.0);
 
     // create components and subscriptions.
     for (int i = 0; i < this->impl->controls.size(); ++i)
@@ -235,7 +234,7 @@ void MotorPlugin::Configure(
         this->impl->node.Subscribe<gz::msgs::Double>(
             topic,
             [this, i](const gz::msgs::Double &_msg, const gz::transport::MessageInfo &_info) {
-                this->impl->OnVelMsg(i, _msg);
+                this->impl->OnPwmMsg(i, _msg);
             });
 
         gzdbg << "MotorPlugin subscribing to PWM messages on [" << topic 
@@ -246,7 +245,7 @@ void MotorPlugin::Configure(
 }
 
 /////////////////////////////////////////////////
-void MotorPlugin::LoadControlChannels(
+void MotorPlugin::Impl::LoadControlChannels(
     sdf::ElementPtr _sdf,
     gz::sim::EntityComponentManager &_ecm)
 {
@@ -266,7 +265,7 @@ void MotorPlugin::LoadControlChannels(
         }
         else
         {
-        gzwarn << "[" << this->impl->parentModelName << "] "
+        gzwarn << "[" << this->parentModelName << "] "
                 <<  "id/channel attribute not specified, use order parsed ["
                 << control.channel << "].\n";
         }
@@ -278,16 +277,16 @@ void MotorPlugin::LoadControlChannels(
         }
         else
         {
-            gzerr << "[" << this->impl->parentModelName << "] "
+            gzerr << "[" << this->parentModelName << "] "
                     << "Please specify a joint_name,"
                     << " where the control channel is attached.\n";
         }
 
         // Get the pointer to the joint.
-        control.joint = JointByName(_ecm, this->impl->parentModel.Entity(), control.jointName);
+        control.joint = JointByName(_ecm, this->parentModel.Entity(), control.jointName);
         if (control.joint == gz::sim::kNullEntity)
         {
-            gzerr << "Joint [" << control.joint << "] not found in model [" << this->impl->parentModel.Name(_ecm) << "]" << "\n";
+            gzerr << "Joint [" << control.joint << "] not found in model [" << this->parentModel.Name(_ecm) << "]" << "\n";
             return;
         }
         else
@@ -319,7 +318,7 @@ void MotorPlugin::LoadControlChannels(
     
         if (controlSdf->HasElement("resistance"))
         {
-        control.internal_resistance = controlSdf->Get<double>("resistance");
+        control.internalResistance = controlSdf->Get<double>("resistance");
         }
         else
         {
@@ -341,40 +340,18 @@ void MotorPlugin::LoadControlChannels(
 
         if (controlSdf->HasElement("cmd_topic"))
         {
-            this->impl->topics.push_back (controlSdf->Get<std::string>("cmd_topic"));
+            this->topics.push_back(controlSdf->Get<std::string>("cmd_topic"));
         }
         else
         {
             gzerr << "MotorPlugin requires parameter 'cmd_topic'. "
                     "Failed to initialize.\n";
             return;
-        }    
-        
-        if (controlSdf->HasElement("multiplier"))
-        {
-            control.multiplier = controlSdf->Get<double>("multiplier");
-        }
-        else
-        {
-            gzerr << "MotorPlugin requires parameter 'multiplier'. "
-                    "Failed to initialize.\n";
-            return;
-        }
-
-        if (controlSdf->HasElement("offset"))
-        {
-            control.offset = controlSdf->Get<double>("offset");
-        }
-        else
-        {
-            gzerr << "MotorPlugin requires parameter 'offset'. "
-                    "Failed to initialize.\n";
-            return;
         }
 
         if (controlSdf->HasElement("thermal_resistance"))
         {
-            control.thermal_resistance = controlSdf->Get<double>("thermal_resistance");
+            control.thermalResistance = controlSdf->Get<double>("thermal_resistance");
         }
         else
         {
@@ -385,7 +362,7 @@ void MotorPlugin::LoadControlChannels(
 
         if (controlSdf->HasElement("thermal_capacitance"))
         {
-            control.thermal_capacitance = controlSdf->Get<double>("thermal_capacitance");
+            control.thermalCapacitance = controlSdf->Get<double>("thermal_capacitance");
         }
         else
         {
@@ -396,7 +373,7 @@ void MotorPlugin::LoadControlChannels(
 
         if (controlSdf->HasElement("ambient_temperature"))
         {
-            control.ambient_temperature = controlSdf->Get<double>("ambient_temperature");
+            control.ambientTemperature = controlSdf->Get<double>("ambient_temperature");
         }
         else
         {
@@ -405,10 +382,10 @@ void MotorPlugin::LoadControlChannels(
             return;
         }
 
-        std::string motorStatsTopic = "/model/" + this->impl->parentModelName + "/joint/" + control.jointName + "/motor_stats";
-        control.motorStatsPub = this->impl->node.Advertise<ardupilot_gazebo::msgs::MotorStats>(motorStatsTopic);
+        std::string motorStatusTopic = "/model/" + this->parentModelName + "/joint/" + control.jointName + "/motor_stats";
+        control.motorStatusPub = this->node.Advertise<ardupilot_gazebo::msgs::MotorStatus>(motorStatusTopic);
 
-        this->impl->controls.push_back(control);
+        this->controls.push_back(control);
         controlSdf = controlSdf->GetNextElement("control");
     }
 }
@@ -427,7 +404,7 @@ void MotorPlugin::PreUpdate(
     for (size_t i = 0; i < this->impl->controls.size(); ++i)
     {
         auto &control = this->impl->controls[i];
-        double targetSpeed = 0.0;
+        double pwm = 0.0;
         
         auto joint_vel_comp = _ecm.Component<gz::sim::components::JointVelocity>(control.joint);
         if (!joint_vel_comp)
@@ -445,26 +422,19 @@ void MotorPlugin::PreUpdate(
 
         // current joint speed (rad/s)
         double currSpeed = velocities[0];
+        std::lock_guard<std::mutex> lock(this->impl->pwmMutex);
         {
-            std::lock_guard<std::mutex> lock(this->impl->velMutex);
-            targetSpeed = this->impl->velValues[i];
+            pwm = this->impl->pwmValues[i];
         }
 
         double kv = (control.speedConstant * (2.0 * M_PI)) / 60.0;
-        double pwm = (targetSpeed / control.multiplier) - control.offset;
-        
-        if (targetSpeed < 0)
-        {
-            pwm = -pwm;
-        }
         voltage = control.voltageBat * pwm;
-    
         double backEmfV = currSpeed / kv ;  // Ω/KV
         
         // R_T = R_0 * (1 + a(T - T_0))
         // a -> alpha (temperature coefficient for copper is 0.00393)
         // T_0 -> reference temperature taken as ambient temperature for simplicity
-        control.resistance = control.internal_resistance * (1.0 + 0.00393 * (control.temperature - control.ambient_temperature));
+        control.resistance = control.internalResistance * (1.0 + 0.00393 * (control.temperature - control.ambientTemperature));
         current = (voltage - backEmfV) / control.resistance;
       
         double torque = 0.0;
@@ -492,28 +462,28 @@ void MotorPlugin::PreUpdate(
         double p_friction = control.noLoadCurrent * std::abs(backEmfV);
         double p_loss = p_resistive + p_friction;
         double dt = std::chrono::duration<double>(_info.dt).count();
-        double dT_dt = (p_loss / control.thermal_capacitance) - ((control.temperature - control.ambient_temperature) / (control.thermal_resistance * control.thermal_capacitance));
+        double dT_dt = (p_loss / control.thermalCapacitance) - ((control.temperature - control.ambientTemperature) / (control.thermalResistance * control.thermalCapacitance));
         control.temperature += dT_dt * dt;
-        if (control.temperature < control.ambient_temperature) {
-            control.temperature = control.ambient_temperature;
+        if (control.temperature < control.ambientTemperature) {
+            control.temperature = control.ambientTemperature;
         }
-
+        double temp_kelvin = control.temperature + 273.15;
         currSpeed = (currSpeed * 60.0) / (2.0 * M_PI); // rad/s -> rpm
 
         // Publish motor stats
-        ardupilot_gazebo::msgs::MotorStats motorStatsMsg;
-        motorStatsMsg.set_motor_id(control.channel);
-        motorStatsMsg.set_rpm(currSpeed);
-        motorStatsMsg.set_voltage(voltage);
-        motorStatsMsg.set_current(current);
-		motorStatsMsg.set_temperature(control.temperature);
-        if (!control.motorStatsPub.Publish(motorStatsMsg))
+        ardupilot_gazebo::msgs::MotorStatus motorStatusMsg;
+        motorStatusMsg.set_motor_id(control.channel);
+        motorStatusMsg.set_rpm(currSpeed);
+        motorStatusMsg.set_voltage(voltage);
+        motorStatusMsg.set_current(current);
+		motorStatusMsg.set_temperature(temp_kelvin);
+        if (!control.motorStatusPub.Publish(motorStatusMsg))
         {
-            gzerr << "Failed to publish motor stats for joint [" << control.jointName << "]\n";
+            gzerr << "Failed to publish motor status for joint [" << control.jointName << "]\n";
         }
 
 	    // debugging
-        // gzdbg << "Index:- " << i << " TargetS:- " << targetSpeed << " Curr Speed:- " << currSpeed << " Pwm:- "<< pwm << " Torque:- " << torque << " Voltage:- " << voltage << " Current:- " << current << " Temperature:- " << control.temperature << "\n";
+        // gzdbg << "Index:- " << i << " PWM:- " << pwm << " Curr Speed:- " << currSpeed << " Torque:- " << torque << " Voltage:- " << voltage << " Current:- " << current << " Temperature:- " << control.temperature << "\n";
 
         // Apply torque to joint
         auto jfcComp = _ecm.Component<gz::sim::components::JointForceCmd>(control.joint);

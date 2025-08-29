@@ -215,7 +215,7 @@
         <offset>0</offset>
         <servo_min>1100</servo_min>
         <servo_max>1900</servo_max>
-        <type>COMMAND</type>
+        <type>VELOCITY</type>
         <p_gain>0.20</p_gain>
         <i_gain>0</i_gain>
         <d_gain>0</d_gain>
@@ -223,7 +223,6 @@
         <i_min>0</i_min>
         <cmd_max>2.5</cmd_max>
         <cmd_min>-2.5</cmd_min>
-        <cmd_topic>joint_0</cmd_topic>
         <controlVelocitySlowdownSim>1</controlVelocitySlowdownSim>
       </control>
 
@@ -234,7 +233,7 @@
         <offset>0</offset>
         <servo_min>1100</servo_min>
         <servo_max>1900</servo_max>
-        <type>COMMAND</type>
+        <type>VELOCITY</type>
         <p_gain>0.20</p_gain>
         <i_gain>0</i_gain>
         <d_gain>0</d_gain>
@@ -242,7 +241,6 @@
         <i_min>0</i_min>
         <cmd_max>2.5</cmd_max>
         <cmd_min>-2.5</cmd_min>
-        <cmd_topic>joint_1</cmd_topic>
         <controlVelocitySlowdownSim>1</controlVelocitySlowdownSim>
       </control>
 
@@ -253,7 +251,7 @@
         <offset>0</offset>
         <servo_min>1100</servo_min>
         <servo_max>1900</servo_max>
-        <type>COMMAND</type>
+        <type>VELOCITY</type>
         <p_gain>0.20</p_gain>
         <i_gain>0</i_gain>
         <d_gain>0</d_gain>
@@ -261,7 +259,6 @@
         <i_min>0</i_min>
         <cmd_max>2.5</cmd_max>
         <cmd_min>-2.5</cmd_min>
-        <cmd_topic>joint_2</cmd_topic>
         <controlVelocitySlowdownSim>1</controlVelocitySlowdownSim>
       </control>
 
@@ -272,7 +269,7 @@
         <offset>0</offset>
         <servo_min>1100</servo_min>
         <servo_max>1900</servo_max>
-        <type>COMMAND</type>
+        <type>VELOCITY</type>
         <p_gain>0.20</p_gain>
         <i_gain>0</i_gain>
         <d_gain>0</d_gain>
@@ -280,7 +277,6 @@
         <i_min>0</i_min>
         <cmd_max>2.5</cmd_max>
         <cmd_min>-2.5</cmd_min>
-        <cmd_topic>joint_3</cmd_topic>
         <controlVelocitySlowdownSim>1</controlVelocitySlowdownSim>
       </control>
 
@@ -321,65 +317,6 @@
       </control>
 
     </plugin>
-
-    <plugin filename="MotorPlugin" name="MotorPlugin">
-
-        <control channel="0">
-          <joint_name>iris_with_standoffs::rotor_0_joint</joint_name>
-          <voltage_bat>16</voltage_bat>
-          <speed_constant>920</speed_constant>
-          <resistance>0.115</resistance>
-          <no_load_current>0.8</no_load_current>
-          <cmd_topic>joint_0</cmd_topic>
-          <multiplier>838</multiplier>
-          <offset>0</offset>
-          <thermal_resistance>1.4</thermal_resistance>
-          <thermal_capacitance>214.28</thermal_capacitance>
-          <ambient_temperature>25.0</ambient_temperature>
-        </control>
-
-        <control channel="1">
-          <joint_name>iris_with_standoffs::rotor_1_joint</joint_name>
-          <voltage_bat>16</voltage_bat>
-          <speed_constant>920</speed_constant>
-          <resistance>0.115</resistance>
-          <no_load_current>0.8</no_load_current>
-          <cmd_topic>joint_1</cmd_topic>
-          <multiplier>838</multiplier>
-          <offset>0</offset>
-          <thermal_resistance>1.4</thermal_resistance>
-          <thermal_capacitance>214.28</thermal_capacitance>
-          <ambient_temperature>25.0</ambient_temperature>
-        </control>
-
-        <control channel="2">
-          <joint_name>iris_with_standoffs::rotor_2_joint</joint_name>
-          <voltage_bat>16</voltage_bat>
-          <speed_constant>920</speed_constant>
-          <resistance>0.115</resistance>
-          <no_load_current>0.8</no_load_current>
-          <cmd_topic>joint_2</cmd_topic>
-          <multiplier>-838</multiplier>
-          <offset>0</offset>
-          <thermal_resistance>1.4</thermal_resistance>
-          <thermal_capacitance>214.28</thermal_capacitance>
-          <ambient_temperature>25.0</ambient_temperature>
-        </control>
-
-        <control channel="3">
-          <joint_name>iris_with_standoffs::rotor_3_joint</joint_name>
-          <voltage_bat>16</voltage_bat>
-          <speed_constant>920</speed_constant>
-          <resistance>0.115</resistance>
-          <no_load_current>0.8</no_load_current>
-          <cmd_topic>joint_3</cmd_topic>
-          <multiplier>-838</multiplier>
-          <offset>0</offset>
-          <thermal_resistance>1.4</thermal_resistance>
-          <thermal_capacitance>214.28</thermal_capacitance>
-          <ambient_temperature>25.0</ambient_temperature>
-        </control>
-      </plugin>
 
     <plugin
       filename="gz-sim-joint-position-controller-system"

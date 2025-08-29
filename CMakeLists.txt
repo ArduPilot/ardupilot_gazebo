@@ -79,7 +79,7 @@ pkg_check_modules(GST REQUIRED gstreamer-1.0 gstreamer-app-1.0)
 # --------------------------------------------------------------------------- #
 # Build proto custom messages
 set(ARDUPILOT_MSGS_PROTOS
-   ${CMAKE_CURRENT_SOURCE_DIR}/proto/ardupilot_gazebo/msgs/motor_stats.proto
+   ${CMAKE_CURRENT_SOURCE_DIR}/proto/ardupilot_gazebo/msgs/motor_status.proto
 )
 
 gz_msgs_generate_messages(

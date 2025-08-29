@@ -2,7 +2,7 @@ syntax = "proto3";
 package ardupilot_gazebo.msgs;
 
 // Message to hold the status of a single motor.
-message MotorStats {
+message MotorStatus {
   // Motor Id
   int32 motor_id = 1;
 
@@ -15,6 +15,6 @@ message MotorStats {
   // Current drawn by the motor in Amperes.
   double current = 4;
 
-  // Motor Temperature in Celsius.
+  // Motor Temperature in Kelvin.
   double temperature = 5;
 }
