@@ -26,6 +26,9 @@
   <!-- Ionic -->
   <depend condition="$GZ_VERSION == ionic">gz-cmake4</depend>
   <depend condition="$GZ_VERSION == ionic">gz-sim9</depend>
+  <!-- Jetty -->
+  <depend condition="$GZ_VERSION == jetty">gz-cmake</depend>
+  <depend condition="$GZ_VERSION == jetty">gz-sim</depend>
   <!-- Garden -->
   <depend condition="$GZ_VERSION == garden">gz-cmake3</depend>
   <depend condition="$GZ_VERSION == garden">gz-sim7</depend>
