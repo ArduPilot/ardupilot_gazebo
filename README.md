@@ -7,8 +7,8 @@
 This is the official ArduPilot plugin for [Gazebo](https://gazebosim.org/home).
 It replaces the previous
 [`ardupilot_gazebo`](https://github.com/khancyr/ardupilot_gazebo)
-plugin and provides support for the recent releases of the Gazebo simulator
-[(Gazebo Garden)](https://gazebosim.org/docs/garden/install), [(Gazebo Harmonic)](https://gazebosim.org/docs/harmonic/install) and [(Gazebo Ionic)](https://gazebosim.org/docs/ionic/install).
+plugin and provides support for the recent releases of the Gazebo simulator:
+[Gazebo Garden](https://gazebosim.org/docs/garden/install), [Gazebo Harmonic (LTS)](https://gazebosim.org/docs/harmonic/install), [Gazebo Ionic](https://gazebosim.org/docs/ionic/install) and [Gazebo Jetty (LTS)](https://gazebosim.org/docs/jetty/install).
 
 It also adds the following features:
 
