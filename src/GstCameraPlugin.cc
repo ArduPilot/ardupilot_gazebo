@@ -413,6 +413,10 @@ void GstCameraPlugin::Impl::CreateGenericPipeline(GstElement *pipeline)
     GstElement *payloader = gst_element_factory_make("rtph264pay", nullptr);
     GstElement *sink = gst_element_factory_make("udpsink", nullptr);
 
+    g_object_set(G_OBJECT(payloader),
+                "pt", 96,
+                "config-interval", 1,
+                NULL);
     g_object_set(G_OBJECT(sink), "host", udpHost.c_str(),
         "port", udpPort, nullptr);
 
