@@ -89,6 +89,13 @@ pkg_check_modules(GST REQUIRED gstreamer-1.0 gstreamer-app-1.0)
 
 
 # --------------------------------------------------------------------------- #
+# Find protobuf and abseil (required for macOS)
+find_package(Protobuf CONFIG REQUIRED)
+if(APPLE)
+  find_package(absl REQUIRED)
+endif()
+
+# --------------------------------------------------------------------------- #
 # Build plugin.
 
 add_library(ArduPilotPlugin
@@ -102,7 +109,30 @@ target_include_directories(ArduPilotPlugin PRIVATE
 )
 target_link_libraries(ArduPilotPlugin PRIVATE
   gz-sim${GZ_SIM_VER}::gz-sim${GZ_SIM_VER}
+  protobuf::libprotobuf
 )
+
+# On macOS, explicitly link abseil components needed by protobuf
+# These are required when using protobuf 22+ which depends on abseil
+if(APPLE)
+  # Find Homebrew prefix (supports both Intel and Apple Silicon)
+  execute_process(
+    COMMAND brew --prefix
+    OUTPUT_VARIABLE HOMEBREW_PREFIX
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+
+  target_link_libraries(ArduPilotPlugin PRIVATE
+    ${HOMEBREW_PREFIX}/lib/libabsl_log_internal_message.dylib
+    ${HOMEBREW_PREFIX}/lib/libabsl_log_internal_check_op.dylib
+    ${HOMEBREW_PREFIX}/lib/libabsl_log_internal_format.dylib
+    ${HOMEBREW_PREFIX}/lib/libabsl_log_internal_globals.dylib
+    ${HOMEBREW_PREFIX}/lib/libabsl_strings.dylib
+    ${HOMEBREW_PREFIX}/lib/libabsl_str_format_internal.dylib
+    ${HOMEBREW_PREFIX}/lib/libabsl_raw_logging_internal.dylib
+    ${HOMEBREW_PREFIX}/lib/libabsl_log_severity.dylib
+  )
+endif()
 
 add_library(ParachutePlugin
   SHARED
