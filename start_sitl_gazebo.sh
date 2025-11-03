@@ -53,7 +53,7 @@ echo -e "${GREEN}═════════════════════
 echo ""
 
 # Check Gazebo is running
-if ! pgrep -f "gz sim.*iris_runway" > /dev/null; then
+if ! pgrep -f "gz sim" > /dev/null; then
     echo -e "${RED}ERROR: Gazebo not running!${NC}"
     echo "Start Gazebo first in another terminal:"
     echo "  cd /Users/pdfinn/github.com/NERVsystems/ardupilot_gazebo"
@@ -110,20 +110,37 @@ set fwdpos True
 set shownoise False
 MAVINIT_EOF
 
-# Cleanup function
+# Cleanup function - kills SITL and MAVProxy
 cleanup() {
     echo ""
     echo -e "${YELLOW}Cleaning up SITL processes...${NC}"
-    pkill -9 -f "arducopter|mavproxy" 2>/dev/null || true
-    rm -f /tmp/ArduCopter.log 2>/dev/null || true
-    echo -e "${GREEN}SITL stopped${NC}"
-}
-trap cleanup EXIT
 
-# Clean up any stale processes from previous runs
+    pkill -9 -f "arducopter" 2>/dev/null || true
+    pkill -9 -f "mavproxy" 2>/dev/null || true
+
+    # Kill by ports
+    lsof -ti:5760 2>/dev/null | xargs kill -9 2>/dev/null || true
+    lsof -ti:5762 2>/dev/null | xargs kill -9 2>/dev/null || true
+    lsof -ti:5763 2>/dev/null | xargs kill -9 2>/dev/null || true
+
+    sleep 1
+
+    # Verify
+    if pgrep -f "arducopter|mavproxy" > /dev/null; then
+        echo "⚠ Warning: Some SITL processes still running"
+    else
+        echo -e "${GREEN}✓ All SITL processes stopped${NC}"
+    fi
+
+    rm -f /tmp/ArduCopter.log 2>/dev/null || true
+}
+
+# Clean up stale processes BEFORE starting
 echo -e "${YELLOW}Cleaning up old SITL processes...${NC}"
-pkill -9 -f "arducopter|mavproxy" 2>/dev/null || true
-sleep 2
+cleanup
+
+# Trap for cleanup on exit
+trap cleanup EXIT INT TERM
 
 echo -e "${YELLOW}✓ MAVProxy configured (no telemetry loops)${NC}"
 echo ""

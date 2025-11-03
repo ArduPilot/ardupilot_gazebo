@@ -1,15 +1,35 @@
 #!/bin/bash
 
-# Clean up any existing Gazebo processes first
-pkill -9 gz 2>/dev/null || true
-sleep 2
+set -e
 
-# Trap to ensure cleanup on exit
+# Cleanup function - kills ALL Gazebo processes
 cleanup() {
-    echo "Stopping Gazebo..."
-    pkill -9 gz 2>/dev/null || true
+    echo ""
+    echo "Cleaning up Gazebo processes..."
+
+    # Kill by name
+    pkill -9 -f "gz sim" 2>/dev/null || true
+
+    # Kill by port (belt and suspenders)
+    lsof -ti:9002 2>/dev/null | xargs kill -9 2>/dev/null || true
+
+    sleep 1
+
+    # Verify clean
+    if pgrep -f "gz sim" > /dev/null; then
+        echo "⚠ Warning: Some Gazebo processes still running"
+        ps aux | grep "gz sim" | grep -v grep
+    else
+        echo "✓ All Gazebo processes stopped"
+    fi
 }
-trap cleanup EXIT
+
+# Clean up ANY existing processes before starting
+echo "Cleaning up old Gazebo processes..."
+cleanup
+
+# Ensure cleanup on exit
+trap cleanup EXIT INT TERM
 
 export PATH="/opt/homebrew/opt/ruby/bin:$PATH"
 export DYLD_LIBRARY_PATH="/opt/homebrew/lib"
