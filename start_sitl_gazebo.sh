@@ -110,6 +110,21 @@ set fwdpos True
 set shownoise False
 MAVINIT_EOF
 
+# Cleanup function
+cleanup() {
+    echo ""
+    echo -e "${YELLOW}Cleaning up SITL processes...${NC}"
+    pkill -9 -f "arducopter|mavproxy" 2>/dev/null || true
+    rm -f /tmp/ArduCopter.log 2>/dev/null || true
+    echo -e "${GREEN}SITL stopped${NC}"
+}
+trap cleanup EXIT
+
+# Clean up any stale processes from previous runs
+echo -e "${YELLOW}Cleaning up old SITL processes...${NC}"
+pkill -9 -f "arducopter|mavproxy" 2>/dev/null || true
+sleep 2
+
 echo -e "${YELLOW}✓ MAVProxy configured (no telemetry loops)${NC}"
 echo ""
 
@@ -128,9 +143,3 @@ Tools/autotest/sim_vehicle.py \
     --out=udp:${ANDROID_IP}:${ANDROID_PORT} \
     --no-rebuild \
     $WIPE_PARAMS
-
-# Cleanup on exit
-echo ""
-echo -e "${YELLOW}Cleaning up...${NC}"
-pkill -9 -f "arducopter|mavproxy" 2>/dev/null || true
-echo -e "${GREEN}SITL stopped${NC}"
