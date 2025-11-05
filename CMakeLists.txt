@@ -127,6 +127,7 @@ if(APPLE)
     ${HOMEBREW_PREFIX}/lib/libabsl_log_internal_check_op.dylib
     ${HOMEBREW_PREFIX}/lib/libabsl_log_internal_format.dylib
     ${HOMEBREW_PREFIX}/lib/libabsl_log_internal_globals.dylib
+    ${HOMEBREW_PREFIX}/lib/libabsl_log_internal_nullguard.dylib
     ${HOMEBREW_PREFIX}/lib/libabsl_strings.dylib
     ${HOMEBREW_PREFIX}/lib/libabsl_str_format_internal.dylib
     ${HOMEBREW_PREFIX}/lib/libabsl_raw_logging_internal.dylib

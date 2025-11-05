@@ -36,5 +36,5 @@ export DYLD_LIBRARY_PATH="/opt/homebrew/lib"
 export GZ_SIM_SYSTEM_PLUGIN_PATH="$PWD/build"
 export GZ_SIM_RESOURCE_PATH="$PWD/models:$PWD/worlds"
 
-echo "Starting Gazebo warehouse world..."
-gz sim -r -s worlds/iris_warehouse.sdf -v 4
+echo "Starting Gazebo runway world..."
+gz sim -r -s worlds/iris_runway.sdf -v 4
