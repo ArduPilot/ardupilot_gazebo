@@ -168,12 +168,42 @@ cp ~/github.com/NERVsystems/ardupilot_gazebo/build/libArduPilotPlugin.dylib \
 4. ✅ Use `./start_sitl_gazebo.sh -w` to wipe and reset
 5. ✅ Keep Anaconda libs backed up, restore when needed for other work
 
-## 🔧 TO RESTORE ANACONDA (when not using Gazebo)
+## 🔧 ANACONDA LIBRARY MANAGEMENT
 
+### Current State After Setup
+Anaconda libraries are **RESTORED** for normal Python/Jupyter work.
+
+### ⚠️ CRITICAL: Before ANY Gazebo/Plugin Work
+
+**YOU MUST move Anaconda libs away before:**
+- Rebuilding ArduPilot plugin (`cmake ..` in ardupilot_gazebo/build)
+- Rebuilding any Gazebo packages (`brew reinstall gz-*`)
+- Running any cmake commands in Gazebo-related projects
+
+**Move Anaconda away:**
+```bash
+mkdir -p /opt/anaconda3/lib/backup_for_gazebo
+mv /opt/anaconda3/lib/libQt5*.dylib /opt/anaconda3/lib/backup_for_gazebo/
+mv /opt/anaconda3/lib/libabsl*.dylib /opt/anaconda3/lib/backup_for_gazebo/
+mv /opt/anaconda3/lib/libfmt*.dylib /opt/anaconda3/lib/backup_for_gazebo/
+mv /opt/anaconda3/lib/cmake /opt/anaconda3/lib/backup_for_gazebo/cmake_configs
+```
+
+**After Gazebo work is done, restore Anaconda:**
 ```bash
 mv /opt/anaconda3/lib/backup_for_gazebo/* /opt/anaconda3/lib/
+# Note: cmake_configs might already exist, that's ok
+mv /opt/anaconda3/lib/backup_for_gazebo/cmake_configs /opt/anaconda3/lib/cmake 2>/dev/null || true
 rmdir /opt/anaconda3/lib/backup_for_gazebo
 ```
+
+### Why This Matters
+CMake will find BOTH Anaconda and Homebrew libraries and mix them, causing:
+- Linker errors (mixed abseil versions)
+- Qt crashes (Objective-C runtime conflicts)
+- Protobuf version mismatches
+
+**Running the existing binaries is always safe** - they have their dependencies baked in at link time. Only **rebuilding** requires Anaconda removal.
 
 ## 📞 WHEN THINGS BREAK AGAIN
 
