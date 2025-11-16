@@ -28,7 +28,7 @@ Harmonic is recommended.
 If you are running Ubuntu as a virtual machine you will need at least
 Ubuntu 20.04 in order to have the OpenGL support required for the
 `ogre2` render engine. Gazebo and ArduPilot SITL will also run on macOS
-(Big Sur, Monterey and Venturua; Intel and M1 devices).
+(Big Sur, Monterey and Ventura; Intel and M1 devices).
 
 Follow the instructions for a binary install of
 [Gazebo Garden](https://gazebosim.org/docs/garden/install) or [Gazebo Harmonic](https://gazebosim.org/docs/harmonic/install) or [Gazebo Ionic](https://gazebosim.org/docs/ionic/install)
@@ -71,10 +71,10 @@ Use rosdep with
 to manage all dependencies. This is driven off of the environment variable `GZ_VERSION`.
 
 ```bash
-export GZ_VERSION=harmonic # or garden or ionic
+export GZ_VERSION=harmonic # or garden or ionic or jetty
 sudo bash -c 'wget https://raw.githubusercontent.com/osrf/osrf-rosdep/master/gz/00-gazebo.list -O /etc/ros/rosdep/sources.list.d/00-gazebo.list'
 rosdep update
-rosdep resolve gz-harmonic # or gz-garden or gz-ionic
+rosdep resolve gz-harmonic # or gz-garden or gz-ionic or gz-jetty
 # Navigate to your ROS workspace before the next command.
 rosdep install --from-paths src --ignore-src -y
 ```
@@ -88,7 +88,7 @@ brew install opencv gstreamer
 ```
 
 Ensure the `GZ_VERSION` environment variable is set to either
-`garden` or `harmonic` or `ionic`.
+`garden` or `harmonic` or `ionic` or `jetty`.
 
 Clone the repo and build:
 
@@ -273,6 +273,32 @@ Example usage:
 
 `rc 8 1500` - Gimbal yaw neutral
 
+### 5. Iris in Warehouse
+
+An indoor warehouse environment is also available for testing in confined spaces:
+
+```bash
+gz sim -v4 -r iris_warehouse.sdf
+```
+
+This world provides a more challenging environment with obstacles and walls for testing
+navigation and collision avoidance.
+
+### Test Scenarios
+
+Additional test worlds are available in the `tests/worlds/` directory for development and validation:
+
+- **test_anemometer.sdf** - Wind sensor testing
+- **test_gimbal.sdf** - Gimbal functionality verification
+- **test_nested_model.sdf** - Nested model support validation
+- **test_parachute.sdf** - Parachute deployment testing
+
+These test worlds can be launched similarly:
+
+```bash
+gz sim -v4 -r tests/worlds/test_anemometer.sdf
+```
+
 ## Models
 
 In addition to the Iris and Zephyr models included here, a selection
@@ -342,3 +368,22 @@ Click on the images to see further details.
 
 For issues concerning installing and running Gazebo on your platform please
 consult the Gazebo documentation for [troubleshooting frequent issues](https://gazebosim.org/docs/harmonic/troubleshooting#ubuntu).
+
+## Contributing
+
+Contributions to this project are welcome! Please see [CONTRIBUTING.md](.github/CONTRIBUTING.md)
+for guidelines on:
+- Testing and reporting bugs
+- Submitting pull requests
+- Code review process
+- Joining the development community
+
+## Support
+
+For support questions:
+- **Free community support**: [ArduPilot Forum](http://discuss.ardupilot.org)
+- **Development discussions**: [ArduPilot Discord](https://ardupilot.org/discord)
+- **Commercial support**: See [ArduPilot Commercial Support](http://ardupilot.org/ardupilot/docs/common-commercial-support.html)
+
+Please see [SUPPORT.md](.github/SUPPORT.md) for more details. GitHub issues should be used
+for bug reports and feature requests, not general support questions.
