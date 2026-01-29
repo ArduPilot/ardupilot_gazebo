@@ -29,6 +29,7 @@
 #include <mutex>
 #include <string>
 #include <sstream>
+#include <utility>
 #include <vector>
 
 #include <gz/common/SignalHandler.hh>
@@ -86,14 +87,14 @@ class Control
   public: Control()
   {
     // most of these coefficients are not used yet.
-    this->rotorVelocitySlowdownSim = this->kDefaultRotorVelocitySlowdownSim;
-    this->frequencyCutoff = this->kDefaultFrequencyCutoff;
-    this->samplingRate = this->kDefaultSamplingRate;
+    this->rotorVelocitySlowdownSim = kDefaultRotorVelocitySlowdownSim;
+    this->frequencyCutoff = kDefaultFrequencyCutoff;
+    this->samplingRate = kDefaultSamplingRate;
 
     this->pid.Init(0.1, 0, 0, 0, 0, 1.0, -1.0);
   }
 
-  public: ~Control() {}
+  public: ~Control() = default;
 
   /// \brief The PWM channel used to command this control
   public: int channel = 0;
@@ -123,7 +124,7 @@ class Control
   public: std::string cmdTopic;
 
   /// \brief The joint being controlled
-  public: gz::sim::Entity joint;
+  public: gz::sim::Entity joint{gz::sim::kNullEntity};
 
   /// \brief A multiplier to scale the raw input command
   public: double multiplier = 1.0;
@@ -174,8 +175,8 @@ class OnMessageWrapper
   public: callback_t callback;
 
   /// \brief Constructor
-  public: OnMessageWrapper(const callback_t &_callback)
-    : callback(_callback)
+  public: explicit OnMessageWrapper(callback_t _callback)
+    : callback(std::move(_callback))
   {
   }
 
@@ -236,7 +237,7 @@ class gz::sim::systems::ArduPilotPluginPrivate
   public: uint16_t fdm_port_in{9002};
 
   /// \brief The port for the SITL flight controller - auto detected
-  public: uint16_t fcu_port_out;
+  public: uint16_t fcu_port_out{0};
 
   /// \brief The name of the IMU sensor
   public: std::string imuName;
@@ -290,12 +291,12 @@ class gz::sim::systems::ArduPilotPluginPrivate
   {
     // Extract data
     double range_max = _msg.range_max();
-    auto&& ranges = _msg.ranges();
-    auto&& intensities = _msg.intensities();
+    auto&& m_ranges = _msg.ranges();
+    // auto&& intensities = _msg.intensities();  // unused
 
     // If there is no return, the range should be greater than range_max
     double sample_min = 2.0 * range_max;
-    for (auto&& range : ranges)
+    for (auto&& range : m_ranges)
     {
       sample_min = std::min(
           sample_min, std::isinf(range) ? 2.0 * range_max : range);
@@ -303,7 +304,7 @@ class gz::sim::systems::ArduPilotPluginPrivate
 
     // Aquire lock and update the range data
     std::lock_guard<std::mutex> lock(this->rangeMsgMutex);
-    this->ranges[_sensorIndex] = sample_min;
+    this->ranges[static_cast<uint64_t>(_sensorIndex)] = sample_min;
   }
 
   // Anemometer
@@ -348,7 +349,7 @@ class gz::sim::systems::ArduPilotPluginPrivate
 
   /// \brief Max number of consecutive missed ArduPilot controller
   ///        messages before timeout
-  public: int connectionTimeoutMaxCount;
+  public: int connectionTimeoutMaxCount{};
 
   /// \brief Transform from model orientation to x-forward and z-up
   public: gz::math::Pose3d modelXYZToAirplaneXForwardZDown;
@@ -357,10 +358,10 @@ class gz::sim::systems::ArduPilotPluginPrivate
   public: gz::math::Pose3d gazeboXYZToNED;
 
   /// \brief Last received frame rate from the ArduPilot controller
-  public: uint16_t fcu_frame_rate;
+  public: uint16_t fcu_frame_rate{};
 
   /// \brief Last received frame count from the ArduPilot controller
-  public: uint32_t fcu_frame_count = -1;
+  public: uint32_t fcu_frame_count = UINT32_MAX;
 
   /// \brief Last sent JSON string, so we can resend if needed.
   public: std::string json_str;
@@ -385,13 +386,9 @@ gz::sim::systems::ArduPilotPlugin::ArduPilotPlugin()
 {
 }
 
-/////////////////////////////////////////////////
-gz::sim::systems::ArduPilotPlugin::~ArduPilotPlugin()
-{
-}
 
 /////////////////////////////////////////////////
-void gz::sim::systems::ArduPilotPlugin::Reset(const UpdateInfo &_info,
+void gz::sim::systems::ArduPilotPlugin::Reset(const UpdateInfo &/*_info*/,
                                               EntityComponentManager &_ecm)
 {
   if (!_ecm.EntityHasComponentType(this->dataPtr->imuLink,
@@ -514,11 +511,10 @@ void gz::sim::systems::ArduPilotPlugin::Configure(
     sdfClone->Get("have_32_channels", false).first;
 
   // Add the signal handler
-  this->dataPtr->sigHandler.AddCallback(
-      std::bind(
-        &gz::sim::systems::ArduPilotPluginPrivate::OnSignal,
-        this->dataPtr.get(),
-        std::placeholders::_1));
+    this->dataPtr->sigHandler.AddCallback(
+            [capture0 = this->dataPtr.get()](auto &&PH1) {
+                capture0->OnSignal(std::forward<decltype(PH1)>(PH1));
+            });
 
   gzlog << "[" << this->dataPtr->modelName << "] "
         << "ArduPilot ready to fly. The force will be with you" << "\n";
@@ -526,7 +522,7 @@ void gz::sim::systems::ArduPilotPlugin::Configure(
 
 /////////////////////////////////////////////////
 void gz::sim::systems::ArduPilotPlugin::LoadControlChannels(
-    sdf::ElementPtr _sdf,
+    const sdf::ElementPtr& _sdf,
     gz::sim::EntityComponentManager &_ecm)
 {
   // per control channel
@@ -560,7 +556,7 @@ void gz::sim::systems::ArduPilotPlugin::LoadControlChannels(
     }
     else
     {
-      control.channel = this->dataPtr->controls.size();
+      control.channel = static_cast<int>(this->dataPtr->controls.size());
       gzwarn << "[" << this->dataPtr->modelName << "] "
              <<  "id/channel attribute not specified, use order parsed ["
              << control.channel << "].\n";
@@ -798,7 +794,7 @@ void gz::sim::systems::ArduPilotPlugin::LoadControlChannels(
 
 /////////////////////////////////////////////////
 void gz::sim::systems::ArduPilotPlugin::LoadImuSensors(
-    sdf::ElementPtr _sdf,
+    const sdf::ElementPtr &_sdf,
     gz::sim::EntityComponentManager &/*_ecm*/)
 {
     this->dataPtr->imuName =
@@ -807,7 +803,7 @@ void gz::sim::systems::ArduPilotPlugin::LoadImuSensors(
 
 /////////////////////////////////////////////////
 void gz::sim::systems::ArduPilotPlugin::LoadGpsSensors(
-    sdf::ElementPtr /*_sdf*/,
+    const sdf::ElementPtr &/*_sdf*/,
     gz::sim::EntityComponentManager &/*_ecm*/)
 {
   /*
@@ -880,13 +876,13 @@ void gz::sim::systems::ArduPilotPlugin::LoadGpsSensors(
 
 /////////////////////////////////////////////////
 void gz::sim::systems::ArduPilotPlugin::LoadRangeSensors(
-    sdf::ElementPtr _sdf,
+    const sdf::ElementPtr &_sdf,
     gz::sim::EntityComponentManager &/*_ecm*/)
 {
     struct SensorIdentifier
     {
         std::string type;
-        int index;
+        int index{};
         std::string topic;
     };
     std::vector<SensorIdentifier> sensorIds;
@@ -967,15 +963,15 @@ void gz::sim::systems::ArduPilotPlugin::LoadRangeSensors(
         // Bind the sensor index to the callback function
         // (adjust from unit to zero offset)
         OnMessageWrapper<gz::msgs::LaserScan>::callback_t fn =
-            std::bind(
-                &gz::sim::systems::ArduPilotPluginPrivate::RangeCb,
-                this->dataPtr.get(),
-                std::placeholders::_1,
-                sensorId.index - 1);
+                [capture0 = this->dataPtr.get(), capture1 = sensorId.index - 1](
+                        auto &&PH1) {
+                    capture0->RangeCb(std::forward<decltype(PH1)>(PH1),
+                                      capture1);
+                };
 
         // Wrap the std::function so we can register the callback
-        auto callbackWrapper = RangeOnMessageWrapperPtr(
-            new OnMessageWrapper<gz::msgs::LaserScan>(fn));
+        auto callbackWrapper =
+                std::make_shared<OnMessageWrapper<gz::msgs::LaserScan>>(fn);
 
         auto callback = &OnMessageWrapper<gz::msgs::LaserScan>::OnMessage;
 
@@ -996,7 +992,7 @@ void gz::sim::systems::ArduPilotPlugin::LoadRangeSensors(
 
 /////////////////////////////////////////////////
 void gz::sim::systems::ArduPilotPlugin::LoadWindSensors(
-    sdf::ElementPtr _sdf,
+    const sdf::ElementPtr &_sdf,
     gz::sim::EntityComponentManager &/*_ecm*/)
 {
     this->dataPtr->anemometerName =
@@ -1248,22 +1244,23 @@ void gz::sim::systems::ArduPilotPlugin::PostUpdate(
 void gz::sim::systems::ArduPilotPlugin::ResetPIDs()
 {
   // Reset velocity PID for controls
-  for (size_t i = 0; i < this->dataPtr->controls.size(); ++i)
+  for (auto & control : this->dataPtr->controls)
   {
-    this->dataPtr->controls[i].cmd = 0;
+    control.cmd = 0;
     // this->dataPtr->controls[i].pid.Reset();
   }
 }
 
 /////////////////////////////////////////////////
-bool gz::sim::systems::ArduPilotPlugin::InitSockets(sdf::ElementPtr _sdf) const
-{
+bool gz::sim::systems::ArduPilotPlugin::InitSockets(
+        const sdf::ElementPtr &_sdf) const {
     // get the fdm address if provided, otherwise default to localhost
     this->dataPtr->fdm_address =
         _sdf->Get("fdm_addr", static_cast<std::string>("127.0.0.1")).first;
 
     this->dataPtr->fdm_port_in =
-        _sdf->Get("fdm_port_in", static_cast<uint32_t>(9002)).first;
+            static_cast<uint16_t>(_sdf->Get("fdm_port_in",
+                                            static_cast<uint32_t>(9002)).first);
 
     // output port configuration is automatic
     if (_sdf->HasElement("listen_addr")) {
@@ -1430,7 +1427,7 @@ ssize_t getServoPacket(
     int counter = 0;
     while (true)
     {
-        TServoPacket last_pkt;
+        TServoPacket last_pkt{};
         auto recvSize_last = _sock.recv(&last_pkt, sizeof(TServoPacket), 0ul);
         if (recvSize_last == -1)
         {
@@ -1476,14 +1473,14 @@ bool gz::sim::systems::ArduPilotPlugin::ReceiveServoPacket()
     }
 
     // 16 / 32 channel compatibility
-    uint16_t pkt_magic{0};
-    uint16_t pkt_frame_rate{0};
-    uint16_t pkt_frame_count{0};
-    std::array<uint16_t, 32> pkt_pwm;
+    uint16_t pkt_magic{};
+    uint16_t pkt_frame_rate{};
+    uint32_t pkt_frame_count{};
+    std::array<uint16_t, 32> pkt_pwm{};
     ssize_t recvSize{-1};
     if (this->dataPtr->have32Channels)
     {
-      servo_packet_32 pkt;
+      servo_packet_32 pkt{};
       recvSize = getServoPacket(
           this->dataPtr->sock,
           this->dataPtr->fcu_address,
@@ -1498,7 +1495,7 @@ bool gz::sim::systems::ArduPilotPlugin::ReceiveServoPacket()
     }
     else
     {
-      servo_packet_16 pkt;
+      servo_packet_16 pkt{};
       recvSize = getServoPacket(
           this->dataPtr->sock,
           this->dataPtr->fcu_address,
@@ -1642,7 +1639,8 @@ void gz::sim::systems::ArduPilotPlugin::UpdateMotorCommands(
             {
                 // convert pwm to raw cmd: [servo_min, servo_max] => [0, 1],
                 // default is: [1000, 2000] => [0, 1]
-                const double pwm = _pwm[this->dataPtr->controls[i].channel];
+                const double pwm = _pwm[static_cast<uint64_t>(
+                        this->dataPtr->controls[i].channel)];
                 const double pwm_min = this->dataPtr->controls[i].servo_min;
                 const double pwm_max = this->dataPtr->controls[i].servo_max;
                 const double multiplier = this->dataPtr->controls[i].multiplier;
@@ -1888,11 +1886,11 @@ void gz::sim::systems::ArduPilotPlugin::CreateStateJSON(
         windSpdBdyA = std::sqrt(windXBdyA * windXBdyA + windYBdyA * windYBdyA);
         windDirBdyA = atan2(windYBdyA, windXBdyA);
 
-        double windXSnsG = windVelSnsG.X();
-        double windYSnsG = windVelSnsG.Y();
-        auto windSpdSnsG = std::sqrt(
-            windXSnsG * windXSnsG + windYSnsG * windYSnsG);
-        auto windDirSnsG = atan2(windYSnsG, windXSnsG);
+//        double windXSnsG = windVelSnsG.X();
+//        double windYSnsG = windVelSnsG.Y();
+//        auto windSpdSnsG = std::sqrt(
+//            windXSnsG * windXSnsG + windYSnsG * windYSnsG);
+//        auto windDirSnsG = atan2(windYSnsG, windXSnsG);
 
         // gzdbg << "\nEuler angles:\n"
         //       << "bdyAToBdyG:  " << bdyAToBdyG.Rot().Euler() << "\n"
@@ -1968,21 +1966,27 @@ void gz::sim::systems::ArduPilotPlugin::CreateStateJSON(
       case 6:
           writer.Key("rng_6");
           writer.Double(this->dataPtr->ranges[5]);
+          [[fallthrough]];  // Intentional fall-through
       case 5:
           writer.Key("rng_5");
           writer.Double(this->dataPtr->ranges[4]);
+          [[fallthrough]];  // Intentional fall-through
       case 4:
           writer.Key("rng_4");
           writer.Double(this->dataPtr->ranges[3]);
+          [[fallthrough]];  // Intentional fall-through
       case 3:
           writer.Key("rng_3");
           writer.Double(this->dataPtr->ranges[2]);
+          [[fallthrough]];  // Intentional fall-through
       case 2:
           writer.Key("rng_2");
           writer.Double(this->dataPtr->ranges[1]);
+          [[fallthrough]];  // Intentional fall-through
       case 1:
           writer.Key("rng_1");
           writer.Double(this->dataPtr->ranges[0]);
+          break;
       default:
           break;
       }

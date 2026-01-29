@@ -47,7 +47,6 @@ struct servo_packet_32 {
 };
 
 // Forward declare private data class
-class ArduPilotSocketPrivate;
 class ArduPilotPluginPrivate;
 
 /// \brief Interface ArduPilot from ardupilot stack
@@ -86,7 +85,7 @@ class ArduPilotPluginPrivate;
 ///                             controller synchronization
 /// <have_32_channels>    set true if 32 channels are enabled
 ///
-class GZ_SIM_VISIBLE ArduPilotPlugin:
+class GZ_SIM_VISIBLE ArduPilotPlugin final:
   public gz::sim::System,
   public gz::sim::ISystemConfigure,
   public gz::sim::ISystemPostUpdate,
@@ -97,7 +96,7 @@ class GZ_SIM_VISIBLE ArduPilotPlugin:
   public: ArduPilotPlugin();
 
   /// \brief Destructor.
-  public: ~ArduPilotPlugin();
+  public: ~ArduPilotPlugin() final = default;
 
   public: void Reset(const UpdateInfo &_info,
                       EntityComponentManager &_ecm) final;
@@ -120,27 +119,27 @@ class GZ_SIM_VISIBLE ArduPilotPlugin:
 
   /// \brief Load control channels
   private: void LoadControlChannels(
-      sdf::ElementPtr _sdf,
+      const sdf::ElementPtr& _sdf,
       gz::sim::EntityComponentManager &_ecm);
 
   /// \brief Load IMU sensors
   private: void LoadImuSensors(
-      sdf::ElementPtr _sdf,
+      const sdf::ElementPtr &_sdf,
       gz::sim::EntityComponentManager &_ecm);
 
   /// \brief Load GPS sensors
   private: void LoadGpsSensors(
-      sdf::ElementPtr _sdf,
+      const sdf::ElementPtr &_sdf,
       gz::sim::EntityComponentManager &_ecm);
 
   /// \brief Load range sensors
   private: void LoadRangeSensors(
-      sdf::ElementPtr _sdf,
+      const sdf::ElementPtr &_sdf,
       gz::sim::EntityComponentManager &_ecm);
 
   /// \brief Load wind sensors
   private: void LoadWindSensors(
-      sdf::ElementPtr _sdf,
+      const sdf::ElementPtr &_sdf,
       gz::sim::EntityComponentManager &_ecm);
 
   /// \brief Update the control surfaces controllers.
@@ -173,7 +172,7 @@ class GZ_SIM_VISIBLE ArduPilotPlugin:
   private: void SendState() const;
 
   /// \brief Initialise flight dynamics model socket
-  private: bool InitSockets(sdf::ElementPtr _sdf) const;
+  private: bool InitSockets(const sdf::ElementPtr& _sdf) const;
 
   /// \brief Private data pointer.
   private: std::unique_ptr<ArduPilotPluginPrivate> dataPtr;
