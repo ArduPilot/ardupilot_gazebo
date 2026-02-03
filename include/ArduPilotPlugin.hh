@@ -84,6 +84,9 @@ class ArduPilotPluginPrivate;
 /// <anemometer>  scoped name for the wind sensor
 /// <connectionTimeoutMaxCount> timeout before giving up on
 ///                             controller synchronization
+/// <lock_step>           set true to enforce lock-step simulation
+/// <no_time_sync>        set true to prevent SITL from trying to sync
+///                       with wall-time
 /// <have_32_channels>    set true if 32 channels are enabled
 ///
 class GZ_SIM_VISIBLE ArduPilotPlugin:
