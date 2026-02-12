@@ -289,6 +289,7 @@
         <fdm_port_in>9002</fdm_port_in>
         <connectionTimeoutMaxCount>5</connectionTimeoutMaxCount>
         <lock_step>1</lock_step>
+        <no_time_sync>1</no_time_sync>
         <gazeboXYZToNED degrees="true">0 0 0 180 0 90</gazeboXYZToNED>
         <modelXYZToAirplaneXForwardZDown degrees="true">0 0 0 180 0 0</modelXYZToAirplaneXForwardZDown>
         <imuName>imu_link::imu_sensor</imuName>
