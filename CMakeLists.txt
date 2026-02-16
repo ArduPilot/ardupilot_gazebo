@@ -31,6 +31,9 @@ if("$ENV{GZ_VERSION}" STREQUAL "harmonic" OR NOT DEFINED "ENV{GZ_VERSION}")
   gz_find_package(gz-sim8 REQUIRED)
   set(GZ_SIM_VER ${gz-sim8_VERSION_MAJOR})
 
+  gz_find_package(gz-msgs10 REQUIRED)
+  set(GZ_MSGS_VER ${gz-msgs10_VERSION_MAJOR})
+
   message(STATUS "Compiling against Gazebo Harmonic")
 elseif("$ENV{GZ_VERSION}" STREQUAL "ionic")
   # Ionic
@@ -84,10 +87,29 @@ endif()
 # --------------------------------------------------------------------------- #
 find_package(RapidJSON REQUIRED)
 find_package(OpenCV REQUIRED)
+find_package(Protobuf REQUIRED)
 
 pkg_check_modules(GST REQUIRED gstreamer-1.0 gstreamer-app-1.0)
 
+# --------------------------------------------------------------------------- #
+# Build proto custom messages
+set(ARDUPILOT_MSGS_PROTOS
+   ${CMAKE_CURRENT_SOURCE_DIR}/proto/ardupilot_gazebo/msgs/motor_status.proto
+)
 
+gz_msgs_generate_messages(
+  # The cmake target to be generated for libraries/executables to link
+  TARGET msgs
+  # The protobuf package to generate (Typically based on the path)
+  PROTO_PACKAGE "ardupilot_gazebo.msgs"
+  # The path to the base directory of the proto files
+  # All import paths should be relative to this (eg gz/custom_msgs/vector3d.proto)
+  MSGS_PATH ${CMAKE_CURRENT_SOURCE_DIR}/proto
+  # List of proto files to generate
+  MSGS_PROTOS ${ARDUPILOT_MSGS_PROTOS}
+  # List of message targets this library imports from
+  DEPENDENCIES gz-msgs${GZ_MSGS_VER}::gz-msgs${GZ_MSGS_VER}
+)
 # --------------------------------------------------------------------------- #
 # Build plugin.
 
@@ -103,6 +125,24 @@ target_include_directories(ArduPilotPlugin PRIVATE
 target_link_libraries(ArduPilotPlugin PRIVATE
   gz-sim${GZ_SIM_VER}::gz-sim${GZ_SIM_VER}
 )
+
+add_library(MotorPlugin
+  SHARED
+  src/MotorPlugin.cc
+  src/Util.cc
+
+)
+target_include_directories(MotorPlugin PRIVATE
+  include
+  # ${CMAKE_CURRENT_BINARY_DIR}/ardupilot_gazebo-msgs_genmsg
+)
+target_link_libraries(MotorPlugin PRIVATE
+  gz-sim${GZ_SIM_VER}::gz-sim${GZ_SIM_VER}
+  ${PROJECT_NAME}-msgs
+  # gz-msgs${GZ_MSGS_VER}::gz-msgs${GZ_MSGS_VER}
+  # ardupilot_gazebo-msgs
+)
+# add_dependencies(MotorPlugin ardupilot_gazebo-msgs)
 
 add_library(ParachutePlugin
   SHARED
@@ -149,6 +189,7 @@ target_link_libraries(GstCameraPlugin PRIVATE
 install(
   TARGETS
   ArduPilotPlugin
+  MotorPlugin
   ParachutePlugin
   CameraZoomPlugin
   GstCameraPlugin
