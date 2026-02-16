@@ -87,6 +87,10 @@ find_package(OpenCV REQUIRED)
 
 pkg_check_modules(GST REQUIRED gstreamer-1.0 gstreamer-app-1.0)
 
+# Make external include directories system includes to suppress warnings.
+include_directories(SYSTEM ${RapidJSON_INCLUDE_DIRS})
+include_directories(SYSTEM ${OpenCV_INCLUDE_DIRS})
+include_directories(SYSTEM ${GST_INCLUDE_DIRS})
 
 # --------------------------------------------------------------------------- #
 # Build plugin.
@@ -142,6 +146,34 @@ target_link_libraries(GstCameraPlugin PRIVATE
   ${OpenCV_LIBS}
   ${GST_LINK_LIBRARIES}
 )
+
+# Retrieve the list of current targets
+get_property(current_targets DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY BUILDSYSTEM_TARGETS)
+# Filter out targets that end with _uninstall
+list(FILTER current_targets EXCLUDE REGEX "uninstall$")
+
+# Apply compile options to each target, cannot use global compile options as gazebo don't comply with them
+foreach(target ${current_targets})
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    target_compile_options(${target} PRIVATE -Wall -Wextra -Wpedantic)
+    target_compile_options(${target} PRIVATE -Wshadow -Wformat)
+    target_compile_options(${target} PRIVATE -Wcast-align -Woverloaded-virtual)
+    target_compile_options(${target} PRIVATE -Wnull-dereference)
+    target_compile_options(${target} PRIVATE -Wconversion)
+    target_compile_options(${target} PRIVATE -Wmissing-declarations -Wmissing-include-dirs -Wredundant-decls)
+    target_compile_options(${target} PRIVATE -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Wsign-promo -Wswitch -Wundef)
+    target_compile_options(${target} PRIVATE -Wold-style-cast)
+    target_compile_options(${target} PRIVATE -Werror)
+    target_compile_options(${target} PRIVATE -Werror=return-type)
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+      target_compile_options(${target} PRIVATE -Wuseless-cast )
+      target_compile_options(${target} PRIVATE -Wduplicated-cond -Wduplicated-branches -Wlogical-op -Wstrict-null-sentinel)
+    endif()
+
+    target_compile_options(${target} PRIVATE -ffunction-sections -fdata-sections)
+    target_link_options(${target} PRIVATE -Wl,--gc-sections)
+  endif()
+endforeach()
 
 # --------------------------------------------------------------------------- #
 # Install.
