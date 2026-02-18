@@ -105,16 +105,18 @@ make -j4
 Set the Gazebo environment variables in your `.bashrc` or `.zshrc` or in 
 the terminal used to run Gazebo.
 
-#### Terminal
+#### Option 1: Manually edit .bashrc
 
 Assuming that you have cloned the repository to `$HOME/ardupilot_gazebo`:
+
+Add these lines to the end of your ~/.bashrc file:
 
 ```bash
 export GZ_SIM_SYSTEM_PLUGIN_PATH=$HOME/ardupilot_gazebo/build:$GZ_SIM_SYSTEM_PLUGIN_PATH
 export GZ_SIM_RESOURCE_PATH=$HOME/ardupilot_gazebo/models:$HOME/ardupilot_gazebo/worlds:$GZ_SIM_RESOURCE_PATH
 ```
 
-#### .bashrc or .zshrc
+#### Option 2: Run in terminal
 
 Assuming that you have cloned the repository to `$HOME/ardupilot_gazebo`:
 
