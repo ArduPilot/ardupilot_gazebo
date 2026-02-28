@@ -29,9 +29,8 @@ namespace sim
 {
 namespace systems
 {
-/// \todo(srmainwaring) handle 16 or 32 based on magic
-
 // The servo packet received from ArduPilot SITL. Defined in SIM_JSON.h.
+// Channel count (16 vs 32) is auto-detected at runtime from the magic field.
 struct servo_packet_16 {
     uint16_t magic;         // 18458 expected magic value
     uint16_t frame_rate;
@@ -87,7 +86,8 @@ class ArduPilotPluginPrivate;
 /// <lock_step>           set true to enforce lock-step simulation
 /// <no_time_sync>        set true to prevent SITL from trying to sync
 ///                       with wall-time
-/// <have_32_channels>    set true if 32 channels are enabled
+/// <have_32_channels>    optional compatibility/debug hint; runtime value is
+///                       auto-detected from packet magic and may be overridden
 ///
 class GZ_SIM_VISIBLE ArduPilotPlugin:
   public gz::sim::System,

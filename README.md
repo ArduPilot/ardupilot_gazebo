@@ -125,6 +125,48 @@ echo 'export GZ_SIM_RESOURCE_PATH=$HOME/ardupilot_gazebo/models:$HOME/ardupilot_
 
 Reload your terminal with `source ~/.bashrc` (or `source ~/.zshrc` on macOS).
 
+### Servo Channels (16/32)
+
+`ArduPilotPlugin` auto-detects 16 vs 32 output channels from the SITL packet
+magic value (`18458` for 16 channels, `29569` for 32 channels).
+
+The SDF parameter `<have_32_channels>` is retained for compatibility and debug
+purposes, but no longer needs to match `SERVO_32_ENABLE` exactly at startup.
+If a mismatch is detected at runtime, the plugin logs a warning and overrides
+the value from incoming packets.
+
+#### Tested
+
+Manual verification was run with Gazebo logs captured to a file:
+
+```bash
+gz sim -v4 -r iris_runway.sdf 2>&1 | tee /tmp/gz.log
+```
+
+Then, in MAVProxy:
+
+```text
+param show SERVO_32_ENABLE
+param set SERVO_32_ENABLE 1
+reboot
+param show SERVO_32_ENABLE
+param set SERVO_32_ENABLE 0
+reboot
+param show SERVO_32_ENABLE
+```
+
+And in a shell:
+
+```bash
+rg -n "ArduPilot|magic|Overriding|Connected" /tmp/gz.log
+```
+
+Expected behavior:
+
+- with `0 -> 1`, Gazebo logs a mismatch warning and overrides to 32 channels.
+- with `1 -> 0`, Gazebo logs a mismatch warning and overrides to 16 channels.
+- during SITL reboot, transient `ArduPilot controller has reset` warnings can appear.
+
 ## Usage
 
 ### 1. Iris quad-copter
