@@ -1526,6 +1526,8 @@ bool gz::sim::systems::ArduPilotPlugin::ReceiveServoPacket()
     // Values come from SIM_JSON.h in the ArduPilot SITL library.
     constexpr uint16_t magic_16 = 18458;
     constexpr uint16_t magic_32 = 29569;
+    constexpr size_t packet_size_16 = 40;
+    constexpr size_t packet_size_32 = 72;
     const size_t recvSizeBytes = static_cast<size_t>(recvSize);
     bool detected32Channels;
     if (pkt.magic == magic_32)
@@ -1538,32 +1540,33 @@ bool gz::sim::systems::ArduPilotPlugin::ReceiveServoPacket()
     }
     else
     {
-        gzwarn << "Incorrect protocol magic "
+        gzwarn << "[" << this->dataPtr->modelName << "] "
+            << "Incorrect protocol magic "
             << pkt.magic << " (expected "
             << magic_16 << " or " << magic_32 << "), dropping packet.\n";
         return false;
     }
 
-    if (detected32Channels && recvSizeBytes != sizeof(servo_packet_32))
+    if (detected32Channels && recvSizeBytes != packet_size_32)
     {
         gzwarn << "[" << this->dataPtr->modelName << "] "
             << "Got 32-channel magic with unexpected packet size "
-            << recvSize << " (expected " << sizeof(servo_packet_32)
+            << recvSize << " (expected " << packet_size_32
             << "), dropping packet.\n";
         return false;
     }
 
-    if (!detected32Channels && recvSizeBytes != sizeof(servo_packet_16))
+    if (!detected32Channels && recvSizeBytes != packet_size_16)
     {
         gzwarn << "[" << this->dataPtr->modelName << "] "
             << "Got 16-channel magic with unexpected packet size "
-            << recvSize << " (expected " << sizeof(servo_packet_16)
+            << recvSize << " (expected " << packet_size_16
             << "), dropping packet.\n";
         return false;
     }
 
     // If the SDF-configured value disagrees with the auto-detected one, override
-    // it and log a warning.  <have_32_channels> is retained for backward
+    // it and log a warning. <have_32_channels> is retained for backward
     // compatibility and debug purposes only.
     if (detected32Channels != this->dataPtr->have32Channels)
     {
@@ -1578,7 +1581,7 @@ bool gz::sim::systems::ArduPilotPlugin::ReceiveServoPacket()
     const uint16_t pkt_frame_rate = pkt.frame_rate;
     const uint32_t pkt_frame_count = pkt.frame_count;
 
-    // Build a unified 32-element PWM array, zero-initialised.
+    // Build a unified 32-element PWM array, zero-initialized.
     // For a 16-channel packet the upper 16 slots remain at zero.
     std::array<uint16_t, 32> pkt_pwm{};
     if (detected32Channels)

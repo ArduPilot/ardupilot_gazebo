@@ -45,6 +45,11 @@ struct servo_packet_32 {
     uint16_t pwm[32];
 };
 
+static_assert(sizeof(servo_packet_16) == 40,
+    "servo_packet_16 size must match SIM_JSON on-wire protocol (40 bytes)");
+static_assert(sizeof(servo_packet_32) == 72,
+    "servo_packet_32 size must match SIM_JSON on-wire protocol (72 bytes)");
+
 // Forward declare private data class
 class ArduPilotSocketPrivate;
 class ArduPilotPluginPrivate;
