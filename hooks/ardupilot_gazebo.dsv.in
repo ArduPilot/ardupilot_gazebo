@@ -1,4 +1,6 @@
-prepend-non-duplicate;GZ_SIM_RESOURCE_PATH;share;@CMAKE_INSTALL_PREFIX@/share
 prepend-non-duplicate;GZ_SIM_RESOURCE_PATH;share/@PROJECT_NAME@/models
 prepend-non-duplicate;GZ_SIM_RESOURCE_PATH;share/@PROJECT_NAME@/worlds
 prepend-non-duplicate;GZ_SIM_SYSTEM_PLUGIN_PATH;lib/@PROJECT_NAME@/
+
+prepend-non-duplicate;SDF_PATH;share/@PROJECT_NAME@/models
+prepend-non-duplicate;SDF_PATH;share/@PROJECT_NAME@/worlds
