@@ -20,11 +20,11 @@
         </inertia>
       </inertial>
       <collision name='base_collision'>
-        <pose>0 0 -0.08 0 0 0</pose>
+        <pose>0 0 0 0 0 0</pose>
         <geometry>
-          <box>
-            <size>0.47 0.47 0.23</size>
-          </box>
+          <mesh>
+            <uri>model://iris_with_standoffs/meshes/iris_collision.stl</uri>
+          </mesh>
         </geometry>
         <surface>
           <contact>
@@ -41,6 +41,99 @@
           </friction>
         </surface>
       </collision>
+      <collision name='front_left_leg_collision'>
+        <pose>0.123 0.22 -0.11 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.005</radius>
+            <length>0.17</length>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode>
+              <max_vel>100.0</max_vel>
+              <min_depth>0.001</min_depth>
+            </ode>
+          </contact>
+          <friction>
+            <ode>
+              <mu>100000.0</mu>
+              <mu2>100000.0</mu2>
+            </ode>
+          </friction>
+        </surface>
+      </collision>
+      <collision name='front_right_leg_collision'>
+        <pose>0.123 -0.22 -0.11 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.005</radius>
+            <length>0.17</length>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode>
+              <max_vel>100.0</max_vel>
+              <min_depth>0.001</min_depth>
+            </ode>
+          </contact>
+          <friction>
+            <ode>
+              <mu>100000.0</mu>
+              <mu2>100000.0</mu2>
+            </ode>
+          </friction>
+        </surface>
+      </collision>
+      <collision name='rear_left_leg_collision'>
+        <pose>-0.140 0.21 -0.11 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.005</radius>
+            <length>0.17</length>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode>
+              <max_vel>100.0</max_vel>
+              <min_depth>0.001</min_depth>
+            </ode>
+          </contact>
+          <friction>
+            <ode>
+              <mu>100000.0</mu>
+              <mu2>100000.0</mu2>
+            </ode>
+          </friction>
+        </surface>
+      </collision>
+      <collision name='rear_right_leg_collision'>
+        <pose>-0.140 -0.21 -0.11 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.005</radius>
+            <length>0.17</length>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode>
+              <max_vel>100.0</max_vel>
+              <min_depth>0.001</min_depth>
+            </ode>
+          </contact>
+          <friction>
+            <ode>
+              <mu>100000.0</mu>
+              <mu2>100000.0</mu2>
+            </ode>
+          </friction>
+        </surface>
+      </collision>
+
       <visual name='base_visual'>
         <geometry>
           <mesh>
@@ -59,7 +152,6 @@
           </pbr>
         </material>
       </visual>
-
       <visual name='front_left_leg_visual'>
         <pose>0.123 0.22 -0.11 0 0 0</pose>
         <geometry>
@@ -191,7 +283,7 @@
           <izz>0.000167604</izz>
         </inertia>
       </inertial>
-      <collision name='rotor_0_collision'>
+      <collision name='collision'>
         <pose>0 0 0 0 0 0</pose>
         <geometry>
           <cylinder>
@@ -199,16 +291,8 @@
             <radius>0.1</radius>
           </cylinder>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
-      <visual name='rotor_0_visual'>
+      <visual name='visual'>
         <pose>0 0 0 0 0 0</pose>
         <geometry>
           <mesh>
@@ -228,9 +312,6 @@
           </pbr>
         </material>
       </visual>
-      <gravity>1</gravity>
-      <velocity_decay/>
-      <self_collide>0</self_collide>
     </link>
     <joint name='rotor_0_joint' type='revolute'>
       <child>rotor_0</child>
@@ -245,11 +326,6 @@
           <damping>0.004</damping>
         </dynamics>
       </axis>
-      <physics>
-        <ode>
-          <implicit_spring_damper>1</implicit_spring_damper>
-        </ode>
-      </physics>
     </joint>
     <link name='rotor_1'>
       <pose>-0.13 0.2 0.023 0 0 0</pose>
@@ -265,7 +341,7 @@
           <izz>0.000167604</izz>
         </inertia>
       </inertial>
-      <collision name='rotor_1_collision'>
+      <collision name='collision'>
         <pose>0 0 0 0 0 0</pose>
         <geometry>
           <cylinder>
@@ -273,16 +349,8 @@
             <radius>0.1</radius>
           </cylinder>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
-      <visual name='rotor_1_visual'>
+      <visual name='visual'>
         <pose>0 0 0 0 0 0</pose>
         <geometry>
           <mesh>
@@ -302,9 +370,6 @@
           </pbr>
         </material>
       </visual>
-      <gravity>1</gravity>
-      <velocity_decay/>
-      <self_collide>0</self_collide>
     </link>
     <joint name='rotor_1_joint' type='revolute'>
       <child>rotor_1</child>
@@ -319,11 +384,6 @@
           <damping>0.004</damping>
         </dynamics>
       </axis>
-      <physics>
-        <ode>
-          <implicit_spring_damper>1</implicit_spring_damper>
-        </ode>
-      </physics>
     </joint>
     <link name='rotor_2'>
       <pose>0.13 0.22 0.023 0 0 0</pose>
@@ -339,7 +399,7 @@
           <izz>0.000167604</izz>
         </inertia>
       </inertial>
-      <collision name='rotor_2_collision'>
+      <collision name='collision'>
         <pose>0 0 0 0 0 0</pose>
         <geometry>
           <cylinder>
@@ -347,16 +407,8 @@
             <radius>0.1</radius>
           </cylinder>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
-      <visual name='rotor_2_visual'>
+      <visual name='visual'>
         <pose>0 0 0 0 0 0</pose>
         <geometry>
           <mesh>
@@ -376,9 +428,6 @@
           </pbr>
         </material>
       </visual>
-      <gravity>1</gravity>
-      <velocity_decay/>
-      <self_collide>0</self_collide>
     </link>
     <joint name='rotor_2_joint' type='revolute'>
       <child>rotor_2</child>
@@ -393,11 +442,6 @@
           <damping>0.004</damping>
         </dynamics>
       </axis>
-      <physics>
-        <ode>
-          <implicit_spring_damper>1</implicit_spring_damper>
-        </ode>
-      </physics>
     </joint>
     <link name='rotor_3'>
       <pose>-0.13 -0.2 0.023 0 0 0</pose>
@@ -413,7 +457,7 @@
           <izz>0.000167604</izz>
         </inertia>
       </inertial>
-      <collision name='rotor_3_collision'>
+      <collision name='collision'>
         <pose>0 0 0 0 0 0</pose>
         <geometry>
           <cylinder>
@@ -421,16 +465,8 @@
             <radius>0.1</radius>
           </cylinder>
         </geometry>
-        <surface>
-          <contact>
-            <ode/>
-          </contact>
-          <friction>
-            <ode/>
-          </friction>
-        </surface>
       </collision>
-      <visual name='rotor_3_visual'>
+      <visual name='visual'>
         <pose>0 0 0 0 0 0</pose>
         <geometry>
           <mesh>
@@ -450,9 +486,6 @@
           </pbr>
         </material>
       </visual>
-      <gravity>1</gravity>
-      <velocity_decay/>
-      <self_collide>0</self_collide>
     </link>
     <joint name='rotor_3_joint' type='revolute'>
       <child>rotor_3</child>
@@ -467,11 +500,6 @@
           <damping>0.004</damping>
         </dynamics>
       </axis>
-      <physics>
-        <ode>
-          <implicit_spring_damper>1</implicit_spring_damper>
-        </ode>
-      </physics>
     </joint>
   </model>
 </sdf>
