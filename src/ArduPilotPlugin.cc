@@ -1207,9 +1207,11 @@ void gz::sim::systems::ArduPilotPlugin::PreUpdate(
                     this->dataPtr->arduPilotOnline)
                 {
                     // SIGNINT should interrupt this loop.
-                    if (this->dataPtr->signal != 0)
+                    if (this->dataPtr->signal != 0 || this->dataPtr->json_str.empty())
                     {
-                        break;
+                      gzerr << "No servo packet received and signal received or imu not valid, "
+                            << "breaking out of lock-step loop to avoid blocking.\n";
+                      return;
                     }
                 }
                 this->dataPtr->lastServoPacketRecvTime = _info.simTime;
