@@ -230,7 +230,7 @@ class gz::sim::systems::ArduPilotPluginPrivate
   public: std::string fdm_address{"127.0.0.1"};
 
   /// \brief The address for the SITL flight controller - auto detected
-  public: const char* fcu_address{nullptr};
+  public: std::string fcu_address;
 
   /// \brief The port for the flight dynamics model
   public: uint16_t fdm_port_in{9002};
@@ -1422,7 +1422,7 @@ namespace
 template<typename TServoPacket>
 ssize_t getServoPacket(
   SocketUDP &_sock,
-  const char *&_fcu_address,
+  std::string &_fcu_address,
   uint16_t &_fcu_port_out,
   uint32_t _waitMs,
   const std::string &_modelName,
@@ -1431,7 +1431,7 @@ ssize_t getServoPacket(
 {
     ssize_t recvSize = _sock.recv(&_pkt, sizeof(TServoPacket), _waitMs);
 
-    _sock.get_client_address(_fcu_address, _fcu_port_out);
+    _sock.get_client_address_str(_fcu_address, _fcu_port_out);
 
     // drain the socket in the case we're backed up
     int counter = 0;
@@ -1599,8 +1599,9 @@ bool gz::sim::systems::ArduPilotPlugin::ReceiveServoPacket()
         gzwarn << "ArduPilot controller has reset\n";
     }
 
-    // check for duplicate frame
-    else if (pkt_frame_count == this->dataPtr->fcu_frame_count)
+    // check for duplicate frame (only when online; offline allows recovery)
+    else if (pkt_frame_count == this->dataPtr->fcu_frame_count
+             && this->dataPtr->arduPilotOnline)
     {
         gzwarn << "Duplicate input frame\n";
 
@@ -2031,7 +2032,7 @@ void gz::sim::systems::ArduPilotPlugin::SendState() const
     this->dataPtr->sock.sendto(
         this->dataPtr->json_str.c_str(),
         this->dataPtr->json_str.size(),
-        this->dataPtr->fcu_address,
+        this->dataPtr->fcu_address.c_str(),
         this->dataPtr->fcu_port_out);
 
 #if DEBUG_JSON_IO
