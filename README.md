@@ -24,7 +24,8 @@ The project comprises a Gazebo plugin to connect to ArduPilot SITL
 ## Prerequisites
 
 Gazebo Garden or Harmonic is supported on Ubuntu 22.04 (Jammy).
-Harmonic is recommended.
+Harmonic is recommended. Gazebo Jetty is supported directly, and ROS Lyrical
+hosts use the Gazebo Jetty vendor packages.
 If you are running Ubuntu as a virtual machine you will need at least
 Ubuntu 20.04 in order to have the OpenGL support required for the
 `ogre2` render engine. Gazebo and ArduPilot SITL will also run on macOS
@@ -64,6 +65,22 @@ sudo apt install libgz-sim8-dev rapidjson-dev
 sudo apt install libopencv-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-plugins-bad gstreamer1.0-libav gstreamer1.0-gl
 ```
 
+#### ROS Lyrical / Gazebo vendor packages
+
+On ROS Lyrical hosts, install the ROS Gazebo vendor packages and source the ROS
+environment before building:
+
+```bash
+sudo apt update
+sudo apt install ros-lyrical-gz-sim-vendor rapidjson-dev
+sudo apt install libopencv-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-plugins-bad gstreamer1.0-libav gstreamer1.0-gl
+source /opt/ros/lyrical/setup.bash
+export GZ_VERSION=lyrical
+```
+
+When `/opt/ros/lyrical` is present, `cmake ..` also auto-selects the Lyrical
+vendor packages if `GZ_VERSION` is unset.
+
 #### Rosdep
 
 Use rosdep with
@@ -71,10 +88,10 @@ Use rosdep with
 to manage all dependencies. This is driven off of the environment variable `GZ_VERSION`.
 
 ```bash
-export GZ_VERSION=harmonic # or garden or ionic
+export GZ_VERSION=harmonic # or garden or ionic or jetty
 sudo bash -c 'wget https://raw.githubusercontent.com/osrf/osrf-rosdep/master/gz/00-gazebo.list -O /etc/ros/rosdep/sources.list.d/00-gazebo.list'
 rosdep update
-rosdep resolve gz-harmonic # or gz-garden or gz-ionic
+rosdep resolve gz-harmonic # or gz-garden or gz-ionic or gz-jetty
 # Navigate to your ROS workspace before the next command.
 rosdep install --from-paths src --ignore-src -y
 ```
@@ -88,7 +105,7 @@ brew install opencv gstreamer
 ```
 
 Ensure the `GZ_VERSION` environment variable is set to either
-`garden` or `harmonic` or `ionic`.
+`garden` or `harmonic` or `ionic` or `jetty` or `lyrical`.
 
 Clone the repo and build:
 

@@ -18,11 +18,18 @@
   <build_depend>gstreamer1.0-libav</build_depend>  
   <build_depend>gstreamer1.0-gl</build_depend>  
 
-  <!-- Harmonic (default) -->
+  <!-- Lyrical / Gazebo vendor packages (default on ROS Lyrical hosts) -->
+  <depend condition="$GZ_VERSION == lyrical">gz_cmake_vendor</depend>
+  <depend condition="$GZ_VERSION == lyrical">gz_common_vendor</depend>
+  <depend condition="$GZ_VERSION == lyrical">gz_rendering_vendor</depend>
+  <depend condition="$GZ_VERSION == lyrical">gz_sim_vendor</depend>
+  <depend condition="$GZ_VERSION == ''">gz_cmake_vendor</depend>
+  <depend condition="$GZ_VERSION == ''">gz_common_vendor</depend>
+  <depend condition="$GZ_VERSION == ''">gz_rendering_vendor</depend>
+  <depend condition="$GZ_VERSION == ''">gz_sim_vendor</depend>
+  <!-- Harmonic -->
   <depend condition="$GZ_VERSION == harmonic">gz-cmake3</depend>
   <depend condition="$GZ_VERSION == harmonic">gz-sim8</depend>
-  <depend condition="$GZ_VERSION == ''">gz-cmake3</depend>
-  <depend condition="$GZ_VERSION == ''">gz-sim8</depend>
   <!-- Ionic -->
   <depend condition="$GZ_VERSION == ionic">gz-cmake4</depend>
   <depend condition="$GZ_VERSION == ionic">gz-sim9</depend>
@@ -39,4 +46,3 @@
     <build_type>ament_cmake</build_type>
   </export>
 </package>
-
