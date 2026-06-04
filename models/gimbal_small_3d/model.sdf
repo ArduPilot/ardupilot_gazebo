@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <sdf version="1.9">
   <model name="gimbal_small_3d">
-    <!-- <pose>0 0 0.18 0 0 0</pose> -->
+    <pose>0 0 0.18 0 0 0</pose>
     <link name="gimbal_link">
       <inertial>
         <mass>0.2</mass>
@@ -17,7 +17,7 @@
       <visual name="gimbal_visual">
         <geometry>
           <mesh>
-            <uri>package://ardupilot_gazebo/models/gimbal_small_3d/meshes/base_plate.dae</uri>
+            <uri>model://gimbal_small_3d/meshes/base_plate.dae</uri>
           </mesh>
         </geometry>
         <material>
@@ -51,7 +51,7 @@
       <visual name="yaw_visual">
         <geometry>
           <mesh>
-            <uri>package://ardupilot_gazebo/models/gimbal_small_3d/meshes/yaw_arm.dae</uri>
+            <uri>model://gimbal_small_3d/meshes/yaw_arm.dae</uri>
           </mesh>
         </geometry>
         <material>
@@ -63,7 +63,7 @@
       <collision name="yaw_collision">
         <geometry>
           <mesh>
-            <uri>package://ardupilot_gazebo/models/gimbal_small_3d/meshes/yaw_arm.dae</uri>
+            <uri>model://gimbal_small_3d/meshes/yaw_arm.dae</uri>
           </mesh>
         </geometry>
       </collision>
@@ -99,7 +99,7 @@
       <visual name="roll_visual">
         <geometry>
           <mesh>
-            <uri>package://ardupilot_gazebo/models/gimbal_small_3d/meshes/roll_arm.dae</uri>
+            <uri>model://gimbal_small_3d/meshes/roll_arm.dae</uri>
           </mesh>
         </geometry>
         <material>
@@ -111,7 +111,7 @@
       <collision name="roll_collision">
         <geometry>
           <mesh>
-            <uri>package://ardupilot_gazebo/models/gimbal_small_3d/meshes/roll_arm.dae</uri>
+            <uri>model://gimbal_small_3d/meshes/roll_arm.dae</uri>
           </mesh>
         </geometry>
       </collision>
@@ -148,7 +148,7 @@
         <pose>0 0 0 0 0 0</pose>
         <geometry>
           <mesh>
-            <uri>package://ardupilot_gazebo/models/gimbal_small_3d/meshes/camera_enclosure.dae</uri>
+            <uri>model://gimbal_small_3d/meshes/camera_enclosure.dae</uri>
           </mesh>
         </geometry>
         <material>
@@ -161,7 +161,7 @@
         <pose>0 0 0 0 0 0</pose>
         <geometry>
           <mesh>
-            <uri>package://ardupilot_gazebo/models/gimbal_small_3d/meshes/camera_enclosure.dae</uri>
+            <uri>model://gimbal_small_3d/meshes/camera_enclosure.dae</uri>
           </mesh>
         </geometry>
       </collision>
@@ -189,8 +189,9 @@
         </geometry>
       </collision>
       <sensor name="camera" type="camera">
-        <gz_frame_id>pitch_link</gz_frame_id>
-        <pose>0 0 0 -1.57 -1.57 0</pose>
+        <!-- Original gimbal camera, kept at its mounted location and rotated
+             so its optical axis looks down in the neutral gimbal attitude. -->
+        <pose>0 0 0 0 0 -1.57079632679</pose>
         <camera>
           <horizontal_fov>2.0</horizontal_fov>
           <image>

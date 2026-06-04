@@ -2,12 +2,12 @@
 <sdf version="1.9">
   <model name="iris_with_gimbal">
     <include merge="true">
-      <uri>package://ardupilot_gazebo/models/iris_with_standoffs</uri>
+      <uri>model://iris_with_standoffs</uri>
       <name>iris</name>
     </include>
 
     <include merge="true">
-      <uri>package://ardupilot_gazebo/models/gimbal_small_3d</uri>
+      <uri>model://gimbal_small_3d</uri>
       <name>gimbal</name>
       <pose degrees="true">0 -0.01 -0.124923 90 0 90</pose>
     </include>
@@ -302,42 +302,6 @@
         <cmd_max>2.5</cmd_max>
         <cmd_min>-2.5</cmd_min>
         <controlVelocitySlowdownSim>1</controlVelocitySlowdownSim>
-      </control>
-
-      <!-- roll range is -30 to +30 deg -->
-      <control channel="8">
-        <jointName>roll_joint</jointName>
-        <multiplier>1.047197551196</multiplier>
-        <offset>-0.5</offset>
-        <servo_min>1100</servo_min>
-        <servo_max>1900</servo_max>
-        <type>COMMAND</type>
-        <cmd_topic>/gimbal/cmd_roll</cmd_topic>
-        <p_gain>2</p_gain>
-      </control>
-
-      <!-- pitch range is -135 to +45 deg -->
-      <control channel="9">
-        <jointName>pitch_joint</jointName>
-        <multiplier>-3.14159265</multiplier>
-        <offset>-0.75</offset>
-        <servo_min>1100</servo_min>
-        <servo_max>1900</servo_max>
-        <type>COMMAND</type>
-        <cmd_topic>/gimbal/cmd_pitch</cmd_topic>
-        <p_gain>2</p_gain>
-      </control>
-
-      <!-- yaw range is -160 to +160 deg -->
-      <control channel="10">
-        <jointName>yaw_joint</jointName>
-        <multiplier>-5.5850536</multiplier>
-        <offset>-0.5</offset>
-        <servo_min>1100</servo_min>
-        <servo_max>1900</servo_max>
-        <type>COMMAND</type>
-        <cmd_topic>/gimbal/cmd_yaw</cmd_topic>
-        <p_gain>2</p_gain>
       </control>
 
     </plugin>

@@ -120,5 +120,11 @@
       <pose degrees="true">0 0 0.195 0 0 90</pose>
     </include>
 
+    <include>
+      <name>r1_rover</name>
+      <uri>model://r1_rover</uri>
+      <pose>1.7 0 0.05 0 0 0</pose>
+    </include>
+
   </world>
 </sdf>

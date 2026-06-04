@@ -1,0 +1,44 @@
+<?xml version='1.0'?>
+<sdf version='1.9'>
+  <model name='aruco_landing_marker'>
+    <static>false</static>
+    <link name='pad_link'>
+      <pose>0 0 0 0 0 0</pose>
+      <inertial>
+        <mass>0.5</mass>
+        <inertia>
+          <ixx>0.001</ixx>
+          <iyy>0.001</iyy>
+          <izz>0.001</izz>
+        </inertia>
+      </inertial>
+      <collision name='pad_collision'>
+        <geometry>
+          <box>
+            <size>0.5 0.5 0.02</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name='pad_visual'>
+        <geometry>
+          <box>
+            <size>0.5 0.5 0.02</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.8 0.2 0.2 1</ambient>
+          <diffuse>0.8 0.2 0.2 1</diffuse>
+        </material>
+      </visual>
+      <surface>
+        <contact>
+          <ode/>
+        </contact>
+      </surface>
+    </link>
+    <plugin name='PadVelocityPlugin' filename='libPadVelocityPlugin.so'>
+      <pad_link>pad_link</pad_link>
+      <cmd_topic>/model/aruco_landing_marker/cmd_vel</cmd_topic>
+    </plugin>
+  </model>
+</sdf>

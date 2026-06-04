@@ -3,6 +3,7 @@
   <model name='iris_with_standoffs'>
     <pose>0 0 0 0 0 0</pose>
     <link name='base_link'>
+      <enable_wind>true</enable_wind>
       <velocity_decay>
         <linear>0.0</linear>
         <angular>0.0</angular>
@@ -23,7 +24,7 @@
         <pose>0 0 0 0 0 0</pose>
         <geometry>
           <mesh>
-            <uri>package://ardupilot_gazebo/models/iris_with_standoffs/meshes/iris_collision.stl</uri>
+            <uri>model://iris_with_standoffs/meshes/iris_collision.stl</uri>
           </mesh>
         </geometry>
         <surface>
@@ -137,7 +138,7 @@
       <visual name='base_visual'>
         <geometry>
           <mesh>
-            <uri>package://ardupilot_gazebo/models/iris_with_standoffs/meshes/iris.dae</uri>
+            <uri>model://iris_with_standoffs/meshes/iris.dae</uri>
           </mesh>
         </geometry>
         <material>
@@ -270,7 +271,6 @@
         </inertia>
       </inertial>
       <sensor name="imu_sensor" type="imu">
-        <gz_frame_id>imu_link</gz_frame_id>
         <pose degrees="true">0 0 0 180 0 0</pose>
         <always_on>1</always_on>
         <update_rate>1000.0</update_rate>
@@ -320,7 +320,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>package://ardupilot_gazebo/models/iris_with_standoffs/meshes/iris_prop_ccw.dae</uri>
+            <uri>model://iris_with_standoffs/meshes/iris_prop_ccw.dae</uri>
           </mesh>
         </geometry>
         <material>
@@ -378,7 +378,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>package://ardupilot_gazebo/models/iris_with_standoffs/meshes/iris_prop_ccw.dae</uri>
+            <uri>model://iris_with_standoffs/meshes/iris_prop_ccw.dae</uri>
           </mesh>
         </geometry>
         <material>
@@ -436,7 +436,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>package://ardupilot_gazebo/models/iris_with_standoffs/meshes/iris_prop_cw.dae</uri>
+            <uri>model://iris_with_standoffs/meshes/iris_prop_cw.dae</uri>
           </mesh>
         </geometry>
         <material>
@@ -494,7 +494,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>package://ardupilot_gazebo/models/iris_with_standoffs/meshes/iris_prop_cw.dae</uri>
+            <uri>model://iris_with_standoffs/meshes/iris_prop_cw.dae</uri>
           </mesh>
         </geometry>
         <material>

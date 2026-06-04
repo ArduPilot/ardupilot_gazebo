@@ -143,6 +143,17 @@ target_link_libraries(GstCameraPlugin PRIVATE
   ${GST_LINK_LIBRARIES}
 )
 
+add_library(PadVelocityPlugin
+  SHARED
+  src/PadVelocityPlugin.cc
+)
+target_include_directories(PadVelocityPlugin PRIVATE
+  include
+)
+target_link_libraries(PadVelocityPlugin PRIVATE
+  gz-sim${GZ_SIM_VER}::gz-sim${GZ_SIM_VER}
+)
+
 # --------------------------------------------------------------------------- #
 # Install.
 
@@ -152,6 +163,7 @@ install(
   ParachutePlugin
   CameraZoomPlugin
   GstCameraPlugin
+  PadVelocityPlugin
   DESTINATION lib/${PROJECT_NAME}
 )
 
