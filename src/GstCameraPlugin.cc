@@ -73,8 +73,10 @@ class GstCameraPlugin::Impl {
     unsigned int width{0};
     unsigned int height{0};
 
-    // Unused by actual pipeline since it's based on the gazebo topic rate?
-    unsigned int rate{5};
+    // Declared framerate for appsrc caps; actual rate follows the gazebo
+    // topic, but downstream elements pace/buffer by this declaration, so it
+    // must be >= the camera sensor's update_rate.
+    unsigned int rate{30};
 
     pthread_t threadId;
     bool isGstMainLoopActive{false};
@@ -413,6 +415,9 @@ void GstCameraPlugin::Impl::CreateGenericPipeline(GstElement *pipeline)
     GstElement *payloader = gst_element_factory_make("rtph264pay", nullptr);
     GstElement *sink = gst_element_factory_make("udpsink", nullptr);
 
+    // Resend SPS/PPS every second so receivers can join mid-stream
+    g_object_set(G_OBJECT(payloader), "config-interval", 1, nullptr);
+
     g_object_set(G_OBJECT(sink), "host", udpHost.c_str(),
         "port", udpPort, nullptr);
 
@@ -483,7 +488,10 @@ GstElement* GstCameraPlugin::Impl::CreateEncoder()
     else
     {
         encoder = gst_element_factory_make("x264enc", nullptr);
-        g_object_set(G_OBJECT(encoder), "bitrate", 800, "speed-preset", 6,
+        // speed-preset 1 (ultrafast): preset 6 (medium) ate most of a core at
+        // 720p on this board, dragging the lockstep sim's real-time factor
+        // down — which directly lowers the wall-clock camera FPS.
+        g_object_set(G_OBJECT(encoder), "bitrate", 2500, "speed-preset", 1,
             "tune", 4, "key-int-max", 10, nullptr);
     }
     return encoder;
