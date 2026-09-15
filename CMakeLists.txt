@@ -94,6 +94,7 @@ pkg_check_modules(GST REQUIRED gstreamer-1.0 gstreamer-app-1.0)
 add_library(ArduPilotPlugin
     SHARED
     src/ArduPilotPlugin.cc
+    src/BatteryModel.cc
     src/SocketUDP.cc
     src/Util.cc
 )
@@ -142,6 +143,20 @@ target_link_libraries(GstCameraPlugin PRIVATE
   ${OpenCV_LIBS}
   ${GST_LINK_LIBRARIES}
 )
+
+# --------------------------------------------------------------------------- #
+# Tests.
+
+enable_testing()
+
+add_executable(battery_model_test
+  tests/battery_model_test.cc
+  src/BatteryModel.cc
+)
+target_include_directories(battery_model_test PRIVATE
+  include
+)
+add_test(NAME battery_model_test COMMAND battery_model_test)
 
 # --------------------------------------------------------------------------- #
 # Install.

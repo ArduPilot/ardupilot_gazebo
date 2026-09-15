@@ -59,6 +59,8 @@
 
 #include <sdf/sdf.hh>
 
+#include "BatteryModel.hh"
+
 #include "SocketUDP.hh"
 #include "Util.hh"
 
@@ -230,7 +232,7 @@ class gz::sim::systems::ArduPilotPluginPrivate
   public: std::string fdm_address{"127.0.0.1"};
 
   /// \brief The address for the SITL flight controller - auto detected
-  public: const char* fcu_address{nullptr};
+  public: std::string fcu_address;
 
   /// \brief The port for the flight dynamics model
   public: uint16_t fdm_port_in{9002};
@@ -246,6 +248,19 @@ class gz::sim::systems::ArduPilotPluginPrivate
 
   /// \brief Set true to prevent SITL from trying to sync with wall-time
   public: bool isNoTimeSync{true};
+
+  /// \brief Simulated battery pack. Only fed and reported when the model's
+  /// plugin declares a <battery> element; without one the state packet keeps
+  /// its upstream shape and ArduPilot falls back to its own battery model.
+  public: bool batteryEnabled{false};
+
+  /// \brief The pack itself, driven by the rotors' electrical draw.
+  public: BatteryModel battery;
+
+  /// \brief Watts drawn per (rad/s)^3 of rotor speed, summed over the rotors.
+  /// A propeller's power goes as the cube of its speed, so one coefficient
+  /// covers hover, climb and cruise; calibrate it at hover (see plan.md).
+  public: double powerCoefficient{0.0};
 
   /// \brief Set true if have 32 servo channels
   public: bool have32Channels{false};
@@ -436,6 +451,24 @@ void gz::sim::systems::ArduPilotPlugin::Reset(const UpdateInfo &_info,
             gz::sim::components::JointVelocityCmd({0}));
       }
     }
+
+    // The battery reads rotor speed. getJointByName() already adds this
+    // component at load time; re-enable it here because a world reset can
+    // take it away, as it does the ones above.
+    if (this->dataPtr->batteryEnabled &&
+        this->dataPtr->controls[i].type == "VELOCITY")
+    {
+      enableComponent<components::JointVelocity>(
+          _ecm, this->dataPtr->controls[i].joint, true);
+    }
+  }
+
+  // A reset hands ArduPilot a fresh aircraft, so hand it a fresh pack too.
+  // Otherwise the charge burnt before the reset carries over and a few resets
+  // into a session the aircraft is flat on the ground.
+  if (this->dataPtr->batteryEnabled)
+  {
+    this->dataPtr->battery.Reset();
   }
 }
 
@@ -519,6 +552,39 @@ void gz::sim::systems::ArduPilotPlugin::Configure(
 
     this->dataPtr->have32Channels =
     sdfClone->Get("have_32_channels", false).first;
+
+  // Simulated battery (optional). With --model JSON there is no SITL Frame, so
+  // ArduPilot cannot model the pack itself: declaring this element is what
+  // makes battery.voltage / battery.current appear in the state packet.
+  if (sdfClone->HasElement("battery"))
+  {
+    sdf::ElementPtr batterySDF = sdfClone->GetElement("battery");
+    const double cells = batterySDF->Get("cells", 6.0).first;
+    const double capacityAh = batterySDF->Get("capacityAh", 0.0).first;
+    const double resistance = batterySDF->Get("resistance", 0.013).first;
+    const double maxCurrent = batterySDF->Get("maxCurrent", 200.0).first;
+    this->dataPtr->powerCoefficient =
+        batterySDF->Get("powerCoefficient", 0.0).first;
+
+    this->dataPtr->battery.Setup(cells, capacityAh, resistance, maxCurrent);
+    this->dataPtr->batteryEnabled = true;
+
+    gzmsg << "[" << this->dataPtr->modelName << "] "
+          << "battery: " << cells << "S, " << capacityAh << " Ah, "
+          << resistance << " ohm, max " << maxCurrent << " A, "
+          << "powerCoefficient " << this->dataPtr->powerCoefficient << "\n";
+
+    // Without a coefficient the pack draws nothing, which looks exactly like
+    // the problem this element exists to fix -- and worse, ArduPilot now takes
+    // our reading instead of its own fallback, so nothing else reports a load.
+    if (this->dataPtr->powerCoefficient <= 0.0)
+    {
+      gzwarn << "[" << this->dataPtr->modelName << "] "
+             << "battery has no positive <powerCoefficient>: the pack will "
+             << "report 0 A and a voltage that never moves. See the README "
+             << "for how to calibrate it.\n";
+    }
+  }
 
   // Add the signal handler
   this->dataPtr->sigHandler.AddCallback(
@@ -1304,6 +1370,11 @@ void gz::sim::systems::ArduPilotPlugin::ApplyMotorForces(
     const double _dt,
     gz::sim::EntityComponentManager &_ecm)
 {
+  // Rotor speed cubed, summed over the rotors, for the battery model below.
+  // Control surfaces and the gimbal are left out: they are position servos
+  // drawing a rounding error next to the rotors.
+  double rotorSpeedCubed = 0.0;
+
   // update velocity PID for controls and apply force to joint
   for (size_t i = 0; i < this->dataPtr->controls.size(); ++i)
   {
@@ -1413,6 +1484,42 @@ void gz::sim::systems::ArduPilotPlugin::ApplyMotorForces(
       }
     }
   }
+
+  // Advance the pack on simulation time, so a paused world does not discharge
+  // it.
+  if (this->dataPtr->batteryEnabled)
+  {
+    for (size_t i = 0; i < this->dataPtr->controls.size(); ++i)
+    {
+      if (this->dataPtr->controls[i].type != "VELOCITY")
+      {
+        continue;
+      }
+      const components::JointVelocity *vComp =
+          _ecm.Component<components::JointVelocity>(
+              this->dataPtr->controls[i].joint);
+      if (vComp == nullptr || vComp->Data().empty())
+      {
+        continue;
+      }
+      // The joint runs at the real rotor speed divided by this factor (see
+      // the command path above), so multiply it back out. Without this the
+      // coefficient would absorb the factor -- which works only while every
+      // rotor shares one value, and silently mis-weights them when they differ.
+      const double speed = std::fabs(vComp->Data()[0]) *
+          this->dataPtr->controls[i].rotorVelocitySlowdownSim;
+      rotorSpeedCubed += speed * speed * speed;
+    }
+
+    // ApplyMotorForces is only called while ArduPilot is connected, and
+    // lastControllerUpdateTime only advances then, so the first step after a
+    // late connection or a reconnection carries the whole gap. Discharging a
+    // minute of hover in one step would be a visible drop; cap what the pack
+    // can see in a single step.
+    this->dataPtr->battery.Update(
+        this->dataPtr->powerCoefficient * rotorSpeedCubed,
+        std::min(_dt, 0.1));
+  }
 }
 
 /////////////////////////////////////////////////
@@ -1422,7 +1529,7 @@ namespace
 template<typename TServoPacket>
 ssize_t getServoPacket(
   SocketUDP &_sock,
-  const char *&_fcu_address,
+  std::string &_fcu_address,
   uint16_t &_fcu_port_out,
   uint32_t _waitMs,
   const std::string &_modelName,
@@ -1431,7 +1538,7 @@ ssize_t getServoPacket(
 {
     ssize_t recvSize = _sock.recv(&_pkt, sizeof(TServoPacket), _waitMs);
 
-    _sock.get_client_address(_fcu_address, _fcu_port_out);
+    _sock.get_client_address_str(_fcu_address, _fcu_port_out);
 
     // drain the socket in the case we're backed up
     int counter = 0;
@@ -1599,8 +1706,9 @@ bool gz::sim::systems::ArduPilotPlugin::ReceiveServoPacket()
         gzwarn << "ArduPilot controller has reset\n";
     }
 
-    // check for duplicate frame
-    else if (pkt_frame_count == this->dataPtr->fcu_frame_count)
+    // check for duplicate frame (only when online; offline allows recovery)
+    else if (pkt_frame_count == this->dataPtr->fcu_frame_count
+             && this->dataPtr->arduPilotOnline)
     {
         gzwarn << "Duplicate input frame\n";
 
@@ -1962,6 +2070,20 @@ void gz::sim::systems::ArduPilotPlugin::CreateStateJSON(
     writer.Double(velWldA.Z());
     writer.EndArray();
 
+    // Battery. SIM_JSON takes these as the FDM's own reading and stops using
+    // its internal model, so send them only when we are actually simulating a
+    // pack.
+    if (this->dataPtr->batteryEnabled)
+    {
+      writer.Key("battery");
+      writer.StartObject();
+      writer.Key("voltage");
+      writer.Double(this->dataPtr->battery.Voltage());
+      writer.Key("current");
+      writer.Double(this->dataPtr->battery.Current());
+      writer.EndObject();
+    }
+
     // Range sensor
     {
       // Aquire lock on this->dataPtr->ranges
@@ -2031,7 +2153,7 @@ void gz::sim::systems::ArduPilotPlugin::SendState() const
     this->dataPtr->sock.sendto(
         this->dataPtr->json_str.c_str(),
         this->dataPtr->json_str.size(),
-        this->dataPtr->fcu_address,
+        this->dataPtr->fcu_address.c_str(),
         this->dataPtr->fcu_port_out);
 
 #if DEBUG_JSON_IO

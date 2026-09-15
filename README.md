@@ -273,6 +273,78 @@ Example usage:
 
 `rc 8 1500` - Gimbal yaw neutral
 
+### 5. Simulated battery
+
+A model may declare a battery pack, which the plugin then discharges and
+reports to ArduPilot as `battery.voltage` and `battery.current` in the state
+packet.
+
+This is worth doing because `--model JSON` selects SITL's JSON backend, which
+has no `Frame`: ArduPilot's own pack model (`SIM_Battery`) never runs, and its
+fallback model is inert too, since that one derives throttle from a motor mask
+only the frame-based backends set. Without a pack simulated here, an aircraft
+flown through Gazebo reports a flat `SIM_BATT_VOLTAGE` and no current at all,
+whatever `BATT_MONITOR` is set to.
+
+Add a `<battery>` element inside the plugin:
+
+```xml
+<plugin name="ArduPilotPlugin" filename="ArduPilotPlugin">
+  ...
+  <battery>
+    <cells>6</cells>
+    <capacityAh>20.9</capacityAh>
+    <resistance>0.013</resistance>
+    <maxCurrent>200</maxCurrent>
+    <powerCoefficient>2.74e-7</powerCoefficient>
+  </battery>
+</plugin>
+```
+
+| Element | Meaning |
+| --- | --- |
+| `cells` | Cells in series. Full charge is 4.2 V each. |
+| `capacityAh` | Usable capacity, Ah. Zero means an unlimited pack whose voltage never moves, matching ArduPilot's SITL. |
+| `resistance` | Whole-pack internal resistance, ohms, which sets the sag under load. |
+| `maxCurrent` | Clamp on the reported current, amps. |
+| `powerCoefficient` | Watts drawn per (rad/s)³ of rotor speed, summed over every `VELOCITY` control channel. |
+
+Leave the element out and nothing changes: no battery keys are sent and
+ArduPilot keeps its own behaviour.
+
+#### Calibrating `powerCoefficient`
+
+A propeller's power goes as the cube of its speed, so a single coefficient
+covers hover, climb and cruise, and a VTOL's draw falls by itself when the
+lift rotors stop in forward flight.
+
+Calibrate it at hover against a known current, which the same airframe flown
+without Gazebo will give you:
+
+1. Fly a steady hover with any starting value and read the reported current.
+2. Scale the coefficient by `wanted / measured` -- current is proportional to
+   it -- and fly the hover again to confirm.
+
+Do not try to derive it from motor torque. These rotor joints carry an
+artificial damping term for simulation stability, and at a few hundred rad/s
+that alone is several times the aircraft's real shaft power.
+
+#### Checking it works
+
+SITL prints the fields it is receiving whenever the set changes, so the
+console should list them shortly after the plugin connects:
+
+```
+JSON received:
+        timestamp
+        ...
+        battery: voltage
+        battery: current
+```
+
+Pack temperature is not simulated: an analog `BATT_MONITOR` has no temperature
+source in any case.
+
 ## Models
 
 In addition to the Iris and Zephyr models included here, a selection

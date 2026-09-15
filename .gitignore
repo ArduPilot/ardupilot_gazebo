@@ -103,3 +103,6 @@ cmake-build-debug
 
 # Catkin custom files
 CATKIN_IGNORE
+
+# Local design notes, not part of the plugin
+plan.md
