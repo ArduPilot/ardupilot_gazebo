@@ -162,13 +162,17 @@ class GZ_SIM_VISIBLE ArduPilotPlugin:
   /// \brief Receive a servo packet from ArduPilot
   ///
   /// Returns true if a servo packet was received, otherwise false.
-  private: bool ReceiveServoPacket();
+  private: bool ReceiveServoPacket(
+      const gz::sim::UpdateInfo &_info,
+      const gz::sim::EntityComponentManager &_ecm
+  );
 
   /// \brief Update the motor commands given servo PWM values
   private: void UpdateMotorCommands(const std::array<uint16_t, 32> &_pwm);
 
   /// \brief Create the state JSON
-  private: void CreateStateJSON(
+  /// Returns true if it could write the state, otherwise false.
+  private: bool CreateStateJSON(
       double _simTime,
       const gz::sim::EntityComponentManager &_ecm) const;
 
