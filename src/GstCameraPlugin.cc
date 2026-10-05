@@ -69,6 +69,7 @@ class GstCameraPlugin::Impl {
     bool useCuda{false};
     std::string imageTopic;
     std::string enableTopic;
+    bool autoStartStream{false};
 
     unsigned int width{0};
     unsigned int height{0};
@@ -176,6 +177,11 @@ void GstCameraPlugin::Configure(
         impl->enableTopic = _sdf->Get<std::string>("enable_topic");
     }
 
+    if (_sdf->HasElement("auto_start_stream"))
+    {
+        impl->autoStartStream = _sdf->Get<bool>("auto_start_stream");
+    }
+
     //! @note subscriptions are deferred to Pre-Update as the enclosing
     //  sensor must be fully initialised before entity - component queries
     //  for topics names etc. to succeed.
@@ -225,6 +231,10 @@ void GstCameraPlugin::PreUpdate(const UpdateInfo &_info,
         gzmsg << "GstCameraPlugin: enable topic ["
               << impl->enableTopic << "]" << std::endl;
 
+        impl->requestedStartStreaming = impl->autoStartStream;
+        gzmsg << "GstCameraPlugin: auto start stream ["
+              << impl->autoStartStream << "]" << std::endl;
+        
         // subscribe to gazebo topics
         impl->node.Subscribe(impl->imageTopic,
             &GstCameraPlugin::Impl::OnImage, impl.get());
