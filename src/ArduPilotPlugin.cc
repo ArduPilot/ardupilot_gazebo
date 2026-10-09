@@ -353,6 +353,11 @@ class gz::sim::systems::ArduPilotPluginPrivate
   ///        messages before timeout
   public: int connectionTimeoutMaxCount;
 
+  /// \brief Blocking wait (ms) for a servo packet per update once ArduPilot is
+  ///        online. SDF <recv_timeout_ms>, default 10 (the previous fixed
+  ///        value). Use 0 for several models in one world without lock-step.
+  public: uint32_t recvTimeoutMs{10};
+
   /// \brief Transform from model orientation to x-forward and z-up
   public: gz::math::Pose3d modelXYZToAirplaneXForwardZDown;
 
@@ -508,6 +513,9 @@ void gz::sim::systems::ArduPilotPlugin::Configure(
   // Missed update count before we declare arduPilotOnline status false
   this->dataPtr->connectionTimeoutMaxCount =
     sdfClone->Get("connectionTimeoutMaxCount", 10).first;
+
+  this->dataPtr->recvTimeoutMs =
+    sdfClone->Get("recv_timeout_ms", this->dataPtr->recvTimeoutMs).first;
 
   // Enforce lock-step simulation (has default: false)
   this->dataPtr->isLockStep =
@@ -1474,12 +1482,13 @@ bool gz::sim::systems::ArduPilotPlugin::ReceiveServoPacket()
         // Increase timeout for recv once we detect a packet from ArduPilot FCS.
         // If this value is too high then it will block the main Gazebo
         // update loop and adversely affect the RTF.
-        waitMs = 10;
+        waitMs = this->dataPtr->recvTimeoutMs;
     }
     else
     {
         // Otherwise skip quickly and do not set control force.
-        waitMs = 1;
+        const uint32_t offlineWaitMs = 1;
+        waitMs = std::min(offlineWaitMs, this->dataPtr->recvTimeoutMs);
     }
 
     // 16 / 32 channel compatibility
