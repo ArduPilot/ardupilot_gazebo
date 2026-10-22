@@ -1485,7 +1485,7 @@ bool gz::sim::systems::ArduPilotPlugin::ReceiveServoPacket()
     // 16 / 32 channel compatibility
     uint16_t pkt_magic{0};
     uint16_t pkt_frame_rate{0};
-    uint16_t pkt_frame_count{0};
+    uint32_t pkt_frame_count{0};
     std::array<uint16_t, 32> pkt_pwm;
     ssize_t recvSize{-1};
     if (this->dataPtr->have32Channels)
