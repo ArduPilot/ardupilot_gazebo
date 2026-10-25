@@ -213,11 +213,15 @@ plugin element:
   <udp_port>5600</udp_port>
   <use_basic_pipeline>true</use_basic_pipeline>
   <use_cuda>false</use_cuda>
+  <auto_start_stream>false</auto_start_stream>
 </plugin>
 ```
 
 The `<image_topic>` and `<enable_topic>` parameters are deduced from the
 topic name for the camera sensor, but may be overriden if required.
+
+The `<auto_start_stream>` parameter is used if you don't want to start streaming
+by manually having to send a message on the `<enable_topic>`.
 
 The `gimbal.sdf` world includes a 3 degrees of freedom gimbal with a
 zoomable camera. To start streaming:
