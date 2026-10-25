@@ -20,6 +20,7 @@
 #include <gst/app/gstappsrc.h>
 #include <gst/gst.h>
 
+#include <cmath>
 #include <iostream>
 #include <memory>
 #include <string>
@@ -73,8 +74,10 @@ class GstCameraPlugin::Impl {
     unsigned int width{0};
     unsigned int height{0};
 
-    // Unused by actual pipeline since it's based on the gazebo topic rate?
-    unsigned int rate{5};
+    // Declared framerate for appsrc caps; actual rate follows the gazebo
+    // topic, but downstream elements pace/buffer by this declaration, so it
+    // is set from the camera sensor's update_rate when one is given.
+    unsigned int rate{30};
 
     pthread_t threadId;
     bool isGstMainLoopActive{false};
@@ -132,6 +135,15 @@ void GstCameraPlugin::Configure(
         gzerr << "GstCameraPlugin: camera sensor has invalid name. "
                  "Failed to initialize" << std::endl;
         return;
+    }
+
+    if (auto cameraComp = _ecm.Component<components::Camera>(_entity))
+    {
+        double updateRate = cameraComp->Data().UpdateRate();
+        if (updateRate > 0)
+        {
+            impl->rate = static_cast<unsigned int>(std::ceil(updateRate));
+        }
     }
 
     if (_sdf->HasElement("udp_host"))
@@ -412,6 +424,9 @@ void GstCameraPlugin::Impl::CreateGenericPipeline(GstElement *pipeline)
     GstElement *encoder = CreateEncoder();
     GstElement *payloader = gst_element_factory_make("rtph264pay", nullptr);
     GstElement *sink = gst_element_factory_make("udpsink", nullptr);
+
+    // Resend SPS/PPS with every IDR frame so receivers can join mid-stream
+    g_object_set(G_OBJECT(payloader), "config-interval", -1, nullptr);
 
     g_object_set(G_OBJECT(sink), "host", udpHost.c_str(),
         "port", udpPort, nullptr);
