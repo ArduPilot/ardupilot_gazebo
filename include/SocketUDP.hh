@@ -20,6 +20,7 @@
 
 #include <fcntl.h>
 #include <unistd.h>
+#include <string>
 
 #ifdef _WIN32
 #include <winsock2.h>
@@ -61,7 +62,7 @@ public:
     ssize_t recv(void *pkt, size_t size, uint32_t timeout_ms);
 
     /// \brief Get last client address and port
-    void get_client_address(const char *&ip_addr, uint16_t &port);
+    void get_client_address(std::string &ip_addr, uint16_t &port);
 
 private:
     /// \brief File descriptor.
