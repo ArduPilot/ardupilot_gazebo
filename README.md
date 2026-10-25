@@ -51,7 +51,7 @@ Manual - Gazebo Garden Dependencies:
 ```bash
 sudo apt update
 sudo apt install libgz-sim7-dev rapidjson-dev
-sudo apt install libopencv-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-plugins-bad gstreamer1.0-libav gstreamer1.0-gl
+sudo apt install libopencv-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-gl
 ```
 
 #### Harmonic (apt)
@@ -61,7 +61,7 @@ Manual - Gazebo Harmonic Dependencies:
 ```bash
 sudo apt update
 sudo apt install libgz-sim8-dev rapidjson-dev
-sudo apt install libopencv-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-plugins-bad gstreamer1.0-libav gstreamer1.0-gl
+sudo apt install libopencv-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-gl
 ```
 
 #### Rosdep
@@ -213,8 +213,16 @@ plugin element:
   <udp_port>5600</udp_port>
   <use_basic_pipeline>true</use_basic_pipeline>
   <use_cuda>false</use_cuda>
+  <use_vaapi>true</use_vaapi>
 </plugin>
 ```
+
+Video is encoded in H.264 with `nvh264enc` when `<use_cuda>` is true.
+Otherwise, when `<use_vaapi>` is true (the default), the plugin uses the
+VA-API hardware encoder `vah264enc` (Intel and AMD GPUs, from
+`gstreamer1.0-plugins-bad` with a VA driver such as `mesa-va-drivers` or
+`intel-media-va-driver`) when one is available, and falls back to the software
+encoder `x264enc` from `gstreamer1.0-plugins-ugly`.
 
 The `<image_topic>` and `<enable_topic>` parameters are deduced from the
 topic name for the camera sensor, but may be overriden if required.
