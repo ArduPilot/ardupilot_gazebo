@@ -68,6 +68,7 @@ class GstCameraPlugin::Impl {
     std::string rtmpLocation;
     bool useBasicPipeline{false};
     bool useCuda{false};
+    bool useVaapi{true};
     std::string imageTopic;
     std::string enableTopic;
 
@@ -176,6 +177,12 @@ void GstCameraPlugin::Configure(
     if (_sdf->HasElement("use_cuda"))
     {
         impl->useCuda = _sdf->Get<bool>("use_cuda");
+    }
+
+    // Use VA-API for video encoding when available
+    if (_sdf->HasElement("use_vaapi"))
+    {
+        impl->useVaapi = _sdf->Get<bool>("use_vaapi");
     }
 
     if (_sdf->HasElement("image_topic"))
@@ -390,12 +397,15 @@ void GstCameraPlugin::Impl::CreateRtmpPipeline(GstElement *pipeline)
     GstElement *queue = gst_element_factory_make("queue", nullptr);
     GstElement *converter = gst_element_factory_make("videoconvert", nullptr);
     GstElement *encoder = CreateEncoder();
+    // flvmux needs stream-format=avc, hardware encoders output byte-stream
+    GstElement *h264_parser = gst_element_factory_make("h264parse", nullptr);
     GstElement *payloader = gst_element_factory_make("flvmux", nullptr);
     GstElement *sink = gst_element_factory_make("rtmpsink", nullptr);
 
     g_object_set(G_OBJECT(sink), "location", rtmpLocation.c_str(), nullptr);
 
-    if (!source || !queue || !converter || !encoder || !payloader || !sink)
+    if (!source || !queue || !converter || !encoder || !h264_parser
+        || !payloader || !sink)
     {
         gzerr << "GstCameraPlugin: failed to create GStreamer elements"
               << std::endl;
@@ -404,11 +414,11 @@ void GstCameraPlugin::Impl::CreateRtmpPipeline(GstElement *pipeline)
 
     // Connect all elements to pipeline
     gst_bin_add_many(GST_BIN(pipeline), source, queue, converter, encoder,
-        payloader, sink, nullptr);
+        h264_parser, payloader, sink, nullptr);
 
     // Link all elements
     if (gst_element_link_many(source, queue, converter, encoder,
-        payloader, sink, nullptr) != TRUE)
+        h264_parser, payloader, sink, nullptr) != TRUE)
     {
         gzerr << "GstCameraPlugin: failed to link GStreamer elements"
               << std::endl;
@@ -497,9 +507,24 @@ GstElement* GstCameraPlugin::Impl::CreateEncoder()
     }
     else
     {
-        encoder = gst_element_factory_make("x264enc", nullptr);
-        g_object_set(G_OBJECT(encoder), "bitrate", 800, "speed-preset", 6,
-            "tune", 4, "key-int-max", 10, nullptr);
+        // VA-API hardware encoder, only registered when a VA device that
+        // supports H.264 encoding is found
+        if (useVaapi)
+        {
+            encoder = gst_element_factory_make("vah264enc", nullptr);
+        }
+        if (encoder)
+        {
+            gzdbg << "Using VA-API" << std::endl;
+            g_object_set(G_OBJECT(encoder), "bitrate", 800,
+                "key-int-max", 10, nullptr);
+        }
+        else
+        {
+            encoder = gst_element_factory_make("x264enc", nullptr);
+            g_object_set(G_OBJECT(encoder), "bitrate", 800, "speed-preset", 6,
+                "tune", 4, "key-int-max", 10, nullptr);
+        }
     }
     return encoder;
 }
