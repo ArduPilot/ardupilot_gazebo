@@ -402,6 +402,10 @@ void GstCameraPlugin::Impl::CreateRtmpPipeline(GstElement *pipeline)
     GstElement *payloader = gst_element_factory_make("flvmux", nullptr);
     GstElement *sink = gst_element_factory_make("rtmpsink", nullptr);
 
+    // keep only the latest frame when the encoder falls behind, rather than
+    // building up latency
+    g_object_set(G_OBJECT(queue), "max-size-buffers", 1,
+        "max-size-bytes", 0, "max-size-time", 0, "leaky", 2, nullptr);
     g_object_set(G_OBJECT(sink), "location", rtmpLocation.c_str(), nullptr);
 
     if (!source || !queue || !converter || !encoder || !h264_parser
@@ -432,8 +436,14 @@ void GstCameraPlugin::Impl::CreateGenericPipeline(GstElement *pipeline)
     GstElement *queue = gst_element_factory_make("queue", nullptr);
     GstElement *converter = gst_element_factory_make("videoconvert", nullptr);
     GstElement *encoder = CreateEncoder();
+    GstElement *h264_parser = gst_element_factory_make("h264parse", nullptr);
     GstElement *payloader = gst_element_factory_make("rtph264pay", nullptr);
     GstElement *sink = gst_element_factory_make("udpsink", nullptr);
+
+    // keep only the latest frame when the encoder falls behind, rather than
+    // building up latency
+    g_object_set(G_OBJECT(queue), "max-size-buffers", 1,
+        "max-size-bytes", 0, "max-size-time", 0, "leaky", 2, nullptr);
 
     // Resend SPS/PPS with every IDR frame so receivers can join mid-stream
     g_object_set(G_OBJECT(payloader), "config-interval", -1, nullptr);
@@ -441,7 +451,8 @@ void GstCameraPlugin::Impl::CreateGenericPipeline(GstElement *pipeline)
     g_object_set(G_OBJECT(sink), "host", udpHost.c_str(),
         "port", udpPort, nullptr);
 
-    if (!source || !queue || !converter || !encoder || !payloader || !sink)
+    if (!source || !queue || !converter || !encoder || !h264_parser
+        || !payloader || !sink)
     {
         gzerr << "GstCameraPlugin: failed to create GStreamer elements"
               << std::endl;
@@ -450,11 +461,11 @@ void GstCameraPlugin::Impl::CreateGenericPipeline(GstElement *pipeline)
 
     // Connect all elements to pipeline
     gst_bin_add_many(GST_BIN(pipeline), source, queue, converter, encoder,
-        payloader, sink, nullptr);
+        h264_parser, payloader, sink, nullptr);
 
     // Link all elements
     if (gst_element_link_many(source, queue, converter, encoder,
-        payloader, sink, nullptr) != TRUE)
+        h264_parser, payloader, sink, nullptr) != TRUE)
     {
         gzerr << "GstCameraPlugin: failed to link GStreamer elements"
               << std::endl;
@@ -473,6 +484,10 @@ void GstCameraPlugin::Impl::CreateMpeg2tsPipeline(GstElement *pipeline)
     GstElement *queue_mpeg = gst_element_factory_make("queue", nullptr);
     GstElement *sink = gst_element_factory_make("udpsink", nullptr);
 
+    // keep only the latest frame when the encoder falls behind, rather than
+    // building up latency
+    g_object_set(G_OBJECT(queue), "max-size-buffers", 1,
+        "max-size-bytes", 0, "max-size-time", 0, "leaky", 2, nullptr);
     g_object_set(G_OBJECT(payloader), "alignment", 7, nullptr);
     g_object_set(G_OBJECT(sink), "host", udpHost.c_str(), "port", udpPort,
         "sync", false, nullptr);
@@ -503,7 +518,9 @@ GstElement* GstCameraPlugin::Impl::CreateEncoder()
     {
         gzdbg << "Using Cuda" << std::endl;
         encoder = gst_element_factory_make("nvh264enc", nullptr);
-        g_object_set(G_OBJECT(encoder), "bitrate", 800, "preset", 1, nullptr);
+        // preset 5: low-latency-hp
+        g_object_set(G_OBJECT(encoder), "bitrate", 800, "preset", 5,
+            "gop-size", 10, nullptr);
     }
     else
     {
