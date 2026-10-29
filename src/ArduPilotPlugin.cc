@@ -306,6 +306,11 @@ class gz::sim::systems::ArduPilotPluginPrivate
 
     // Aquire lock and update the range data
     std::lock_guard<std::mutex> lock(this->rangeMsgMutex);
+    if (_sensorIndex < 0 ||
+        static_cast<size_t>(_sensorIndex) >= this->ranges.size())
+    {
+      return;
+    }
     this->ranges[_sensorIndex] = sample_min;
   }
 
@@ -893,7 +898,7 @@ void gz::sim::systems::ArduPilotPlugin::LoadRangeSensors(
     struct SensorIdentifier
     {
         std::string type;
-        int index;
+        int index{0};
         std::string topic;
     };
     std::vector<SensorIdentifier> sensorIds;
