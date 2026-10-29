@@ -5,7 +5,7 @@
       <uri>model://zephyr</uri>
     </include>
 
-    <!-- 
+    <!--
       The attachment link connected by a ball joint is to allow the
       aircraft to rotate freely below parachute, as detachable joint
       must be fixed.

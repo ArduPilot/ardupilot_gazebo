@@ -102,7 +102,7 @@ make -j4
 
 ## Configure
 
-Set the Gazebo environment variables in your `.bashrc` or `.zshrc` or in 
+Set the Gazebo environment variables in your `.bashrc` or `.zshrc` or in
 the terminal used to run Gazebo.
 
 #### Terminal
@@ -156,9 +156,9 @@ GUIDED> arm throttle
 GUIDED> takeoff 5
 ```
 
-### 2. Zephyr delta wing  
+### 2. Zephyr delta wing
 
-The Zephyr delta wing is positioned on the runway for vertical take-off. 
+The Zephyr delta wing is positioned on the runway for vertical take-off.
 
 #### Run Gazebo
 
@@ -184,7 +184,7 @@ FBWA> mode circle
 #### Increase the simulation speed
 
 The `zephyr_runway.sdf` world has a `<physics>` element configured to run
-faster than real time: 
+faster than real time:
 
 ```xml
 <physics name="1ms" type="ignore">
@@ -285,7 +285,7 @@ Example usage:
 
 In addition to the Iris and Zephyr models included here, a selection
 of models configured use the ArduPilot Gazebo plugin is available in
-[ArduPilot/SITL_Models](https://github.com/ArduPilot/SITL_Models). 
+[ArduPilot/SITL_Models](https://github.com/ArduPilot/SITL_Models).
 Click on the images to see further details.
 
 <table>

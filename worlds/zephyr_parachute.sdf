@@ -85,7 +85,7 @@
 
   A figure of 8 mission at alt = 100m is set.
 
-  MANUAL> fbwa            # switch mode 
+  MANUAL> fbwa            # switch mode
   FBWA>   arm throttle    # arm
   FBWA>   rc 3 1900       # vertical launch
   FBWA>   auto            # switch to auto
@@ -196,7 +196,7 @@
         </sensor>
       </link>
     </model>
-    
+
     <include>
       <uri>model://runway</uri>
       <pose degrees="true">-29 545 0 0 0 363</pose>
