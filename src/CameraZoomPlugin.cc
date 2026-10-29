@@ -39,7 +39,13 @@
 #include <gz/rendering/RenderingIface.hh>
 #include <gz/rendering/Scene.hh>
 
+#include <gz/sim/components/BoundingBoxCamera.hh>
 #include <gz/sim/components/Camera.hh>
+#include <gz/sim/components/DepthCamera.hh>
+#include <gz/sim/components/RgbdCamera.hh>
+#include <gz/sim/components/SegmentationCamera.hh>
+#include <gz/sim/components/ThermalCamera.hh>
+#include <gz/sim/components/WideAngleCamera.hh>
 #include <gz/sim/components/Model.hh>
 #include <gz/sim/components/Name.hh>
 #include <gz/sim/components/ParentEntity.hh>
@@ -103,6 +109,16 @@ class CameraZoomPlugin::Impl
 
     return std::optional<sim::Entity>(parent->Data());
   }
+
+  /// \todo(srmainwaring) replace with `gz::sim::Sensor` when available.
+  /// \brief Get the sdf::Sensor from any camera-family component on the entity.
+  /// LogicalCamera is excluded (no sdf::Camera, no zoom semantics).
+  /// \param[out] _typeId Matched component type id, or kComponentTypeIdInvalid.
+  /// \return sdf::Sensor* on success, nullptr if no supported component.
+  public: sdf::Sensor *CameraSensorSdf(
+    EntityComponentManager &_ecm,
+    Entity _entity,
+    ComponentTypeId &_typeId) const;
 
   /// \brief World occupied by the parent model.
   public: World world{kNullEntity};
@@ -237,6 +253,51 @@ void CameraZoomPlugin::Impl::InitialiseCamera()
       return;
     }
   }
+}
+
+//////////////////////////////////////////////////
+sdf::Sensor *CameraZoomPlugin::Impl::CameraSensorSdf(
+    EntityComponentManager &_ecm,
+    Entity _entity,
+    ComponentTypeId &_typeId) const
+{
+  _typeId = kComponentTypeIdInvalid;
+  if (auto *c = _ecm.Component<components::Camera>(_entity))
+  {
+    _typeId = components::Camera::typeId;
+    return &c->Data();
+  }
+  if (auto *c = _ecm.Component<components::BoundingBoxCamera>(_entity))
+  {
+    _typeId = components::BoundingBoxCamera::typeId;
+    return &c->Data();
+  }
+  if (auto *c = _ecm.Component<components::DepthCamera>(_entity))
+  {
+    _typeId = components::DepthCamera::typeId;
+    return &c->Data();
+  }
+  if (auto *c = _ecm.Component<components::RgbdCamera>(_entity))
+  {
+    _typeId = components::RgbdCamera::typeId;
+    return &c->Data();
+  }
+  if (auto *c = _ecm.Component<components::SegmentationCamera>(_entity))
+  {
+    _typeId = components::SegmentationCamera::typeId;
+    return &c->Data();
+  }
+  if (auto *c = _ecm.Component<components::ThermalCamera>(_entity))
+  {
+    _typeId = components::ThermalCamera::typeId;
+    return &c->Data();
+  }
+  if (auto *c = _ecm.Component<components::WideAngleCamera>(_entity))
+  {
+    _typeId = components::WideAngleCamera::typeId;
+    return &c->Data();
+  }
+  return nullptr;
 }
 
 //////////////////////////////////////////////////
@@ -409,8 +470,10 @@ void CameraZoomPlugin::PreUpdate(
   /// \todo(srmainwaring) replace with `gz::sim::Sensor` when available.
   // Entity cameraEntity = this->impl->cameraSensor.Entity();
   Entity cameraEntity = this->impl->cameraSensorEntity;
-  auto comp = _ecm.Component<components::Camera>(cameraEntity);
-  if (!comp)
+  ComponentTypeId sensorTypeId = kComponentTypeIdInvalid;
+  sdf::Sensor *sensorSdf =
+      this->impl->CameraSensorSdf(_ecm, cameraEntity, sensorTypeId);
+  if (!sensorSdf)
     return;
 
   if (this->impl->zoomChanged)
@@ -430,8 +493,7 @@ void CameraZoomPlugin::PreUpdate(
   }
 
   // Update component.
-  sdf::Sensor &sensor = comp->Data();
-  sdf::Camera *cameraSdf = sensor.CameraSensor();
+  sdf::Camera *cameraSdf = sensorSdf->CameraSensor();
   if (!cameraSdf)
     return;
 
@@ -478,7 +540,7 @@ void CameraZoomPlugin::PreUpdate(
       sensorWidth, newFocalLength);
   // Update rendering camera with the latest focal length.
   cameraSdf->SetHorizontalFov(newHfov);
-  _ecm.SetChanged(cameraEntity, components::Camera::typeId,
+  _ecm.SetChanged(cameraEntity, sensorTypeId,
     ComponentState::OneTimeChange);
 
   // Update rendering camera.

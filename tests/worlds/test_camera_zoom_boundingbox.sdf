@@ -1,0 +1,110 @@
+<?xml version="1.0" ?>
+<sdf version="1.9">
+  <world name="test_camera_zoom_boundingbox">
+    <physics name="1ms" type="ignored">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+    </physics>
+
+    <plugin name="gz::sim::systems::Physics"
+      filename="gz-sim-physics-system">
+    </plugin>
+    <plugin name="gz::sim::systems::Sensors"
+      filename="gz-sim-sensors-system">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+    <plugin name="gz::sim::systems::UserCommands"
+      filename="gz-sim-user-commands-system">
+    </plugin>
+    <plugin name="gz::sim::systems::SceneBroadcaster"
+      filename="gz-sim-scene-broadcaster-system">
+    </plugin>
+
+    <scene>
+      <ambient>1.0 1.0 1.0</ambient>
+      <background>0.8 0.8 0.8</background>
+    </scene>
+
+    <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.5 0.5 0.5 1</specular>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>50 50</size>
+            </plane>
+          </geometry>
+          <material>
+            <ambient>0.7 0.7 0.7 1</ambient>
+            <diffuse>0.7 0.7 0.7 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Target box for the bounding-box camera to detect. -->
+    <model name="target">
+      <static>true</static>
+      <pose>5 0 0.5 0 0 0</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <box><size>1 1 1</size></box>
+          </geometry>
+          <material>
+            <ambient>1 0.2 0.2 1</ambient>
+            <diffuse>1 0.2 0.2 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Sensor mount carrying a boundingbox_camera with CameraZoomPlugin.
+         Regression fixture for ArduPilot/ardupilot_gazebo issue #129:
+         CameraZoomPlugin must drive HFOV for non-Camera sensor components
+         (BoundingBoxCamera here, plus DepthCamera, RgbdCamera,
+         SegmentationCamera, ThermalCamera, WideAngleCamera).
+         To exercise: launch this world and publish on the zoom topic, e.g.
+           gz topic -t /model/cam_mount/sensor/camera/zoom/cmd_zoom \
+             -m gz.msgs.Double -p 'data: 4.0'
+         Before the fix, HFOV stays at 2.0 rad. After the fix it converges to
+         refHfov / zoom = 0.5 rad. -->
+    <model name="cam_mount">
+      <static>true</static>
+      <pose>0 0 0.5 0 0 0</pose>
+      <link name="link">
+        <sensor name="camera" type="boundingbox_camera">
+          <topic>boxes</topic>
+          <pose>0 0 0 0 0 0</pose>
+          <camera>
+            <box_type>2d</box_type>
+            <horizontal_fov>2.0</horizontal_fov>
+            <image>
+              <width>320</width>
+              <height>240</height>
+            </image>
+            <clip>
+              <near>0.1</near>
+              <far>100</far>
+            </clip>
+          </camera>
+          <always_on>1</always_on>
+          <update_rate>10</update_rate>
+
+          <plugin filename="CameraZoomPlugin" name="CameraZoomPlugin">
+            <max_zoom>125.0</max_zoom>
+          </plugin>
+        </sensor>
+      </link>
+    </model>
+  </world>
+</sdf>
