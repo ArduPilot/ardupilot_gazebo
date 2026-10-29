@@ -10,11 +10,11 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     name: ubuntu-build
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
         with:
           submodules: 'recursive'
 
@@ -40,6 +40,7 @@ jobs:
           libgstreamer1.0-dev \
           libgstreamer-plugins-base1.0-dev \
           gstreamer1.0-plugins-bad \
+          gstreamer1.0-plugins-ugly \
           gstreamer1.0-libav \
           gstreamer1.0-gl
 
@@ -48,10 +49,10 @@ jobs:
         id: ccache_cache_timestamp
         run: |
           NOW=$(date -u +"%F-%T")
-          echo "::set-output name=timestamp::${NOW}"
+          echo "timestamp=${NOW}" >> "$GITHUB_OUTPUT"
 
       - name: Cache ccache files
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.ccache
           key: ${{github.workflow}}-ccache-${{steps.ccache_cache_timestamp.outputs.timestamp}}
@@ -65,5 +66,5 @@ jobs:
         shell: bash
         run: |
           mkdir build && cd build
-          cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo
+          cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
           make -j4
