@@ -303,8 +303,8 @@
         <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Camera</uri>
     </include>
 
-    <include degrees="true">
-        <pose>-9.04 -6.04 4.97 0 51.5 -180</pose>
+    <include>
+        <pose degrees="true">-9.04 -6.04 4.97 0 51.5 -180</pose>
         <static>true</static>
         <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Depth Camera</uri>
     </include>
