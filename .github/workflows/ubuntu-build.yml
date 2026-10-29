@@ -11,7 +11,13 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-24.04
-    name: ubuntu-build
+    name: ubuntu-build (${{ matrix.gz }})
+    strategy:
+      fail-fast: false
+      matrix:
+        gz: [harmonic, jetty]
+    env:
+      GZ_VERSION: ${{ matrix.gz }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -21,7 +27,7 @@ jobs:
       - name: Setup Gazebo
         uses: gazebo-tooling/setup-gazebo@v0.3.0
         with:
-          required-gazebo-distributions: harmonic
+          required-gazebo-distributions: ${{ matrix.gz }}
 
       - name: Install Build Dependencies
         shell: bash
@@ -56,8 +62,8 @@ jobs:
         uses: actions/cache@v6
         with:
           path: ~/.ccache
-          key: ${{github.workflow}}-ccache-${{steps.ccache_cache_timestamp.outputs.timestamp}}
-          restore-keys: ${{github.workflow}}-ccache-  # restore ccache from either previous build on this branch or on master
+          key: ${{github.workflow}}-${{ matrix.gz }}-ccache-${{steps.ccache_cache_timestamp.outputs.timestamp}}
+          restore-keys: ${{github.workflow}}-${{ matrix.gz }}-ccache-  # restore ccache from either previous build on this branch or on master
 
       - name: Setup ccache
         run: |
@@ -69,3 +75,7 @@ jobs:
           mkdir build && cd build
           cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
           make -j4
+
+      - name: Check SDF files
+        run: |
+          scripts/check_sdf.sh
