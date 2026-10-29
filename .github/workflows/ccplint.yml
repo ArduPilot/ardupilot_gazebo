@@ -10,19 +10,13 @@ on: [push, pull_request]
 
 jobs:
   cpplint:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-slim
     name: cpplint
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-      - name: Setup
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-      - name: Install cpplint
-        run: |
-          pip install cpplint
+        uses: actions/checkout@v7
+      # ubuntu-slim provides python and pipx
       - name: Run cpplint
         run: |
-          cpplint ./include/*.hh
-          cpplint ./src/*.cc
+          pipx run cpplint ./include/*.hh
+          pipx run cpplint ./src/*.cc

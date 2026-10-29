@@ -5,16 +5,17 @@ name: cppcheck
 on: [push, pull_request]
 
 jobs:
-  cpplint:
-    runs-on: ubuntu-22.04
+  cppcheck:
+    runs-on: ubuntu-slim
     name: cppcheck
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
+      # cppcheck is not part of the ubuntu-slim image
       - name: Install cppcheck
         run: |
           sudo apt-get update
-          sudo apt-get install cppcheck
+          sudo apt-get install -y --no-install-recommends cppcheck
       - name: Run cppcheck
         run: |
           cppcheck --std=c++17 ./include/*.hh
