@@ -64,6 +64,18 @@ sudo apt install libgz-sim8-dev rapidjson-dev
 sudo apt install libopencv-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-gl
 ```
 
+#### Jetty (apt)
+
+Manual - Gazebo Jetty Dependencies:
+
+```bash
+sudo apt update
+sudo apt install libgz-sim10-dev rapidjson-dev
+sudo apt install libopencv-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-gl
+```
+
+Set `GZ_VERSION=jetty` when building, Harmonic is the default.
+
 #### Rosdep
 
 Use rosdep with
@@ -88,7 +100,7 @@ brew install opencv gstreamer
 ```
 
 Ensure the `GZ_VERSION` environment variable is set to either
-`garden` or `harmonic` or `ionic`.
+`garden`, `harmonic`, `ionic` or `jetty`.
 
 Clone the repo and build:
 
@@ -345,6 +357,20 @@ Click on the images to see further details.
 </tr>
 
 </table>
+
+## Development
+
+The checks run in CI can be run locally with [pre-commit](https://pre-commit.com):
+
+```bash
+pipx install pre-commit
+pre-commit install          # run the checks on every commit
+pre-commit run --all-files  # run all checks now
+```
+
+The `cppcheck` and `check-sdf` hooks need `cppcheck` and Gazebo installed,
+skip them with `SKIP=cppcheck,check-sdf` otherwise. The SDF files can also be
+checked directly with `scripts/check_sdf.sh [file.sdf ...]`.
 
 ## Troubleshooting
 
