@@ -42,7 +42,7 @@ elseif("$ENV{GZ_VERSION}" STREQUAL "ionic")
 
   gz_find_package(gz-rendering9 REQUIRED)
   set(GZ_RENDERING_VER ${gz-rendering9_VERSION_MAJOR})
-  
+
   gz_find_package(gz-sim9 REQUIRED)
   set(GZ_SIM_VER ${gz-sim9_VERSION_MAJOR})
 
@@ -57,7 +57,7 @@ elseif("$ENV{GZ_VERSION}" STREQUAL "jetty")
 
   gz_find_package(gz-rendering REQUIRED)
   set(GZ_RENDERING_VER "")
-  
+
   gz_find_package(gz-sim REQUIRED)
   set(GZ_SIM_VER "")
 
@@ -72,12 +72,12 @@ elseif("$ENV{GZ_VERSION}" STREQUAL "garden")
 
   gz_find_package(gz-rendering7 REQUIRED)
   set(GZ_RENDERING_VER ${gz-rendering7_VERSION_MAJOR})
-  
+
   gz_find_package(gz-sim7 REQUIRED)
   set(GZ_SIM_VER ${gz-sim7_VERSION_MAJOR})
 
   message(STATUS "Compiling against Gazebo Garden")
-else()  
+else()
   message(FATAL_ERROR "Unsupported GZ_VERSION: $ENV{GZ_VERSION}")
 endif()
 

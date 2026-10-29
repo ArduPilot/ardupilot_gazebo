@@ -1,5 +1,5 @@
 # GitHub Action to run cppcheck
-# 
+#
 name: cppcheck
 
 on: [push, pull_request]

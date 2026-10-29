@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<!-- 
+<!--
   Run example
   gz sim -v4 -r test_nested_model.sdf
 

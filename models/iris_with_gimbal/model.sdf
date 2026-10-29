@@ -8,7 +8,7 @@
     <include>
       <uri>model://gimbal_small_3d</uri>
       <name>gimbal</name>
-      <pose degrees="true">0 -0.01 -0.124923 90 0 90</pose>    
+      <pose degrees="true">0 -0.01 -0.124923 90 0 90</pose>
     </include>
 
     <joint name="gimbal_joint" type="revolute">

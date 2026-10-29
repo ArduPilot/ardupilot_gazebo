@@ -1,7 +1,7 @@
 # GitHub Action to run cpplint
-# 
+#
 # The cpplint configuration file is:
-# 
+#
 #   ./CPPLINT.cfg
 #
 name: ccplint
