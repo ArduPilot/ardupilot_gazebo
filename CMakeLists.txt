@@ -10,8 +10,8 @@ if(${ament_cmake_FOUND})
 endif()
 
 # --------------------------------------------------------------------------- #
-# Compile as C++14.
-set(CMAKE_CXX_STANDARD 14)
+# Compile as C++17.
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # --------------------------------------------------------------------------- #
@@ -134,6 +134,8 @@ add_library(GstCameraPlugin
 )
 target_include_directories(GstCameraPlugin PRIVATE
   include
+)
+target_include_directories(GstCameraPlugin SYSTEM PRIVATE
   ${OpenCV_INCLUDE_DIRS}
   ${GST_INCLUDE_DIRS}
 )
@@ -142,6 +144,18 @@ target_link_libraries(GstCameraPlugin PRIVATE
   ${OpenCV_LIBS}
   ${GST_LINK_LIBRARIES}
 )
+
+# --------------------------------------------------------------------------- #
+# Compiler warnings.
+
+foreach(target ArduPilotPlugin ParachutePlugin CameraZoomPlugin GstCameraPlugin)
+  if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    target_compile_options(${target} PRIVATE -Wall -Wextra)
+  endif()
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    target_compile_options(${target} PRIVATE -Wuseless-cast)
+  endif()
+endforeach()
 
 # --------------------------------------------------------------------------- #
 # Install.
