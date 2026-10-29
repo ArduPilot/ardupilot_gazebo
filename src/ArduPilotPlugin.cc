@@ -1975,21 +1975,27 @@ void gz::sim::systems::ArduPilotPlugin::CreateStateJSON(
       case 6:
           writer.Key("rng_6");
           writer.Double(this->dataPtr->ranges[5]);
+          [[fallthrough]];
       case 5:
           writer.Key("rng_5");
           writer.Double(this->dataPtr->ranges[4]);
+          [[fallthrough]];
       case 4:
           writer.Key("rng_4");
           writer.Double(this->dataPtr->ranges[3]);
+          [[fallthrough]];
       case 3:
           writer.Key("rng_3");
           writer.Double(this->dataPtr->ranges[2]);
+          [[fallthrough]];
       case 2:
           writer.Key("rng_2");
           writer.Double(this->dataPtr->ranges[1]);
+          [[fallthrough]];
       case 1:
           writer.Key("rng_1");
           writer.Double(this->dataPtr->ranges[0]);
+          break;
       default:
           break;
       }
