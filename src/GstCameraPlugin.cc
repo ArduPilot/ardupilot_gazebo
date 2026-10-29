@@ -20,6 +20,7 @@
 #include <gst/app/gstappsrc.h>
 #include <gst/gst.h>
 
+#include <atomic>
 #include <cmath>
 #include <iostream>
 #include <memory>
@@ -80,7 +81,10 @@ class GstCameraPlugin::Impl {
     unsigned int rate{30};
 
     pthread_t threadId;
-    bool isGstMainLoopActive{false};
+    std::atomic<bool> isGstMainLoopActive{false};
+    // set from a start request until the GStreamer thread exits, so that a
+    // second request while the pipeline is still being built is ignored
+    std::atomic<bool> isGstThreadRunning{false};
     bool requestedStartStreaming{false};
 
     GMainLoop *gst_loop{nullptr};
@@ -299,9 +303,12 @@ void GstCameraPlugin::Impl::InitializeCamera()
 
 void GstCameraPlugin::Impl::StartStreaming()
 {
-    if (!isGstMainLoopActive)
+    if (!isGstThreadRunning.exchange(true))
     {
-        pthread_create(&threadId, NULL, StartThread, this);
+        if (pthread_create(&threadId, NULL, StartThread, this) != 0)
+        {
+            isGstThreadRunning = false;
+        }
     }
 }
 
@@ -309,6 +316,7 @@ void *GstCameraPlugin::Impl::StartThread(void *param)
 {
     GstCameraPlugin::Impl *impl = (GstCameraPlugin::Impl *)param;
     impl->StartGstThread();
+    impl->isGstThreadRunning = false;
     return nullptr;
 }
 
