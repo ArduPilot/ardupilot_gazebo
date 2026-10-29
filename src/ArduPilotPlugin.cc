@@ -24,6 +24,7 @@
 
 #include <algorithm>
 #include <chrono>
+#include <cstdint>
 #include <functional>
 #include <memory>
 #include <mutex>
@@ -236,7 +237,7 @@ class gz::sim::systems::ArduPilotPluginPrivate
   public: uint16_t fdm_port_in{9002};
 
   /// \brief The port for the SITL flight controller - auto detected
-  public: uint16_t fcu_port_out;
+  public: uint16_t fcu_port_out{0};
 
   /// \brief The name of the IMU sensor
   public: std::string imuName;
@@ -294,7 +295,6 @@ class gz::sim::systems::ArduPilotPluginPrivate
     // Extract data
     double range_max = _msg.range_max();
     auto&& ranges = _msg.ranges();
-    auto&& intensities = _msg.intensities();
 
     // If there is no return, the range should be greater than range_max
     double sample_min = 2.0 * range_max;
@@ -356,7 +356,7 @@ class gz::sim::systems::ArduPilotPluginPrivate
 
   /// \brief Max number of consecutive missed ArduPilot controller
   ///        messages before timeout
-  public: int connectionTimeoutMaxCount;
+  public: int connectionTimeoutMaxCount{0};
 
   /// \brief Transform from model orientation to x-forward and z-up
   public: gz::math::Pose3d modelXYZToAirplaneXForwardZDown;
@@ -365,10 +365,10 @@ class gz::sim::systems::ArduPilotPluginPrivate
   public: gz::math::Pose3d gazeboXYZToNED;
 
   /// \brief Last received frame rate from the ArduPilot controller
-  public: uint16_t fcu_frame_rate;
+  public: uint16_t fcu_frame_rate{0};
 
   /// \brief Last received frame count from the ArduPilot controller
-  public: uint32_t fcu_frame_count = -1;
+  public: uint32_t fcu_frame_count{UINT32_MAX};
 
   /// \brief Last sent JSON string, so we can resend if needed.
   public: std::string json_str;
@@ -1492,7 +1492,7 @@ bool gz::sim::systems::ArduPilotPlugin::ReceiveServoPacket()
     // 16 / 32 channel compatibility
     uint16_t pkt_magic{0};
     uint16_t pkt_frame_rate{0};
-    uint16_t pkt_frame_count{0};
+    uint32_t pkt_frame_count{0};
     std::array<uint16_t, 32> pkt_pwm;
     ssize_t recvSize{-1};
     if (this->dataPtr->have32Channels)
@@ -1586,7 +1586,8 @@ bool gz::sim::systems::ArduPilotPlugin::ReceiveServoPacket()
     }
 
     // the controller is online
-    if (!this->dataPtr->arduPilotOnline)
+    const bool wasOnline = this->dataPtr->arduPilotOnline;
+    if (!wasOnline)
     {
         this->dataPtr->arduPilotOnline = true;
 
@@ -1600,7 +1601,7 @@ bool gz::sim::systems::ArduPilotPlugin::ReceiveServoPacket()
     this->dataPtr->fcu_frame_rate = pkt_frame_rate;
 
     // check for controller reset
-    if (pkt_frame_count < this->dataPtr->fcu_frame_count)
+    if (wasOnline && pkt_frame_count < this->dataPtr->fcu_frame_count)
     {
         /// \todo(anyone) implement re-initialisation
         gzwarn << "ArduPilot controller has reset\n";
@@ -1621,8 +1622,8 @@ bool gz::sim::systems::ArduPilotPlugin::ReceiveServoPacket()
     }
 
     // check for skipped frames
-    else if (pkt_frame_count != this->dataPtr->fcu_frame_count + 1
-        && this->dataPtr->arduPilotOnline)
+    else if (wasOnline
+        && pkt_frame_count != this->dataPtr->fcu_frame_count + 1)
     {
         gzwarn << "Missed "
             << pkt_frame_count - this->dataPtr->fcu_frame_count
@@ -1902,20 +1903,12 @@ void gz::sim::systems::ArduPilotPlugin::CreateStateJSON(
         windSpdBdyA = std::sqrt(windXBdyA * windXBdyA + windYBdyA * windYBdyA);
         windDirBdyA = atan2(windYBdyA, windXBdyA);
 
-        double windXSnsG = windVelSnsG.X();
-        double windYSnsG = windVelSnsG.Y();
-        auto windSpdSnsG = std::sqrt(
-            windXSnsG * windXSnsG + windYSnsG * windYSnsG);
-        auto windDirSnsG = atan2(windYSnsG, windXSnsG);
-
         // gzdbg << "\nEuler angles:\n"
         //       << "bdyAToBdyG:  " << bdyAToBdyG.Rot().Euler() << "\n"
         //       << "Wind velocity:\n"
         //       << "windVelSnsG: " << windVelSnsG << "\n"
         //       << "windVelBdyA: " << windVelBdyA << "\n"
         //       << "Wind speed and direction:\n"
-        //       << "windSpdSnsG: " << windSpdSnsG << "\n"
-        //       << "windDirSnsG: " << windDirSnsG * 180 / GZ_PI <<  "\n"
         //       << "windSpdBdyA: " << windSpdBdyA << "\n"
         //       << "windDirBdyA: " << windDirBdyA * 180 / GZ_PI <<  "\n"
         //       << "\n";
