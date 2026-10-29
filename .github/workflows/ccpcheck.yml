@@ -1,5 +1,7 @@
 # GitHub Action to run cppcheck
 #
+# The cppcheck options are in ./.pre-commit-config.yaml
+#
 name: cppcheck
 
 on: [push, pull_request]
@@ -18,5 +20,4 @@ jobs:
           sudo apt-get install -y --no-install-recommends cppcheck
       - name: Run cppcheck
         run: |
-          cppcheck --std=c++17 ./include/*.hh
-          cppcheck --std=c++17 ./src/*.cc
+          pipx run pre-commit run cppcheck --all-files

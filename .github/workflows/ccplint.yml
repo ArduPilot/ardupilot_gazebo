@@ -18,5 +18,4 @@ jobs:
       # ubuntu-slim provides python and pipx
       - name: Run cpplint
         run: |
-          pipx run cpplint ./include/*.hh
-          pipx run cpplint ./src/*.cc
+          pipx run pre-commit run cpplint --all-files

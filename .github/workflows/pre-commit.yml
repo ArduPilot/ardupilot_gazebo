@@ -1,0 +1,21 @@
+# GitHub Action to run the pre-commit file checks
+#
+# cpplint and cppcheck run in their own workflows and the SDF check runs in
+# ubuntu-build, where Gazebo is installed.
+#
+name: pre-commit
+
+on: [push, pull_request]
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-slim
+    name: pre-commit
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Run pre-commit
+        env:
+          SKIP: cpplint,cppcheck,check-sdf
+        run: |
+          pipx run pre-commit run --all-files --show-diff-on-failure
