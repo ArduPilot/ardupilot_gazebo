@@ -34,6 +34,7 @@ jobs:
           g++ \
           git
           sudo apt update && sudo apt install --no-install-recommends -y \
+          cppzmq-dev \
           rapidjson-dev \
           libopencv-dev \
           libunwind-dev \
