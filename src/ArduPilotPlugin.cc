@@ -505,7 +505,9 @@ void gz::sim::systems::ArduPilotPlugin::Configure(
     return;
   }
 
-  // Missed update count before we declare arduPilotOnline status false
+  // Missed update count before we either
+  // a) (if lock_step is false ) declare arduPilotOnline status false or
+  // b) (if lock_step is true) resend the last state if lock_step is set.
   this->dataPtr->connectionTimeoutMaxCount =
     sdfClone->Get("connectionTimeoutMaxCount", 10).first;
 
@@ -1203,7 +1205,7 @@ void gz::sim::systems::ArduPilotPlugin::PreUpdate(
         {
             if (this->dataPtr->isLockStep)
             {
-                while (!this->ReceiveServoPacket() &&
+                while (!this->ReceiveServoPacket(_info, _ecm) &&
                     this->dataPtr->arduPilotOnline)
                 {
                     // SIGNINT should interrupt this loop.
@@ -1214,7 +1216,7 @@ void gz::sim::systems::ArduPilotPlugin::PreUpdate(
                 }
                 this->dataPtr->lastServoPacketRecvTime = _info.simTime;
             }
-            else if (this->ReceiveServoPacket())
+            else if (this->ReceiveServoPacket(_info, _ecm))
             {
                 this->dataPtr->lastServoPacketRecvTime = _info.simTime;
             }
@@ -1245,8 +1247,11 @@ void gz::sim::systems::ArduPilotPlugin::PostUpdate(
         double t =
             std::chrono::duration_cast<std::chrono::duration<double>>(
                 _info.simTime).count();
-        this->CreateStateJSON(t, _ecm);
-        this->SendState();
+        if (!this->CreateStateJSON(t, _ecm))
+        {   // Don't send an empty network packet if the state message could not be written yet.
+            // The next ReceiveServoPacket() in PreUpdate() will try again.
+            this->SendState();
+        }
         this->dataPtr->lastControllerUpdateTime = _info.simTime;
     }
 }
@@ -1459,7 +1464,9 @@ ssize_t getServoPacket(
 }  // namespace
 
 /////////////////////////////////////////////////
-bool gz::sim::systems::ArduPilotPlugin::ReceiveServoPacket()
+bool gz::sim::systems::ArduPilotPlugin::ReceiveServoPacket(
+    const gz::sim::UpdateInfo &_info,
+    const gz::sim::EntityComponentManager &_ecm)
 {
     // Added detection for whether ArduPilot is online or not.
     // If ArduPilot is detected (receive of fdm packet from someone),
@@ -1534,7 +1541,36 @@ bool gz::sim::systems::ArduPilotPlugin::ReceiveServoPacket()
                 // for lock-step resend last state rather than time out
                 if (this->dataPtr->isLockStep)
                 {
-                    this->SendState();
+                    if (this->dataPtr->json_str.empty())
+                    { // No state has been created, yet. Try it now.
+                        double t =
+                            std::chrono::duration_cast<std::chrono::duration<double>>(
+                            _info.simTime).count();
+                        if (!this->CreateStateJSON(t, _ecm))
+                        {
+                            gzwarn << "[" << this->dataPtr->modelName << "] "
+                            << "BUG: Ardupilot was connected and timed out, but I can't send it the current"
+                              " state as I still haven't received an IMU msg to do that!"
+                              " Until then the simulation will hang!\n";
+                        }
+                    }
+                    if (!this->dataPtr->json_str.empty())
+                    {
+                        static double last_warning_timestamp = -1;
+                        double t = std::chrono::duration_cast<std::chrono::duration<double>>(
+                            _info.simTime).count();
+                        if (last_warning_timestamp != t)
+                        {   // We didn't warn about particular interruption, yet.
+                            gzwarn << "[" << this->dataPtr->modelName << "] "
+                              << "Did not receive an update from the ArduPilot for "
+                              << this->dataPtr->connectionTimeoutMaxCount
+                              << " consecutive attempts. The simulation freezes until I get an update! Resending state..."
+                                 " (If this message appears too often either increase connectionTimeoutMaxCount in your SDF-Model,"
+                                 " disable lock_step or make the SITL answer faster.)\n";
+                            last_warning_timestamp = t;
+                        }
+                        this->SendState();
+                    }
                 }
                 else
                 {
@@ -1604,12 +1640,28 @@ bool gz::sim::systems::ArduPilotPlugin::ReceiveServoPacket()
     // check for duplicate frame
     else if (pkt_frame_count == this->dataPtr->fcu_frame_count)
     {
-        gzwarn << "Duplicate input frame\n";
+        gzwarn << "Duplicate input frame (no. " << pkt_frame_count << ")\n";
 
         // for lock-step resend last state rather than ignore
         if (this->dataPtr->isLockStep)
         {
-            this->SendState();
+            if (this->dataPtr->json_str.empty())
+            { // No state has been created, yet. Try it now.
+                double t =
+                    std::chrono::duration_cast<std::chrono::duration<double>>(
+                    _info.simTime).count();
+                if (!this->CreateStateJSON(t, _ecm))
+                {
+                    gzwarn << "[" << this->dataPtr->modelName << "] "
+                    << "I'd like to resend the last state because the model has lock_step enabled,"
+                       " but I still haven't received an IMU msg to do that!"
+                       " Until then the simulation will hang!\n";
+                }
+            }
+            if (!this->dataPtr->json_str.empty())
+            {
+                this->SendState();
+            }
         }
 
         return false;
@@ -1714,7 +1766,7 @@ void gz::sim::systems::ArduPilotPlugin::UpdateMotorCommands(
 }
 
 /////////////////////////////////////////////////
-void gz::sim::systems::ArduPilotPlugin::CreateStateJSON(
+bool gz::sim::systems::ArduPilotPlugin::CreateStateJSON(
     double _simTime,
     const gz::sim::EntityComponentManager &_ecm) const
 {
@@ -1726,7 +1778,7 @@ void gz::sim::systems::ArduPilotPlugin::CreateStateJSON(
         // Wait until we've received a valid message.
         if (!this->dataPtr->imuMsgValid)
         {
-            return;
+            return false;
         }
         imuMsg = this->dataPtr->imuMsg;
     }
@@ -2022,11 +2074,18 @@ void gz::sim::systems::ArduPilotPlugin::CreateStateJSON(
     // get JSON
     this->dataPtr->json_str = "\n" + std::string(s.GetString()) + "\n";
     // gzdbg << this->dataPtr->json_str << "\n";
+    return true;
 }
 
 /////////////////////////////////////////////////
 void gz::sim::systems::ArduPilotPlugin::SendState() const
 {
+    if (this->dataPtr->json_str.empty())
+    {
+        gzwarn << "[" << this->dataPtr->modelName << "] "
+        << "SendState() called but there is no current state, yet. Not sending anything. Call CreateStateJSON() first!";
+        return;
+    }
 #if DEBUG_JSON_IO
     auto bytes_sent =
 #endif
