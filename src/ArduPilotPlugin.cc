@@ -1603,8 +1603,10 @@ bool gz::sim::systems::ArduPilotPlugin::ReceiveServoPacket()
     // check for controller reset
     if (wasOnline && pkt_frame_count < this->dataPtr->fcu_frame_count)
     {
-        /// \todo(anyone) implement re-initialisation
-        gzwarn << "ArduPilot controller has reset\n";
+        // nothing to re-initialise: the frame count and FCU address are
+        // updated from this packet, and its PWM replaces the motor commands
+        gzwarn << "[" << this->dataPtr->modelName << "] "
+            << "ArduPilot controller has reset\n";
     }
 
     // check for duplicate frame
