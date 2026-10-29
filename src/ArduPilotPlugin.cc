@@ -311,7 +311,7 @@ class gz::sim::systems::ArduPilotPluginPrivate
     {
       return;
     }
-    this->ranges[_sensorIndex] = sample_min;
+    this->ranges[static_cast<size_t>(_sensorIndex)] = sample_min;
   }
 
   // Anemometer
@@ -572,7 +572,7 @@ void gz::sim::systems::ArduPilotPlugin::LoadControlChannels(
     }
     else
     {
-      control.channel = this->dataPtr->controls.size();
+      control.channel = static_cast<int>(this->dataPtr->controls.size());
       gzwarn << "[" << this->dataPtr->modelName << "] "
              <<  "id/channel attribute not specified, use order parsed ["
              << control.channel << "].\n";
@@ -1274,8 +1274,8 @@ bool gz::sim::systems::ArduPilotPlugin::InitSockets(sdf::ElementPtr _sdf) const
     this->dataPtr->fdm_address =
         _sdf->Get("fdm_addr", static_cast<std::string>("127.0.0.1")).first;
 
-    this->dataPtr->fdm_port_in =
-        _sdf->Get("fdm_port_in", static_cast<uint32_t>(9002)).first;
+    this->dataPtr->fdm_port_in = static_cast<uint16_t>(
+        _sdf->Get("fdm_port_in", static_cast<uint32_t>(9002)).first);
 
     // output port configuration is automatic
     if (_sdf->HasElement("listen_addr")) {
@@ -1653,18 +1653,20 @@ void gz::sim::systems::ArduPilotPlugin::UpdateMotorCommands(
         // enforce limit on the number of <control> elements
         if (i < MAX_MOTORS)
         {
-            if (this->dataPtr->controls[i].channel < max_servo_channels)
+            if (this->dataPtr->controls[i].channel >= 0
+                && this->dataPtr->controls[i].channel < max_servo_channels)
             {
                 // convert pwm to raw cmd: [servo_min, servo_max] => [0, 1],
                 // default is: [1000, 2000] => [0, 1]
-                const double pwm = _pwm[this->dataPtr->controls[i].channel];
+                const double pwm = _pwm[static_cast<size_t>(
+                    this->dataPtr->controls[i].channel)];
                 const double pwm_min = this->dataPtr->controls[i].servo_min;
                 const double pwm_max = this->dataPtr->controls[i].servo_max;
                 const double multiplier = this->dataPtr->controls[i].multiplier;
                 const double offset = this->dataPtr->controls[i].offset;
 
                 // pwm = 0 => no servo output.
-                if (_pwm[this->dataPtr->controls[i].channel] == 0)
+                if (pwm == 0)
                 {
                   this->dataPtr->controls[i].outputReady = false;
                   this->dataPtr->controls[i].cmd = 0.0;
@@ -1705,8 +1707,8 @@ void gz::sim::systems::ArduPilotPlugin::UpdateMotorCommands(
                 gzerr << "[" << this->dataPtr->modelName << "] "
                     << "control[" << i << "] channel ["
                     << this->dataPtr->controls[i].channel
-                    << "] is greater than the number of servo channels ["
-                    << max_servo_channels
+                    << "] is outside the servo channel range [0, "
+                    << max_servo_channels - 1
                     << "], control not applied.\n";
             }
         }

@@ -321,7 +321,7 @@ void GstCameraPlugin::Impl::StartStreaming()
 
 void *GstCameraPlugin::Impl::StartThread(void *param)
 {
-    GstCameraPlugin::Impl *impl = (GstCameraPlugin::Impl *)param;
+    GstCameraPlugin::Impl *impl = static_cast<GstCameraPlugin::Impl *>(param);
     impl->StartGstThread();
     impl->isGstThreadRunning = false;
     return nullptr;
@@ -568,7 +568,7 @@ void GstCameraPlugin::Impl::OnImage(const msgs::Image &msg)
     if (!isGstMainLoopActive) return;
 
     // Alloc buffer
-    const guint size = width * height * 1.5;
+    const guint size = width * height * 3 / 2;
     GstBuffer *buffer = gst_buffer_new_allocate(NULL, size, NULL);
 
     if (!buffer)
@@ -587,8 +587,10 @@ void GstCameraPlugin::Impl::OnImage(const msgs::Image &msg)
     }
 
     // Color Conversion from RGB to YUV
-    cv::Mat frame = cv::Mat(height, width, CV_8UC3);
-    cv::Mat frameYUV = cv::Mat(height, width, CV_8UC3);
+    const int rows = static_cast<int>(height);
+    const int cols = static_cast<int>(width);
+    cv::Mat frame = cv::Mat(rows, cols, CV_8UC3);
+    cv::Mat frameYUV = cv::Mat(rows, cols, CV_8UC3);
     frame.data = reinterpret_cast<unsigned char *>(
         const_cast<char *>(msg.data().c_str()));
 
