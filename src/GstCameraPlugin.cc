@@ -86,7 +86,7 @@ class GstCameraPlugin::Impl {
     // set from a start request until the GStreamer thread exits, so that a
     // second request while the pipeline is still being built is ignored
     std::atomic<bool> isGstThreadRunning{false};
-    bool requestedStartStreaming{false};
+    std::atomic<bool> requestedStartStreaming{false};
 
     GMainLoop *gst_loop{nullptr};
     GstElement *source{nullptr};
@@ -556,13 +556,20 @@ GstElement* GstCameraPlugin::Impl::CreateEncoder()
 
 void GstCameraPlugin::Impl::OnImage(const msgs::Image &msg)
 {
-    if (requestedStartStreaming)
+    if (requestedStartStreaming.exchange(false))
     {
-        width = msg.width();
-        height = msg.height();
-        StartStreaming();
-        requestedStartStreaming = false;
-        return;
+        // Repeated ON requests must not consume frames of an active stream.
+        // Reserve a frame for setup only when the pipeline is not yet active.
+        if (!isGstMainLoopActive.load())
+        {
+            if (!isGstThreadRunning.load())
+            {
+                width = msg.width();
+                height = msg.height();
+                StartStreaming();
+            }
+            return;
+        }
     }
 
     if (!isGstMainLoopActive) return;
