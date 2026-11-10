@@ -42,6 +42,8 @@ namespace systems {
 ///  <rtmp_location>       the RTMP location
 ///  <use_basic_pipeline>  set to true if not using <rtmp_location>
 ///  <use_cuda>            set to true to use CUDA (if available)
+///  <keyframe_interval>   maximum x264 keyframe interval in frames (1-600),
+///                       defaults to 10; CUDA and VA-API are unchanged
 ///  <image_topic>         the camera image topic
 ///  <enable_topic>        the topic to enable / disable video streaming
 ///
