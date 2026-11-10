@@ -81,6 +81,9 @@ class GstCameraPlugin::Impl {
     // is set from the camera sensor's update_rate when one is given.
     unsigned int rate{30};
 
+    // Maximum distance between x264 keyframes; preserves the previous default.
+    unsigned int keyframeInterval{10};
+
     pthread_t threadId;
     std::atomic<bool> isGstMainLoopActive{false};
     // set from a start request until the GStreamer thread exits, so that a
@@ -187,6 +190,20 @@ void GstCameraPlugin::Configure(
     if (_sdf->HasElement("use_vaapi"))
     {
         impl->useVaapi = _sdf->Get<bool>("use_vaapi");
+    }
+
+    if (_sdf->HasElement("keyframe_interval"))
+    {
+        const int interval = _sdf->Get<int>("keyframe_interval");
+        if (interval >= 1 && interval <= 600)
+        {
+            impl->keyframeInterval = static_cast<unsigned int>(interval);
+        }
+        else
+        {
+            gzwarn << "GstCameraPlugin: keyframe_interval must be in [1, 600]; "
+                   << "using the default of 10 frames" << std::endl;
+        }
     }
 
     if (_sdf->HasElement("image_topic"))
@@ -548,7 +565,7 @@ GstElement* GstCameraPlugin::Impl::CreateEncoder()
         {
             encoder = gst_element_factory_make("x264enc", nullptr);
             g_object_set(G_OBJECT(encoder), "bitrate", 800, "speed-preset", 6,
-                "tune", 4, "key-int-max", 10, nullptr);
+                "tune", 4, "key-int-max", keyframeInterval, nullptr);
         }
     }
     return encoder;
