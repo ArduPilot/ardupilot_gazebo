@@ -358,10 +358,12 @@ class gz::sim::systems::ArduPilotPluginPrivate
   ///        messages before timeout
   public: int connectionTimeoutMaxCount{0};
 
-  /// \brief Transform from model orientation to x-forward and z-up
+  /// \brief Rotation from the Gazebo model frame (x-forward, y-left, z-up)
+  ///        to the aerospace body frame (x-forward, y-right, z-down)
   public: gz::math::Pose3d modelXYZToAirplaneXForwardZDown;
 
-  /// \brief Transform from world frame to NED frame
+  /// \brief Rotation from the Gazebo world frame (ENU: x-East, y-North, z-Up)
+  ///        to the ArduPilot world frame (NED: x-North, y-East, z-Down)
   public: gz::math::Pose3d gazeboXYZToNED;
 
   /// \brief Last received frame rate from the ArduPilot controller
@@ -476,8 +478,8 @@ void gz::sim::systems::ArduPilotPlugin::Configure(
   }
 
   // modelXYZToAirplaneXForwardZDown brings us from gazebo model frame:
-  // x-forward, y-right, z-down
-  // to the aerospace convention: x-forward, y-left, z-up
+  // x-forward, y-left, z-up
+  // to the aerospace convention: x-forward, y-right, z-down
   this->dataPtr->modelXYZToAirplaneXForwardZDown =
     gz::math::Pose3d(0, 0, 0, GZ_PI, 0, 0);
   if (sdfClone->HasElement("modelXYZToAirplaneXForwardZDown"))
@@ -486,8 +488,12 @@ void gz::sim::systems::ArduPilotPlugin::Configure(
         sdfClone->Get<gz::math::Pose3d>("modelXYZToAirplaneXForwardZDown");
   }
 
-  // gazeboXYZToNED: from gazebo model frame: x-forward, y-right, z-down
-  // to the aerospace convention: x-forward, y-left, z-up
+  // gazeboXYZToNED brings us from the gazebo world frame:
+  // x-East, y-North, z-Up (ENU)
+  // to the ArduPilot world frame: x-North, y-East, z-Down (NED).
+  // The models in this repository set it to "0 0 0 180 0 90" (degrees), i.e.
+  // (GZ_PI, 0, GZ_PI / 2). The default below, (GZ_PI, 0, 0), only flips the
+  // y and z axes and does not swap x and y.
   this->dataPtr->gazeboXYZToNED = gz::math::Pose3d(0, 0, 0, GZ_PI, 0, 0);
   if (sdfClone->HasElement("gazeboXYZToNED"))
   {
