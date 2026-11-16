@@ -24,10 +24,12 @@
 
 #include <algorithm>
 #include <chrono>
+#include <condition_variable>
 #include <cstdint>
 #include <functional>
 #include <memory>
 #include <mutex>
+#include <optional>
 #include <string>
 #include <sstream>
 #include <vector>
@@ -218,6 +220,12 @@ class gz::sim::systems::ArduPilotPluginPrivate
   /// \brief keep track of controller update sim-time.
   public: std::chrono::steady_clock::duration lastControllerUpdateTime{0};
 
+  /// \brief Sim time of a step whose state is still to be sent to ArduPilot.
+  ///        PostUpdate() sets it and the next PreUpdate() sends the state,
+  ///        once every system (including the IMU) has published that step.
+  public: std::optional<std::chrono::steady_clock::duration>
+      pendingStateTime;
+
   /// \brief Keep track of the time the last servo packet was received.
   public: std::chrono::steady_clock::duration lastServoPacketRecvTime{0};
 
@@ -270,9 +278,64 @@ class gz::sim::systems::ArduPilotPluginPrivate
   ///        IMU data message for later use.
   public: void ImuCb(const gz::msgs::IMU &_msg)
   {
-    std::lock_guard<std::mutex> lock(this->imuMsgMutex);
-    imuMsg = _msg;
-    imuMsgValid = true;
+    {
+      std::lock_guard<std::mutex> lock(this->imuMsgMutex);
+      imuMsg = _msg;
+      imuMsgValid = true;
+      imuStalled = false;
+    }
+    this->imuCv.notify_all();
+  }
+
+  /// \brief Set when an expected IMU sample did not arrive, so steps do not
+  ///        wait for a sensor that has stopped publishing. Cleared by ImuCb().
+  public: bool imuStalled{false};
+
+  /// \brief Signalled by ImuCb() when an IMU data message arrives.
+  public: std::condition_variable imuCv;
+
+  /// \brief The IMU sensor update period, zero to update every step.
+  public: std::chrono::steady_clock::duration imuPeriod{0};
+
+  /// \brief Wait until the IMU sample for the step at _simTime has been
+  ///        received, if the sensor publishes one at that step.
+  ///        gz-transport delivers messages on its own thread, so a sample
+  ///        can arrive shortly after the step that published it.
+  public: void WaitForImu(const std::chrono::steady_clock::duration &_simTime)
+  {
+    std::unique_lock<std::mutex> lock(this->imuMsgMutex);
+    if (this->imuStalled)
+    {
+      return;
+    }
+    const auto received = [&]() {
+      if (!this->imuMsgValid)
+      {
+        return false;
+      }
+      const auto stamp = gz::msgs::Convert(this->imuMsg.header().stamp());
+      if (stamp >= _simTime)
+      {
+        return true;
+      }
+      // a gz-sensors sensor publishes at the first step at or after each
+      // multiple of its update period, so no sample is due at _simTime if
+      // no multiple lies in (stamp, _simTime]
+      return this->imuPeriod.count() > 0 &&
+          _simTime / this->imuPeriod == stamp / this->imuPeriod;
+    };
+    // The wait is normally well under a millisecond. The timeout (in wall
+    // time, so not tied to the sensor period) only catches a sensor that
+    // has stopped publishing: stop waiting for it until it publishes again.
+    if (!this->imuCv.wait_for(lock, std::chrono::milliseconds(100), received))
+    {
+      this->imuStalled = true;
+      gzwarn << "[" << this->modelName << "] "
+             << "IMU sample for sim time "
+             << std::chrono::duration<double>(_simTime).count()
+             << " s not received, not waiting for the IMU until it"
+             << " publishes again.\n";
+    }
   }
 
   // Range sensors
@@ -1167,6 +1230,16 @@ void gz::sim::systems::ArduPilotPlugin::PreUpdate(
             {
                 this->dataPtr->imuLink = parent;
 
+                const double imuRate = _ecm.Component<
+                    gz::sim::components::Imu>(imuEntity)->Data().UpdateRate();
+                if (imuRate > 0.0)
+                {
+                    // truncated to nanoseconds, as gz-sensors does
+                    this->dataPtr->imuPeriod = std::chrono::duration_cast<
+                        std::chrono::steady_clock::duration>(
+                            std::chrono::duration<double>(1.0 / imuRate));
+                }
+
                 imuTopicName = gz::sim::scopedName(
                     imuEntity, _ecm) + "/imu";
 
@@ -1202,6 +1275,17 @@ void gz::sim::systems::ArduPilotPlugin::PreUpdate(
     }
     else
     {
+        // Send the state of the previous step (see pendingStateTime).
+        if (this->dataPtr->pendingStateTime)
+        {
+            const auto simTime = *this->dataPtr->pendingStateTime;
+            this->dataPtr->pendingStateTime.reset();
+            this->dataPtr->WaitForImu(simTime);
+            this->CreateStateJSON(
+                std::chrono::duration<double>(simTime).count(), _ecm);
+            this->SendState();
+        }
+
         // Update the control surfaces.
         if (!_info.paused && _info.simTime >
             this->dataPtr->lastControllerUpdateTime)
@@ -1239,19 +1323,18 @@ void gz::sim::systems::ArduPilotPlugin::PreUpdate(
 /////////////////////////////////////////////////
 void gz::sim::systems::ArduPilotPlugin::PostUpdate(
     const gz::sim::UpdateInfo &_info,
-    const gz::sim::EntityComponentManager &_ecm)
+    const gz::sim::EntityComponentManager &/*_ecm*/)
 {
     std::lock_guard<std::mutex> lock(this->dataPtr->mutex);
 
-    // Publish the new state.
+    // Mark the new state for sending. Other systems, including the IMU
+    // sensor, publish this step's data from their PostUpdate(), which runs
+    // concurrently with this one, so the state is sent from the next
+    // PreUpdate() instead.
     if (!_info.paused && _info.simTime > this->dataPtr->lastControllerUpdateTime
         && this->dataPtr->arduPilotOnline)
     {
-        double t =
-            std::chrono::duration_cast<std::chrono::duration<double>>(
-                _info.simTime).count();
-        this->CreateStateJSON(t, _ecm);
-        this->SendState();
+        this->dataPtr->pendingStateTime = _info.simTime;
         this->dataPtr->lastControllerUpdateTime = _info.simTime;
     }
 }
