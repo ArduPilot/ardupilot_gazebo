@@ -323,7 +323,7 @@
           <upper>1e+16</upper>
         </limit>
         <dynamics>
-          <damping>0.004</damping>
+          <damping>1.0e-4</damping>
         </dynamics>
       </axis>
     </joint>
@@ -381,7 +381,7 @@
           <upper>1e+16</upper>
         </limit>
         <dynamics>
-          <damping>0.004</damping>
+          <damping>1.0e-4</damping>
         </dynamics>
       </axis>
     </joint>
@@ -439,7 +439,7 @@
           <upper>1e+16</upper>
         </limit>
         <dynamics>
-          <damping>0.004</damping>
+          <damping>1.0e-4</damping>
         </dynamics>
       </axis>
     </joint>
@@ -497,7 +497,7 @@
           <upper>1e+16</upper>
         </limit>
         <dynamics>
-          <damping>0.004</damping>
+          <damping>1.0e-4</damping>
         </dynamics>
       </axis>
     </joint>
